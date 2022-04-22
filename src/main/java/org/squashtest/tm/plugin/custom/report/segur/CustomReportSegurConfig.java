@@ -66,6 +66,7 @@ import org.squashtest.tm.api.report.form.composite.ProjectPickerOption;
 
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -79,6 +80,7 @@ public class CustomReportSegurConfig {
 		return reportPlugin;
 	}
 
+	
 	@Bean
 	public SegurExcelReport segurReport(Form segurForm) {
 		SegurExcelReport segurReport = new SegurExcelReport();
@@ -90,53 +92,39 @@ public class CustomReportSegurConfig {
 		return segurReport;
 	}
 
-	 @Bean
-	  public Form demoForm(@Named("demoCampaignTreePricker") TreePicker campaignTreePicker) {
-	    Form form = new Form();
-	    List<Input> inputs = new ArrayList();
-	    inputs.add(campaignTreePicker);
-	    form.setInputs(inputs);
-	    return form;
-	  }
+	@Bean
+	public Form segurForm(@Named("segurRadioButton") RadioButtonsGroup segurRadioButton) {
+		Form form = new Form();
+		List<Input> inputs = new ArrayList();
+		inputs.add(segurRadioButton);
+		form.setInputs(inputs);
+		return form;
+	}
 
-	  @Bean(name = "demoCampaignTreePricker")
-	  public TreePicker campaignTreePricker(){
-	    TreePicker treePicker = new TreePicker();
-	    treePicker.setPickedNodeType(NodeType.CAMPAIGN);
-	    treePicker.setName("campaignId");
-	    treePicker.setLabelKey("custom.report.demo.picker.label");
-	    treePicker.setNodeSelectionLimit(1);
-	    treePicker.setRequired(true);
-	    treePicker.setStrict(true);
-	    return treePicker;
-	  }
+	@Bean (name = "segurRadioButton")
+	public RadioButtonsGroup segurRadioButton(@Named("milestonePickerOption") MilestonePickerOption milestonePickerOption) {
+		RadioButtonsGroup button = new RadioButtonsGroup();		
+		button.setLabelKey("button.label.key");
+		button.setName("button.name");
+		button.setRequired(true);
+				
+		button.setOptions(Collections.singletonList(milestonePickerOption));			
+		return button;
+		
+	}
 	
-//	@Bean
-//	//public Form segurForm(@Named("projectPicker") ProjectPicker projectPicker,@Named("milestonePickerOption") MilestonePicker milestonePickerOption) {
-//	public Form segurForm(@Named("milestonePickerOption") MilestonePickerOption milestonePickerOption) {
-//		Form form = new Form();
-//		List<Input> inputs = new ArrayList();
-////		inputs.add(projectPicker);
-//		inputs.add((Input) milestonePickerOption);
-//		form.setInputs(inputs);
-//		return form;
-//	}
-//
-//	@Bean(name = "milestonePickerOption")
-//	public MilestonePickerOption milestonePickerOption() {
-//		MilestonePickerOption picker = new MilestonePickerOption();
-//		picker.setName("milestoneId");
-//		picker.setLabelKey("select.milestone");
-//		picker.setDefaultSelected(false);
-//		return picker;
-//	}
+	
+	@Bean(name = "milestonePickerOption")
+	public MilestonePickerOption milestonePickerOption() {
+		MilestonePickerOption picker = new MilestonePickerOption();
+		picker.setName("milestoneId");
+		picker.setLabelKey("select.milestone");
+	//	picker.setRequired(true);
+		picker.setPickerName("milestone.pickename");
+		picker.setPickerLabelKey("select.milestone");
+		picker.setDefaultSelected(true);
+		return picker;
+	}
 
-//	@Bean(name = "projectPicker")
-//	public ProjectPicker projectPicker() {
-//		ProjectPicker picker = new ProjectPicker();
-//		picker.setName("projectId");
-//		picker.setLabelKey("select.project");
-//		picker.setRequired(true);
-//		return picker;
-//	}
+
 }

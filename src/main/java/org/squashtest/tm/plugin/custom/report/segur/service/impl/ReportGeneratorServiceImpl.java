@@ -41,6 +41,15 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -51,17 +60,6 @@ import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.model.CampaignDto;
 import org.squashtest.tm.plugin.custom.report.segur.repository.CampaignCollector;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ReportGeneratorServiceImpl implements ReportGeneratorService {
@@ -84,13 +82,16 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         //DAO
         CampaignDto campaign = campaignCollector.findCampaignById(campaignId);
 
-        //Ecriture de l'excel
-        printHeaders(sheet);
-        printRow(campaign,sheet);
-        formatColumns(sheet);
+        //A suuprimer ...Ecriture de l'excel
+//        printHeaders(sheet);
+//        printRow(campaign,sheet);
+//        formatColumns(sheet);
+        
+        //tmp chargement du template et écriture de lignes bidons...
+        
         File report = null;
         try {
-        	String fileName = ExcelWriterUtil.createOutputFileName(false, "INS", "1.3");
+        	String fileName = ExcelWriterUtil.createOutputFileName(false, "INS", "V1.3");
 			report = ExcelWriterUtil.flushToTemporaryFile(workbook,fileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -99,38 +100,38 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         return report;
     }
 
-    private void printHeaders(Sheet sheet) {
-        Row row = sheet.createRow(0);
-        for (int i = 0; i < headers.size(); i++) {
+//    private void printHeaders(Sheet sheet) {
+//        Row row = sheet.createRow(0);
+//        for (int i = 0; i < headers.size(); i++) {
+//
+//            Cell cell = row.createCell(i);
+//            cell.setCellValue(headers.get(i));
+//        }
+//    }
 
-            Cell cell = row.createCell(i);
-            cell.setCellValue(headers.get(i));
-        }
-    }
-
-    private void printRow(CampaignDto campaign, Sheet sheet) {
-        Row row = sheet.createRow(1);
-        Cell nameCell = row.createCell(0);
-        nameCell.setCellValue(campaign.getName());
-        Cell descriptionCell = row.createCell(1);
-        String description = campaign.getDescription() != null ? campaign.getDescription() : "";
-        descriptionCell.setCellValue(description);
-        Cell referenceCell = row.createCell(2);
-        referenceCell.setCellValue(campaign.getReference());
-        Cell createdByCell = row.createCell(3);
-        createdByCell.setCellValue(campaign.getCreatedBy());
-    }
-
-    private void clean(SXSSFWorkbook workbook) {
-        workbook.dispose();
-    }
+//    private void printRow(CampaignDto campaign, Sheet sheet) {
+//        Row row = sheet.createRow(1);
+//        Cell nameCell = row.createCell(0);
+//        nameCell.setCellValue(campaign.getName());
+//        Cell descriptionCell = row.createCell(1);
+//        String description = campaign.getDescription() != null ? campaign.getDescription() : "";
+//        descriptionCell.setCellValue(description);
+//        Cell referenceCell = row.createCell(2);
+//        referenceCell.setCellValue(campaign.getReference());
+//        Cell createdByCell = row.createCell(3);
+//        createdByCell.setCellValue(campaign.getCreatedBy());
+//    }
+//
+//    private void clean(SXSSFWorkbook workbook) {
+//        workbook.dispose();
+//    }
 
 
-    private void formatColumns(Sheet sheet) {
-        for (int i = 0; i < headers.size(); i++) {
-            sheet.autoSizeColumn(i);
-        }
-    }
+//    private void formatColumns(Sheet sheet) {
+//        for (int i = 0; i < headers.size(); i++) {
+//            sheet.autoSizeColumn(i);
+//        }
+//    }
 
   
 }
