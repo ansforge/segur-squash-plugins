@@ -1,0 +1,10 @@
+target
+META-INF
+.project
+.settings
+.classpath
+.bak
+bin
+.idea
+*.iml
+*.ci-friendly-pom.xml
