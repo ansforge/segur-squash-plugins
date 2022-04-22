@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.model.CampaignDto;
@@ -55,6 +56,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,23 +73,29 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
     @Override
     public File generateReport(Map<String, Criteria> criterias) {
-        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
+        
+        //récupération des critères
         Map<String,Object> map = (Map<String, Object>) criterias.get("campaignId").getValue();
         List<String> campaigns = (ArrayList)map.get("campaigns");
         Long campaignId = Long.parseLong(campaigns.get(0));
+        
+        //DAO
         CampaignDto campaign = campaignCollector.findCampaignById(campaignId);
 
+        //Ecriture de l'excel
         printHeaders(sheet);
         printRow(campaign,sheet);
         formatColumns(sheet);
         File report = null;
         try {
-            report = flushToTemporaryFile(workbook);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        clean(workbook);
+        	String fileName = ExcelWriterUtil.createOutputFileName(false, "INS", "1.3");
+			report = ExcelWriterUtil.flushToTemporaryFile(workbook,fileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return report;
     }
 
@@ -123,13 +132,5 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         }
     }
 
-    private File flushToTemporaryFile(SXSSFWorkbook workbook) throws IOException {
-        File temp = File.createTempFile("campaign_report", ".xls");
-        temp.deleteOnExit();
-
-        FileOutputStream fos = new FileOutputStream(temp);
-        workbook.write(fos);
-        fos.close();
-        return temp;
-    }
+  
 }

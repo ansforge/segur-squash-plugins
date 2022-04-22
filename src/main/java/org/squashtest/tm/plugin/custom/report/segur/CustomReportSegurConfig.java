@@ -61,6 +61,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.squashtest.tm.api.report.*;
 import org.squashtest.tm.api.report.form.*;
+import org.squashtest.tm.api.report.form.composite.MilestonePickerOption;
+import org.squashtest.tm.api.report.form.composite.ProjectPickerOption;
 
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -69,27 +71,26 @@ import java.util.List;
 @Configuration
 public class CustomReportSegurConfig {
 
+	@Bean
+	public ReportPlugin segurReportPlugin(SegurExcelReport segurReport) {
+		Report[] reports = { segurReport };
+		ReportPlugin reportPlugin = new ReportPlugin();
+		reportPlugin.setReports(reports);
+		return reportPlugin;
+	}
+
+	@Bean
+	public SegurExcelReport segurReport(Form segurForm) {
+		SegurExcelReport segurReport = new SegurExcelReport();
+		segurReport.setCategory(StandardReportCategory.PREPARATION_PHASE);
+		segurReport.setType(StandardReportType.GENERIC);
+		segurReport.setLabelKey("title");
+		segurReport.setDescriptionKey("description");
+		segurReport.setForm(segurForm.getInputs().toArray(new Input[segurForm.getInputs().size()]));
+		return segurReport;
+	}
+
 	 @Bean
-	  public ReportPlugin demoReportPlugin(SegurExcelReport demoReport){
-	    Report[] reports = {demoReport};
-	    ReportPlugin reportPlugin = new ReportPlugin();
-	    reportPlugin.setReports(reports);
-	    return reportPlugin;
-	  }
-
-	  @Bean
-	  public SegurExcelReport demoReport(Form demoForm){
-		  SegurExcelReport demoReport = new SegurExcelReport();
-	    demoReport.setCategory(StandardReportCategory.PREPARATION_PHASE);
-	    demoReport.setType(StandardReportType.GENERIC);
-	    demoReport.setLabelKey("title");
-	    demoReport.setDescriptionKey("description");
-	    demoReport.setForm(demoForm.getInputs().toArray(new Input[demoForm.getInputs().size()]));
-	    return demoReport;
-	  }
-
-
-	  @Bean
 	  public Form demoForm(@Named("demoCampaignTreePricker") TreePicker campaignTreePicker) {
 	    Form form = new Form();
 	    List<Input> inputs = new ArrayList();
@@ -103,100 +104,39 @@ public class CustomReportSegurConfig {
 	    TreePicker treePicker = new TreePicker();
 	    treePicker.setPickedNodeType(NodeType.CAMPAIGN);
 	    treePicker.setName("campaignId");
-	    treePicker.setLabelKey("select.milestone");
+	    treePicker.setLabelKey("custom.report.demo.picker.label");
 	    treePicker.setNodeSelectionLimit(1);
 	    treePicker.setRequired(true);
 	    treePicker.setStrict(true);
 	    return treePicker;
-	    
 	  }
-//	 @Bean
-//	  public ReportPlugin demoReportPlugin(SegurExcelReport demoReport){
-//	    Report[] reports = {demoReport};
-//	    ReportPlugin reportPlugin = new ReportPlugin();
-//	    reportPlugin.setReports(reports);
-//	    return reportPlugin;
-//	  }
+	
+//	@Bean
+//	//public Form segurForm(@Named("projectPicker") ProjectPicker projectPicker,@Named("milestonePickerOption") MilestonePicker milestonePickerOption) {
+//	public Form segurForm(@Named("milestonePickerOption") MilestonePickerOption milestonePickerOption) {
+//		Form form = new Form();
+//		List<Input> inputs = new ArrayList();
+////		inputs.add(projectPicker);
+//		inputs.add((Input) milestonePickerOption);
+//		form.setInputs(inputs);
+//		return form;
+//	}
 //
-//
-//  @Bean
-//  public SegurExcelReport report(Form form){
-//    SegurExcelReport report = new SegurExcelReport();
-//    report.setCategory(StandardReportCategory.PREPARATION_PHASE);
-//    report.setType(StandardReportType.GENERIC);
-//    report.setLabelKey("title");
-//    report.setDescriptionKey("description");
-//    report.setForm(form.getInputs().toArray(new Input[form.getInputs().size()]));
-//    return report;
-//  }
-//
-//
-//  @Bean
-//  public Form demoForm(@Named("demoCampaignTreePricker") TreePicker campaignTreePicker) {
-//    Form form = new Form();
-//    List<Input> inputs = new ArrayList();
-//    inputs.add(campaignTreePicker);
-//    form.setInputs(inputs);
-//    return form;
-//  }
-//
-//  @Bean(name = "demoCampaignTreePricker")
-//  public TreePicker campaignTreePricker(){
-//    TreePicker treePicker = new TreePicker();
-//    treePicker.setPickedNodeType(NodeType.CAMPAIGN);
-//    treePicker.setName("campaignId");
-//    treePicker.setLabelKey("custom.report.demo.picker.label");
-//    treePicker.setNodeSelectionLimit(1);
-//    treePicker.setRequired(true);
-//    treePicker.setStrict(true);
-//    return treePicker;
-//  }
-//  
-//  @Bean
-//  public Form form(/*@Named("projectTreePricker") ProjectPicker projectTreePricker,*/@Named("milestonePickerOption") MilestonePicker milestonePickerOption) {
-//    Form form = new Form();
-//    List<Input> inputs = new ArrayList<Input>();
-//  //  inputs.add((Input) projectTreePricker);
-//    inputs.add((Input) milestonePickerOption);
-//    form.setInputs(inputs);
-//    return form;
-//  }
-//
-//  @Bean(name = "projectTreePricker")
-//  public ProjectPicker projectPickerOption(){
-//	ProjectPicker treePicker = new ProjectPicker();
-//    treePicker.setName("projectId");
-//    treePicker.setLabelKey("select.project");
-//    treePicker.setRequired(true);
-//    return treePicker;
-//  }
-//  
-//  @Bean(name = "milestonePickerOption")
-//  public MilestonePicker milestonePickerOption(){
-//	  MilestonePicker treePicker = new MilestonePicker();
-//    treePicker.setName("milestoneId");
-//    treePicker.setLabelKey("select.milestone");
-//    treePicker.setRequired(true);
-//    return treePicker;
-//  }
+//	@Bean(name = "milestonePickerOption")
+//	public MilestonePickerOption milestonePickerOption() {
+//		MilestonePickerOption picker = new MilestonePickerOption();
+//		picker.setName("milestoneId");
+//		picker.setLabelKey("select.milestone");
+//		picker.setDefaultSelected(false);
+//		return picker;
+//	}
 
-  
-//  @Bean(name = "projectTreePricker")
-//  public ProjectPickerOption projectPickerOption(){
-//	  ProjectPickerOption treePicker = new ProjectPickerOption();
-//    treePicker.setName("projectId");
-//    treePicker.setLabelKey("select.project");
-//    treePicker.setDefaultSelected(true);
-//    return treePicker;
-//  }
-//  
-//  @Bean(name = "milestonePickerOption")
-//  public MilestonePickerOption milestonePickerOption(){
-//	  MilestonePickerOption treePicker = new MilestonePickerOption();
-//    treePicker.setName("milestoneId");
-//    treePicker.setLabelKey("select.milestone");
-//    //treePicker.setRequired(true);
-//    treePicker.setDefaultSelected(false);
-//    return treePicker;
-//  }
+//	@Bean(name = "projectPicker")
+//	public ProjectPicker projectPicker() {
+//		ProjectPicker picker = new ProjectPicker();
+//		picker.setName("projectId");
+//		picker.setLabelKey("select.project");
+//		picker.setRequired(true);
+//		return picker;
+//	}
 }
