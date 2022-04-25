@@ -39,44 +39,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.custom.report.segur.model;
+package org.squashtest.tm.plugin.custom.report.segur.repository;
 
-public class CampaignDto {
+import java.util.List;
+import java.util.Map;
 
-    private String name;
-    private String description;
-    private String reference;
-    private String createdBy;
+import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 
-    public String getName() {
-        return name;
-    }
+public interface RequirementsCollector {
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 
-    public String getDescription() {
-        return description;
-    }
+	public List<Cuf> findCUFsByResId(Long resId);
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+	// todelete
+	public Map<Long, ReqModel> xxxfindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 }
