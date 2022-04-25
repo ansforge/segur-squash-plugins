@@ -33,11 +33,21 @@ public class ReqModel extends BasicReqModel {
 	private String section;
 	
 	//constructeur pour requête Jooq
-	public ReqModel( Long projectId, Long resId, String reference,
+//	public ReqModel( Long projectId, Long resId, String reference,
+//			String requirementStatus, String categorie, String description) {
+//		super();
+//		this.resId = resId;
+//		this.projectId = projectId;
+//		this.categorie = categorie;
+//		this.description = description;
+//		this.reference = reference;
+//		this.requirementStatus = requirementStatus;
+//	}
+	
+	public ReqModel( Long resId, String reference,
 			String requirementStatus, String categorie, String description) {
 		super();
 		this.resId = resId;
-		this.projectId = projectId;
 		this.categorie = categorie;
 		this.description = description;
 		this.reference = reference;

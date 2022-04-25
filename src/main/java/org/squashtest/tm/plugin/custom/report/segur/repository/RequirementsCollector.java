@@ -50,10 +50,15 @@ import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 
 public interface RequirementsCollector {
 
+	// todelete ?
 	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 
 	public List<Cuf> findCUFsByResId(Long resId);
+	
+	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 
-	// todelete
-	public Map<Long, ReqModel> xxxfindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
+	//todelete ?
+	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId);
+	
+	public  String readMilestoneStatus(Long milestoneId); 
 }

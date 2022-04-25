@@ -15,6 +15,9 @@ public class Constantes {
 	public final static String PROFIL_GENERAL = "G�n�ral";
 	public final static String CUF_TYPE_OBJECT = "REQUIREMENT_VERSION";
 	
+	//valeurs BDD
+	public final static String MILESTONE_LOCKED = "LOCKED";
+	
 	// valeurs affich�es dans Excel
 	public final static String OUI = "OUI";
 	public final static String NON = "NON";

@@ -105,9 +105,20 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 //   		
 //	}
 
+		//lecture du statut du jalon => mode publication ou prépublication
+		LOGGER.error(" *********  LEcture du statut du jalon IN ***************");
+		String milestoneStatus = reqCollector.readMilestoneStatus(19L);
+		LOGGER.error(" *********  statut du jalon : " + milestoneStatus);
+		
+		
+
+		
 		//essai avec la Map
 		LOGGER.error(" *********  test DAO avec MAp IN ***************");
-		Map<Long, ReqModel> reqs = reqCollector.xxxfindRequirementByProjectAndMilestone(12L, 13L);
+
+		//Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(12L, 13L);
+		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(19L, 19L);
+		
 		LOGGER.error(" *********  test DAO avec MAp OUT OK ***************");
 		LOGGER.error(" *********  map size: " + reqs.size());
 		LOGGER.error(" *********  map get ref 7386: " + reqs.get(7386L).getReference());
@@ -122,6 +133,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			//mies à jour de ExcelData pour l'exigence (hors CT ....)
 			reqs.get(res_id).updateData();
 		}
+		
+		
+		
 		
 		// tmp chargement du template et écriture de lignes bidons...
 		LOGGER.error(" *********  appel chargement du template yyy ***************");

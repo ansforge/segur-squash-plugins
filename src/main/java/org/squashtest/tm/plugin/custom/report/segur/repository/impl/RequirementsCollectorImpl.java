@@ -51,6 +51,9 @@ import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
 
 
 import java.sql.PreparedStatement;
@@ -75,6 +78,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	@Inject
 	private DSLContext dsl;
 
+	// non utilisé?  à supprimer?
 	@Override
 	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
 
@@ -118,25 +122,60 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 		return cufs;
 	}
 
-	// TODO a supprimer
+	
 	@Override
-	public Map<Long, ReqModel> xxxfindRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
+	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId) {
 
 		Map<Long, ReqModel> reqList = dsl
 				.select(PROJECT.PROJECT_ID, REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
 						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
 						RESOURCE.DESCRIPTION)
-				.from(REQUIREMENT).innerJoin(REQUIREMENT_LIBRARY_NODE)
-				.on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID)).innerJoin(PROJECT)
-				.on(PROJECT.PROJECT_ID.eq(REQUIREMENT_LIBRARY_NODE.PROJECT_ID)).innerJoin(REQUIREMENT_VERSION)
-				.on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
-				.on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID)).innerJoin(INFO_LIST_ITEM)
-				.on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
+				.from(REQUIREMENT)
+				.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
+				.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(REQUIREMENT_LIBRARY_NODE.PROJECT_ID))
+				.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
+				.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
 				.where(PROJECT.NAME.eq("DSR_DUI_MS1")
 						.and(REQUIREMENT_VERSION.REFERENCE.in("M/A.01A", "M/A.03", "M/A.04A", "M/A.08C")))
 				.fetch().intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
 
 		return reqList;
 	}
+	
+	
+	@Override
+	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
 
+		Map<Long, ReqModel> reqList = dsl
+				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
+						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+						RESOURCE.DESCRIPTION)
+				.from(REQUIREMENT)
+				.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
+				.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
+				.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))			
+				.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				
+				.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
+						.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
+				.fetch().intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
+
+		return reqList;
+		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public String readMilestoneStatus(Long milestoneId) {
+		return dsl.select(MILESTONE.STATUS)
+				.from(MILESTONE)
+				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
+				.fetchOne().into(String.class);			
+	}
+	
 }
