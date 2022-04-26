@@ -58,9 +58,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
 
@@ -126,8 +128,11 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	
 		Set<Long> reqKetSet = reqs.keySet();
 		
+		//lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans custom_field_value_option
 		for (Long res_id : reqKetSet) {
+			
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
+			//List<Cuf> cufs = reqCollector.findCUFsForTypeAndByEntityId(Constantes.CUF_TYPE_OBJECT_REQ, res_id);
 			LOGGER.error(" *********  map lecture cuf res_id, size: " + res_id + " /"  + cufs.size());
 			reqs.get(res_id).setCufs(cufs);
 			//mies à jour de ExcelData pour l'exigence (hors CT ....)
@@ -135,7 +140,22 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 		
 		
+		//test lecture des CUFs sur les TEST_CASE => récup des références
+		LOGGER.error(" *********  test lecture du Cuf reférence d'un step ... ");
+		//!!!!    TODO => renvoyer une liste pour gérer porprement les cas ou il y a plus qu'une référence ...
+		String ref_step = reqCollector.findStepReferenceByTestStepId(10716L);
+		LOGGER.error(" *********  lecture du Cuf reférence d'un step: " + ref_step);
 		
+		//test lesture lien exigence-CT-Step
+		LOGGER.error(" *********  test lecture liste des liens exigence/CT/Step IN " + ref_step);
+		List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
+		LOGGER.error(" *********   liste des liens exigence/CT/Step IN size" + liste.size());
+		
+		//liste des CT à récupérer
+		List<Long> distinctCT = liste.stream()
+				.map(val -> val.getTclnId())
+				.distinct()
+				.collect(Collectors.toList());
 		
 		// tmp chargement du template et écriture de lignes bidons...
 		LOGGER.error(" *********  appel chargement du template yyy ***************");
@@ -160,5 +180,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 		return report;
 	}
+
+	
 
 }

@@ -43,10 +43,12 @@ package org.squashtest.tm.plugin.custom.report.segur.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 
 public interface RequirementsCollector {
 
@@ -55,10 +57,23 @@ public interface RequirementsCollector {
 
 	public List<Cuf> findCUFsByResId(Long resId);
 	
+	//todelete?
+	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId);
+	
+	//lecture de CUF de type 'CF' (valeur dans custom_field_value.value)
+	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long resId);
+	
+	public String findStepReferenceByTestStepId(Long testStepId);
+	
+	//public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, String cufCode, Long resId);
+	
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 
 	//todelete ?
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId);
 	
-	public  String readMilestoneStatus(Long milestoneId); 
+	//TODO => renvoyer une liste pour gérer porprement les cas ou il y a plus qu'une référence ...
+	public String readMilestoneStatus(Long milestoneId); 
+	
+	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId);
 }

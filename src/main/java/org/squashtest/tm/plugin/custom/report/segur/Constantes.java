@@ -10,10 +10,21 @@ public class Constantes {
 	public final static String SECTION = "SECTION";
 	public final static String FONCTION = "FONCTION";
 	public final static String BLOC = "BLOC";
-
+	
+	public final static String REF_PREUVE = "REF_PREUVE";
+	public final static String NATPREUVE = "NATPREUVE";
+	public final static String VERIF_PREUVE = "VERIF_PREUVE";
+	
 	
 	public final static String PROFIL_GENERAL = "G�n�ral";
-	public final static String CUF_TYPE_OBJECT = "REQUIREMENT_VERSION";
+	
+	//CUFs
+	public final static String CUF_TYPE_OBJECT_REQ = "REQUIREMENT_VERSION";
+	public final static String CUF_TYPE_OBJECT_TEST_CASE = "TEST_CASE";
+	public final static String CUF_TYPE_OBJECT_TEST_STEP = "TEST_STEP";
+	public final static String CUF_FIELD_TYPE_MSF = "MSF";
+	public final static String CUF_FIELD_TYPE_CF = "CF";
+
 	
 	//valeurs BDD
 	public final static String MILESTONE_LOCKED = "LOCKED";

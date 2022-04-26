@@ -12,6 +12,7 @@
     <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <squash.core.version>3.0.5.RC1</squash.core.version>
+    <!-- ecraser la version junit embarquée dans squash -->
     <junit-jupiter.version>5.7.1</junit-jupiter.version>
   </properties>
 

@@ -10,10 +10,10 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <squash.core.version>3.0.5.RC1</squash.core.version>
     <!-- ecraser la version junit embarquée dans squash -->
     <junit-jupiter.version>5.7.1</junit-jupiter.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <squash.core.version>3.0.5.RC1</squash.core.version>
   </properties>
 
   <dependencyManagement>
@@ -67,21 +67,21 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-  <!--     <version>5.8.0</version> -->
+      <!--     <version>5.8.0</version> -->
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-    <!--   <version>5.8.0</version> -->
+      <!--   <version>5.8.0</version> -->
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
- <!--      <version>1.7.2</version> -->
+      <!--      <version>1.7.2</version> -->
       <scope>test</scope>
     </dependency>
 

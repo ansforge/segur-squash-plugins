@@ -54,6 +54,8 @@ import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
 
 
 import java.sql.PreparedStatement;
@@ -61,6 +63,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -70,6 +73,7 @@ import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 
 @Repository
@@ -101,12 +105,12 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	@Override
 	public List<Cuf> findCUFsByResId(Long resId) {
-		String query = "select " + "cuf.code, cufvo.label" + " from custom_field_value cufv "
-	
-				+ "INNER JOIN custom_field_binding cufb " + "ON cufv.cfb_id = cufb.cfb_id "
-				+ "INNER JOIN custom_field cuf " + "ON cuf.cf_id=cufb.cf_id "
-				+ "LEFT JOIN custom_field_value_option cufvo " + "ON cufv.cfv_id = cufvo.cfv_id "
-				+ "where cufv.bound_entity_type ='REQUIREMENT_VERSION' " + "and cufv.bound_entity_id=?";
+//		String query = "select " + "cuf.code, cufvo.label" + " from custom_field_value cufv "
+//	
+//				+ "INNER JOIN custom_field_binding cufb " + "ON cufv.cfb_id = cufb.cfb_id "
+//				+ "INNER JOIN custom_field cuf " + "ON cuf.cf_id=cufb.cf_id "
+//				+ "LEFT JOIN custom_field_value_option cufvo " + "ON cufv.cfv_id = cufvo.cfv_id "
+//				+ "where cufv.bound_entity_type ='REQUIREMENT_VERSION' " + "and cufv.bound_entity_id=?";
 		
 		List<Cuf> cufs = dsl
 				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL)
@@ -115,13 +119,66 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				
 				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
 				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
-				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT)) // REQUIREMENT_VERSION
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_REQ)) // REQUIREMENT_VERSION
 						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(resId))
 				.fetchInto(Cuf.class);
 
 		return cufs;
 	}
 
+	
+	//a supprimer? valable uniquement pour type CUF = 'CF' ...
+	@Override
+	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId) {
+	
+		List<Cuf> cufs = dsl
+				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL)
+				.from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+				
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
+						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(resId))
+				.fetchInto(Cuf.class);
+
+		return cufs;
+	}
+	
+	@Override
+	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long entityId) {
+		return dsl
+				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE.VALUE)
+				.from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
+				        .and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_CF))
+						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityId))
+				.fetchInto(Cuf.class);
+
+	}
+	
+	@Override
+	public String findStepReferenceByTestStepId(Long testStepId) {
+		return dsl
+				.select(CUSTOM_FIELD_VALUE.VALUE)
+				.from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_TEST_STEP))
+				        .and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_CF))
+				        .and(CUSTOM_FIELD.CODE.eq(Constantes.REF_PREUVE))
+						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(testStepId))
+				.fetchOneInto(String.class);
+		         
+	}
+	
+//	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, String cufCode, Long resId) {
+//		
+//	}
+//	
+	
 	
 	@Override
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId) {
@@ -178,4 +235,21 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				.fetchOne().into(String.class);			
 	}
 	
+	@Override
+	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId) {
+//		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID
+//		from REQUIREMENT_VERSION_COVERAGE rvc
+//		RIGHT JOIN VERIFYING_STEPS vs on rvc.REQUIREMENT_VERSION_COVERAGE_ID = vs.REQUIREMENT_VERSION_COVERAGE_ID 
+//		where rvc.VERIFIED_REQ_VERSION_ID IN ('7386','7390', '7391', '7397', '7462')
+		return  dsl.select(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.as("reqVersionCoverageId"), 
+				       REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("resId"),
+				       REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.as("tclnId"),
+				       VERIFYING_STEPS.TEST_STEP_ID.as("stepId") )
+				.from(REQUIREMENT_VERSION_COVERAGE)
+				.rightJoin(VERIFYING_STEPS).on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
+				.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(reqId))
+				.fetchInto(ReqStepCaseBinding.class);
+				
+				
+	}
 }
