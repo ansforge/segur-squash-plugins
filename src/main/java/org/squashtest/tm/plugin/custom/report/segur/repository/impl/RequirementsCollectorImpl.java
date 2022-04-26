@@ -56,6 +56,13 @@ import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
+
+
 
 
 import java.sql.PreparedStatement;
@@ -74,7 +81,10 @@ import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.Step;
+import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
+
 
 @Repository
 public class RequirementsCollectorImpl implements RequirementsCollector {
@@ -241,6 +251,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		from REQUIREMENT_VERSION_COVERAGE rvc
 //		RIGHT JOIN VERIFYING_STEPS vs on rvc.REQUIREMENT_VERSION_COVERAGE_ID = vs.REQUIREMENT_VERSION_COVERAGE_ID 
 //		where rvc.VERIFIED_REQ_VERSION_ID IN ('7386','7390', '7391', '7397', '7462')
+		
 		return  dsl.select(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.as("reqVersionCoverageId"), 
 				       REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("resId"),
 				       REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.as("tclnId"),
@@ -251,5 +262,49 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				.fetchInto(ReqStepCaseBinding.class);
 				
 				
+	}
+	
+	@Override
+	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) {
+		//prerequisite, descrption:
+//		select tc.prerequisite, tcln.description  from TEST_CASE tc
+//		inner join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id
+//		where tc.tcln_id = '8859';
+		
+		//même chose avec nombre de pas de test (attention pas le nombre liés à une exigence...)		
+//		select tc.tcln_id, tc.prerequisite, tcln.description , count(*) from TEST_CASE tc
+//		inner join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id
+//		inner join TEST_CASE_STEPS tcs on  tcs.test_case_id = tc.tcln_id
+//		where tc.tcln_id IN ('8859','8861','8864','8872')
+//		group by tc.tcln_id, tc.prerequisite, tcln.description;
+		
+//le nombre de pas de test liés à une exigence se calcule à partir de => List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);		
+        return    dsl.select(TEST_CASE.TCLN_ID,
+        		TEST_CASE.REFERENCE,
+        		TEST_CASE.PREREQUISITE, 				      
+            		TEST_CASE_LIBRARY_NODE.DESCRIPTION )
+				.from(TEST_CASE)
+				.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+				.where(TEST_CASE.TCLN_ID.in(tc_ids))
+				.fetch().intoMap(TEST_CASE.TCLN_ID, TestCase.class);
+	}
+	
+	
+	@Override
+	public Map<Long, Step> findSteps(List<Long> tc_ids) {
+//		select atc.test_step_id, atc.expected_result, tcs.step_order  from ACTION_test_step atc
+//		inner join TEST_STEP ts on ts.test_step_id = atc.test_step_id
+//		inner join TEST_CASE_STEPS tcs on tcs.step_id = ts.test_step_id
+//		inner join TEST_CASE tc on tc.tcln_id = tcs.test_case_id
+//		where tcln_id IN ('8859','8861','8864','8872')
+        return    dsl.select(ACTION_TEST_STEP.TEST_STEP_ID,
+        		  ACTION_TEST_STEP.EXPECTED_RESULT, 				      
+            		TEST_CASE_STEPS.STEP_ORDER)
+				.from(ACTION_TEST_STEP)
+				.innerJoin(TEST_STEP).on(TEST_STEP.TEST_STEP_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID))
+				.innerJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.STEP_ID.eq(TEST_STEP.TEST_STEP_ID))
+				.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_STEPS.TEST_CASE_ID))
+				.where(TEST_CASE.TCLN_ID.in(tc_ids))
+				.fetch().intoMap(ACTION_TEST_STEP.TEST_STEP_ID, Step.class);
 	}
 }

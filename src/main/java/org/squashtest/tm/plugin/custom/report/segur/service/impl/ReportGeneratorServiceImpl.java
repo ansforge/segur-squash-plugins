@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +53,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +66,11 @@ import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.Step;
+import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
+
 
 @Service
 public class ReportGeneratorServiceImpl implements ReportGeneratorService {
@@ -80,7 +86,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
-		LOGGER.error(" *********  generateReportxxx ***************");
+	
 		// récupération des critères
 		// Map<String,Object> map = (Map<String, Object>)
 		// criterias.get("milestoneId").getValue();
@@ -89,67 +95,29 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// List<String> milestone = (ArrayList)map.get("campaigns");
 		// Long campaignId = Long.parseLong(campaigns.get(0));
 
-		// ICI test DAO OK
-//		List<ReqModel> reqs = reqCollector.findRequirementByProjectAndMilestone(12L, 13L);
-//		LOGGER.error(" *********  test DAO ***************");
-//		LOGGER.error(" *********  reqs size: " + reqs.size());
-//		LOGGER.error(" *********  reqs 0 descrip: " + reqs.get(0).getDescription());
-//		LOGGER.error(" *********  reqs 0 resId: " + reqs.get(0).getResId());
-//		LOGGER.error(" *********  reqs 1 resId: " + reqs.get(1).getResId());
-//		LOGGER.error(" *********  reqs 2 resId: " + reqs.get(2).getResId());
-//		LOGGER.error(" *********  reqs 3 resId: " + reqs.get(3).getResId());
-		
-		//Recup de la liste des exigences
-//   	List<Long> reqIDList = reqs.stream().map(BasicReqModel::getResId).collect(Collectors.toList());
-//   	LOGGER.error(" *********  recup des IDs **********************");
-//   	for (Long long1 : reqIDList) {
-//   		LOGGER.error(" *********  id recup: " + long1);
-//   		
-//	}
-
-		//lecture du statut du jalon => mode publication ou prépublication
-		LOGGER.error(" *********  LEcture du statut du jalon IN ***************");
+		//lecture du statut du jalon => mode publication ou prépublication		
 		String milestoneStatus = reqCollector.readMilestoneStatus(19L);
-		LOGGER.error(" *********  statut du jalon : " + milestoneStatus);
+		LOGGER.info(" lecture du statut du jalon en base: " + milestoneStatus);
 		
-		
-
-		
-		//essai avec la Map
-		LOGGER.error(" *********  test DAO avec MAp IN ***************");
-
-		//Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(12L, 13L);
-		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(19L, 19L);
-		
-		LOGGER.error(" *********  test DAO avec MAp OUT OK ***************");
-		LOGGER.error(" *********  map size: " + reqs.size());
-		LOGGER.error(" *********  map get ref 7386: " + reqs.get(7386L).getReference());
-		LOGGER.error(" *********  map get ref 7390: " + reqs.get(7390L).getReference());
+		//lecture des exigences
+		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(19L, 19L);	
+		LOGGER.info(" nombre d'exigences trouvées: reqs.size: " + reqs.size());
+	
 	
 		Set<Long> reqKetSet = reqs.keySet();
 		
 		//lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans custom_field_value_option
-		for (Long res_id : reqKetSet) {
-			
+		for (Long res_id : reqKetSet) {			
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
-			//List<Cuf> cufs = reqCollector.findCUFsForTypeAndByEntityId(Constantes.CUF_TYPE_OBJECT_REQ, res_id);
-			LOGGER.error(" *********  map lecture cuf res_id, size: " + res_id + " /"  + cufs.size());
 			reqs.get(res_id).setCufs(cufs);
-			//mies à jour de ExcelData pour l'exigence (hors CT ....)
+			//mies à jour des champs de ExcelData pour l'exigence 
 			reqs.get(res_id).updateData();
 		}
 		
 		
-		//test lecture des CUFs sur les TEST_CASE => récup des références
-		LOGGER.error(" *********  test lecture du Cuf reférence d'un step ... ");
-		//!!!!    TODO => renvoyer une liste pour gérer porprement les cas ou il y a plus qu'une référence ...
-		String ref_step = reqCollector.findStepReferenceByTestStepId(10716L);
-		LOGGER.error(" *********  lecture du Cuf reférence d'un step: " + ref_step);
-		
-		//test lesture lien exigence-CT-Step
-		LOGGER.error(" *********  test lecture liste des liens exigence/CT/Step IN " + ref_step);
+		//test lecture lien exigence-CT-Step
 		List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
-		LOGGER.error(" *********   liste des liens exigence/CT/Step IN size" + liste.size());
+		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + liste.size());
 		
 		//liste des CT à récupérer
 		List<Long> distinctCT = liste.stream()
@@ -157,23 +125,43 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 				.distinct()
 				.collect(Collectors.toList());
 		
-		// tmp chargement du template et écriture de lignes bidons...
-		LOGGER.error(" *********  appel chargement du template yyy ***************");
+		Map<Long, TestCase> mapCT = reqCollector.findTestCase(distinctCT) ;
+		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + mapCT.size());
 
 		
-	//	ExcelWriterUtil util = new ExcelWriterUtil();
+		 Map<Long, Step> steps =  reqCollector.findSteps(distinctCT);
+		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + steps.size());
+		
+		//on ne garde que les Steps qui sont dans la Binding et on lit les références
+		List<Long> usedStepKey = liste.stream()
+				.map(val -> val.getStepId())
+				.distinct()
+				.collect(Collectors.toList());
+		Map<Long, Step> usedSteps = new HashMap<Long, Step>();
+		String ref_step = "";
+		Step currentStep = null;
+		for (Long stepId : usedStepKey) {
+			//!!!!    TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus qu'une référence ...
+			ref_step = reqCollector.findStepReferenceByTestStepId(stepId);	
+			currentStep = steps.get(stepId);
+			currentStep.setReference(ref_step);
+			usedSteps.put(stepId, currentStep);
+		}
+		
 
 		excel.loadWorkbookTemplate();
+		LOGGER.info(" Récupération du template Excel");
 		
-		//excel.putDatasInWorkbook((List<ReqModel>) reqs.values());
-		excel.putDatasInWorkbook(new ArrayList<ReqModel> (reqs.values()));
+
+		// ecriture du workbook
+		excel.putDatasInWorkbook( milestoneStatus, new ArrayList<ReqModel> (reqs.values()),
+				liste, mapCT, steps);
 		
-		LOGGER.error(" *********  ecriture dans le fichier ***************");
 		// ecriture dans le fichier
 		File report = null;
 		try {
 			String fileName = excel.createOutputFileName(false, "INS", "V1.3");
-			report = excel.flushToTemporaryFile(excel.getWorkbook(), fileName);
+			report = excel.flushToTemporaryFile(excel.getWorkbook(), fileName);			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

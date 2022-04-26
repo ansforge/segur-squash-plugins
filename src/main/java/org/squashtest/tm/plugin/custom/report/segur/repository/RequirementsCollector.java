@@ -49,6 +49,9 @@ import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.Step;
+import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
+
 
 public interface RequirementsCollector {
 
@@ -72,8 +75,13 @@ public interface RequirementsCollector {
 	//todelete ?
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId);
 	
-	//TODO => renvoyer une liste pour gérer porprement les cas ou il y a plus qu'une référence ...
+	//TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus qu'une référence ...
 	public String readMilestoneStatus(Long milestoneId); 
 	
 	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId);
+	
+	
+	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) ;
+	
+	public Map<Long, Step> findSteps(List<Long> tc_ids);
 }

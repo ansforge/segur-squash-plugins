@@ -52,9 +52,9 @@ public class TmpTest {
 		
 		ReqStepCaseBinding req6 = new ReqStepCaseBinding();
 		req6.setReqVersionCoverageId(7111L);
-		req6.setResId(7462L);
-		req6.setTclnId(8872L);
-		req6.setStepId(10754L);
+		req6.setResId(7386L);
+		req6.setTclnId(8864L);
+		req6.setStepId(10726L);
 		
 		
 		liste.add(req1);
@@ -64,17 +64,17 @@ public class TmpTest {
 		liste.add(req5);
 		liste.add(req6);
 		
-//		List<String> distinctElements = list.stream()
-//                .distinct()
-//                .collect(Collectors.toList());
-//		
-//		Set<Obj> set = new HashSet<Obj> ();
+
+//		List<Long> distinctCT = liste.stream()
+//				.map(val -> val.getTclnId())
+//				.distinct()
+//				.collect(Collectors.toList());
 		
-		List<Long> distinctCT = liste.stream()
+		
+		List<Long> bindingCT = liste.stream()
+				.filter(p-> p.getResId().equals(7386L))
 				.map(val -> val.getTclnId())
 				.distinct()
 				.collect(Collectors.toList());
-		
-		System.out.println("coucou");
 	}
 }

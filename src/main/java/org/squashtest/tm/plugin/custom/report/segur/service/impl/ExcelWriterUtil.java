@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -22,6 +24,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.Step;
+import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
+import org.squashtest.tm.plugin.custom.report.segur.model.TestCaseStep;
 
 import lombok.Getter;
 
@@ -39,7 +45,7 @@ public class ExcelWriterUtil {
 	public static String REM = "REM";
 	public static String PREPUB = "prepub";
 	public static String UNDERSCORE = "_";
-	public static String EXTENSION = ".xls";
+	public static String EXTENSION = ".xlsx";
 	
 	//onglets
 	public static int REM_SHEET_INDEX = 0;
@@ -57,9 +63,42 @@ public class ExcelWriterUtil {
 	public static int REM_COLUMN_NATURE = 6;
 	public static int REM_COLUMN_NUMERO_EXIGENCE = 7;
 	public static int REM_COLUMN_ENONCE = 8;
+	public static int REM_COLUMN_NUMERO_SCENARIO = 9;
+	public static int REM_COLUMN_SCENARIO_CONFORMITE = 10;
+//	public static int REM_COLUMN_NUMERO_PREUVE1 = 11;
+//	public static int REM_COLUMN_PREUVE1 = 12;
+//	public static int REM_COLUMN_NUMERO_PREUVE2 = 11;
+//	public static int REM_COLUMN_PREUVE2 = 12;
+//	public static int REM_COLUMN_NUMERO_PREUVE3 = 11;
+//	public static int REM_COLUMN_PREUVE3 = 12;
+//	public static int REM_COLUMN_NUMERO_PREUVE4 = 11;
+//	public static int REM_COLUMN_PREUVE4 = 12;
+    // calculé.. ?
+	public static int MAX_STEP_NUMBER = 10; 
+	public static int REM_COLUMN_FIRST_NUMERO_PREUVE = 11;
+	
+	
+	public static int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER*2 + 1;
+	public static int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
+	public static int PREPUB_COLUMN_REFERENCE_CAS_DE_TEST = PREPUB_COLUMN_REFERENCE_EXIGENCE + 1;
+	public static int PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE = PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1;
+	public static int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
+
+
+	
+	
 	
 	//index de la ligne à créer
 	private int nextLine =  REM_FIRST_EMPTY_LINE;
+	
+	private ExcelData data = null;
+	private Cell cell = null;
+	private Row row = null;
+	private List<Long> bindingCT = null;
+	private Sheet sheet = null; 
+	private TestCase testCase = null;
+	private List<Long> bindingSteps = null;
+	private Step currentStep = null;
 	
 	@Getter
 	private XSSFWorkbook workbook = null;
@@ -105,35 +144,9 @@ public class ExcelWriterUtil {
 			LOGGER.error(" ******** ça plante ici ... ");
 		} 
 		
-	//	FileInputStream template = new FileInputStream(file);
 
 		LOGGER.error(" ******** templatee :" + template);
 
-		/*
-		 * ClassLoader classLoader = null; try { classLoader =
-		 * getClass().getClassLoader(); } catch (Exception e1) {s // TODO Auto-generated
-		 * catch block e1.printStackTrace(); }
-		 * 
-		 * //InputStream template = classLoader.getResourceAsStream(TEMPLATE_NAME);
-		 * 
-		 * 
-		 * File file = null; try { file =
-		 * ResourceUtils.getFile(CLASS_PATH_TEMPLATE_NAME); } catch
-		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } java.io.InputStream template = null; try { template =
-		 * new FileInputStream(file); } catch (FileNotFoundException e1) { // TODO
-		 * Auto-generated catch block e1.printStackTrace(); }
-		 * 
-		 * //java.io.InputStream inputStream =
-		 * classLoader.getResourceAsStream(TEMPLATE_NAME);
-		 * 
-		 * //FileInputStream excelFile = null; // try { // excelFile = new
-		 * FileInputStream(inputStream); // } catch (FileNotFoundException e) { // //
-		 * TODO Auto-generated catch block // e.printStackTrace(); // } //
-		 */
-
-		
-		
 		// création du workbook
 
 		try {
@@ -163,90 +176,129 @@ public class ExcelWriterUtil {
 
 	}
 
-	//TODO pour mise au point => à supprimer
-	public void putDatasInWorkbookOLD(List<ReqModel> datas) {
+	public void putDatasInWorkbook(String milestoneStatus, 
+			List<ReqModel> datas,
+			List<ReqStepCaseBinding> liste,
+			Map<Long, TestCase> mapCT,
+			Map<Long, Step> steps) {
+		
 		workbook.getSheetName(0);
 		Sheet sheet = workbook.getSheetAt(0);
 
-		LOGGER.error(" ******** XSSFWorkbook sheet:" + sheet);
-		
-		LOGGER.error(" ******** XSSFWorkbook:  " + workbook.getSheetName(0));
 		// sheet.autoSizeColumn();
 
+		//TODO Mode Publication et prepublication versus milestonStatus
 		
-		
-		CellReference cellReference = new CellReference("B3"); // 3 => 1ère ligne vide
-		LOGGER.error(" ******** : cellRef OK => "+ cellReference);
-	//	Row row = sheet.getRow(cellReference.getRow());
-		Row row = sheet.createRow(cellReference.getRow());
-		LOGGER.error(" ******** : Row OK =>" + row);
-		Cell cell = row.createCell(cellReference.getCol());
-		LOGGER.error(" ******** : Cell OK");
-		cell.setCellValue("projet.A");
-	
-		
-		LOGGER.error(" **************  fin remplissage du woorkbook: " + workbook);
-		
-	}
-	
-	public void putDatasInWorkbook(List<ReqModel> datas) {
-		workbook.getSheetName(0);
-		Sheet sheet = workbook.getSheetAt(0);
-
-		LOGGER.error(" ******** XSSFWorkbook sheet:" + sheet);
-		
-		LOGGER.error(" ******** XSSFWorkbook:  " + workbook.getSheetName(0));
-		// sheet.autoSizeColumn();
-
-		ExcelData data = null;
-		Cell cell = null;
-		Row row = null;
 		//ecriture des données
 		nextLine =  REM_FIRST_EMPTY_LINE;
+		
+		//TODO voir passage de la row courrante entre les methodes writeExigencePart, writeCaseTestPart
+		
+		//boucle sur les exigences
 		for (ReqModel req : datas) {
 
-			data = req.getExcelData();
-			
-			row = sheet.createRow(nextLine);
-			
-			cell = row.createCell(REM_COLUMN_CONDITIONNELLE);
-			cell.setCellValue(data.getBoolExigenceConditionnelle_1());
-			
-			cell = row.createCell(REM_COLUMN_PROFIL);
-			cell.setCellValue(data.getProfil_2());
-			
-			cell = row.createCell(REM_COLUMN_ID_SECTION);
-			cell.setCellValue(data.getId_section_3());
-			
-			cell = row.createCell(REM_COLUMN_SECTION);
-			cell.setCellValue(data.getSection_4());
-			
-			cell = row.createCell(REM_COLUMN_BLOC);
-			cell.setCellValue(data.getBloc_5());
-			
-			cell = row.createCell(REM_COLUMN_FONCTION);
-			cell.setCellValue(data.getFonction_6());
-			
-			cell = row.createCell(REM_COLUMN_NATURE);
-			cell.setCellValue(data.getNatureExigence_7());
-			
-			cell = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
-			cell.setCellValue( req.getReference());  // req? excalData?
-			
-			cell = row.createCell(REM_COLUMN_ENONCE);
-			cell.setCellValue(data.getEnonceExigence_9());
-			
-			
-			
-			
-			nextLine +=1 ;
-		}
+			//extraire les CTs liés de la map du binding
+			 bindingCT = liste.stream()
+			.filter(p-> p.getResId().equals(req.getResId()))
+			.map(val -> val.getTclnId())
+			.distinct()
+			.collect(Collectors.toList());
 		
-	
-		
+		    if ( bindingCT.isEmpty()) {
+			   writeExigencePart(req.getExcelData(),sheet ,nextLine );
+			   nextLine +=1 ;
+		    }
+				
+		    //si il existe des CTs
+		    for (Long tcID : bindingCT) {
+		    	testCase = mapCT.get(tcID);
+		    	
+		    	// liste des steps pour l'exigence ET le cas de test courant
+		    	bindingSteps = liste.stream()
+		 			.filter(p-> p.getResId().equals(req.getResId()))
+		 			.map(val -> val.getStepId())
+		 			.distinct()
+		 			.collect(Collectors.toList());
+		    	
+		    	//on ecrit (ou réecrit) les colonnes sur les exigences
+		    	writeExigencePart(req.getExcelData(),sheet ,nextLine );
+		    	writeCaseTestPart(testCase, bindingSteps, steps);
+		    	 nextLine +=1 ;
+			}
+		    
+			
+		} // exigences
+			
 		LOGGER.error(" **************  fin remplissage du woorkbook: " + workbook);
 		
 	}
+	
+	public void writeExigencePart(ExcelData data, Sheet sheet, int nextline) {
+		//ecriture des données
+				
+		row = sheet.createRow(nextLine);
+		
+		cell = row.createCell(REM_COLUMN_CONDITIONNELLE);
+		cell.setCellValue(data.getBoolExigenceConditionnelle_1());
+		
+		cell = row.createCell(REM_COLUMN_PROFIL);
+		cell.setCellValue(data.getProfil_2());
+		
+		cell = row.createCell(REM_COLUMN_ID_SECTION);
+		cell.setCellValue(data.getId_section_3());
+		
+		cell = row.createCell(REM_COLUMN_SECTION);
+		cell.setCellValue(data.getSection_4());
+		
+		cell = row.createCell(REM_COLUMN_BLOC);
+		cell.setCellValue(data.getBloc_5());
+		
+		cell = row.createCell(REM_COLUMN_FONCTION);
+		cell.setCellValue(data.getFonction_6());
+		
+		cell = row.createCell(REM_COLUMN_NATURE);
+		cell.setCellValue(data.getNatureExigence_7());
+		
+		cell = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
+		cell.setCellValue( data.getNumeroExigence_8());  
+		
+		cell = row.createCell(REM_COLUMN_ENONCE);
+		cell.setCellValue(data.getEnonceExigence_9());
+		
+	}
+	
+	public void writeCaseTestPart(TestCase testcase,List<Long> bindingSteps, Map<Long, Step> steps) {
+		//ecriture des données
+				
+		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
+		cell.setCellValue(testcase.getReference());
+		
+		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
+		cell.setCellValue(testcase.getPrerequisite() + "\n oups..TODO \n  " + testcase.getDescription());
+
+		//TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
+		//TODO trier les steps à partir du StepOrder ....
+		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
+		for (Long stepId : bindingSteps) {
+			LOGGER.error(" ******** BUG STEP stepId:." + stepId);
+			LOGGER.error(" ******** BUG STEP map steps" + steps);
+		
+			currentStep = steps.get(stepId);
+			LOGGER.error(" ******** BUG cuurentStep expectedResult" + currentStep.getExpectedResult());
+			
+			cell = row.createCell(currentExcelColumn);
+			cell.setCellValue(currentStep.getReference());
+			currentExcelColumn ++;
+			
+			cell = row.createCell(currentExcelColumn);
+			cell.setCellValue(currentStep.getExpectedResult());		
+			currentExcelColumn ++;
+		} 
+		
+	}
+	
+	
+	
 	
 	public static File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
 
