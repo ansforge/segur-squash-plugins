@@ -1,6 +1,8 @@
 package org.squashtest.tm.plugin.custom.report.segur;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,4 +79,6 @@ public class TmpTest {
 				.distinct()
 				.collect(Collectors.toList());
 	}
+	
+
 }

@@ -40,6 +40,12 @@ public class Constantes {
 	//public static String CR_CURRENT_SYSTEM = System.getProperty("line.separator"); 
 	
 	public final static String PREFIX_ELEMENT_LSITE_A_PUCES = "\t - ";
+	
+	public final static String PREFIX_PROJET_SOCLE = "SC";
+	public final static String PREFIX_PROJET_CHANTIER = "CH";
+	//public final static String PREFIX_PROJET_PROJET = "";
+	
+	//voir aussi constantes définies dans ExcelWriterUtil A déplcaer?
 
 	
 }
