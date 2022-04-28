@@ -93,25 +93,25 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	private DSLContext dsl;
 
 	// non utilisé?  à supprimer?
-	@Override
-	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
-
-		List<ReqModel> reqList = dsl
-				.select(PROJECT.PROJECT_ID, REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
-						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
-						RESOURCE.DESCRIPTION)
-				.from(REQUIREMENT)
-				.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
-				.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(REQUIREMENT_LIBRARY_NODE.PROJECT_ID))
-				.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
-				.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
-				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
-				.where(PROJECT.NAME.eq("DSR_DUI_MS1")
-						.and(REQUIREMENT_VERSION.REFERENCE.in("M/A.01A", "M/A.03", "M/A.04A", "M/A.08C")))
-				.fetchInto(ReqModel.class);
-
-		return reqList;
-	}
+//	@Override
+//	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
+//
+//		List<ReqModel> reqList = dsl
+//				.select(PROJECT.PROJECT_ID, REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
+//						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+//						RESOURCE.DESCRIPTION)
+//				.from(REQUIREMENT)
+//				.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
+//				.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(REQUIREMENT_LIBRARY_NODE.PROJECT_ID))
+//				.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
+//				.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+//				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
+//				.where(PROJECT.NAME.eq("DSR_DUI_MS1")
+//						.and(REQUIREMENT_VERSION.REFERENCE.in("M/A.01A", "M/A.03", "M/A.04A", "M/A.08C")))
+//				.fetchInto(ReqModel.class);
+//
+//		return reqList;
+//	}
 
 	@Override
 	public List<Cuf> findCUFsByResId(Long resId) {

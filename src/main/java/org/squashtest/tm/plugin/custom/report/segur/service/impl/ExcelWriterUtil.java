@@ -16,12 +16,14 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
@@ -85,12 +87,13 @@ public class ExcelWriterUtil {
 	public static int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
 
 
-	
+	private XSSFCellStyle style = null;
 	
 	
 	//index de la ligne à créer
 	private int nextLine =  REM_FIRST_EMPTY_LINE;
 	
+	//
 	private ExcelData data = null;
 	private Cell cell = null;
 	private Row row = null;
@@ -104,7 +107,6 @@ public class ExcelWriterUtil {
 	private XSSFWorkbook workbook = null;
 	
 	
-
 	public static String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
 
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
@@ -184,6 +186,11 @@ public class ExcelWriterUtil {
 		
 		workbook.getSheetName(0);
 		Sheet sheet = workbook.getSheetAt(0);
+		
+		//essai autosize de la largeur des lignes
+		// global.. => XSSFCellStyle style pour ne pas avoir à le passer en argument ...
+		style = workbook.createCellStyle();
+		style.setWrapText(true);
 
 		// sheet.autoSizeColumn();
 
@@ -237,6 +244,7 @@ public class ExcelWriterUtil {
 		//ecriture des données
 				
 		row = sheet.createRow(nextLine);
+	//	row.setRowStyle(style); ça marche pas ...
 		
 		cell = row.createCell(REM_COLUMN_CONDITIONNELLE);
 		cell.setCellValue(data.getBoolExigenceConditionnelle_1());
@@ -274,7 +282,7 @@ public class ExcelWriterUtil {
 		cell.setCellValue(testcase.getReference());
 		
 		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
-		cell.setCellValue(testcase.getPrerequisite() + "\n oups..TODO \n  " + testcase.getDescription());
+		cell.setCellValue(Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n !!!!! oups..TODO  !!!! \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 
 		//TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		//TODO trier les steps à partir du StepOrder ....
@@ -291,7 +299,7 @@ public class ExcelWriterUtil {
 			currentExcelColumn ++;
 			
 			cell = row.createCell(currentExcelColumn);
-			cell.setCellValue(currentStep.getExpectedResult());		
+			cell.setCellValue(Parser.convertHTMLtoString(currentStep.getExpectedResult()));		
 			currentExcelColumn ++;
 		} 
 		

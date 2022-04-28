@@ -56,7 +56,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 public interface RequirementsCollector {
 
 	// todelete ?
-	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
+	//public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
 
 	public List<Cuf> findCUFsByResId(Long resId);
 	

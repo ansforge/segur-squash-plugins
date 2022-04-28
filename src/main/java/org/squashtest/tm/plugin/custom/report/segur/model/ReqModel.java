@@ -76,7 +76,7 @@ public class ReqModel extends BasicReqModel {
 		excelData.setNumeroExigence_8(reference);
 		
 	
-		excelData.setEnonceExigence_9(Parser.parsedDescription(description)); 
+		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description)); 
 		
 	}
 	
