@@ -45,10 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
-import org.squashtest.tm.plugin.custom.report.segur.model.Milestone;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -57,10 +55,6 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
 public interface RequirementsCollector {
 
-	// todelete ?
-	//public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
-	
-	//public ExtractedData  findMilestoneByMilestoneId(Long milestoneId);
 	public ExtractedData findMilestoneByMilestoneId(Long milestoneId);
 	
 	
@@ -70,7 +64,7 @@ public interface RequirementsCollector {
 	public List<Cuf> findCUFsByResId(Long resId);
 	
 	//todelete?
-	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId);
+//	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId);
 	
 	//lecture de CUF de type 'CF' (valeur dans custom_field_value.value)
 	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long resId);

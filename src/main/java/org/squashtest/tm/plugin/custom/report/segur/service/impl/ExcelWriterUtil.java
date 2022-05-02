@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
@@ -34,6 +35,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCaseStep;
 
 import lombok.Getter;
+import lombok.extern.java.Log;
 
 @Component
 public class ExcelWriterUtil {
@@ -68,17 +70,9 @@ public class ExcelWriterUtil {
 	public static int REM_COLUMN_ENONCE = 8;
 	public static int REM_COLUMN_NUMERO_SCENARIO = 9;
 	public static int REM_COLUMN_SCENARIO_CONFORMITE = 10;
-//	public static int REM_COLUMN_NUMERO_PREUVE1 = 11;
-//	public static int REM_COLUMN_PREUVE1 = 12;
-//	public static int REM_COLUMN_NUMERO_PREUVE2 = 11;
-//	public static int REM_COLUMN_PREUVE2 = 12;
-//	public static int REM_COLUMN_NUMERO_PREUVE3 = 11;
-//	public static int REM_COLUMN_PREUVE3 = 12;
-//	public static int REM_COLUMN_NUMERO_PREUVE4 = 11;
-//	public static int REM_COLUMN_PREUVE4 = 12;
-	// calculé.. ?
+
 	public static int MAX_STEP_NUMBER = 10;
-	public static int REM_COLUMN_FIRST_NUMERO_PREUVE = 11;
+	public static int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
 	public static int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
 	public static int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
@@ -174,7 +168,7 @@ public class ExcelWriterUtil {
 	}
 
 	public void putDatasInWorkbook(String milestoneStatus, List<ReqModel> datas, List<ReqStepCaseBinding> liste,
-			Map<Long, TestCase> mapCT, Map<Long, Step> steps) {
+			Map<Long, TestCase> mapCT, Map<Long, Step> steps, boolean boolPrebub) {
 
 		workbook.getSheetName(0);
 		Sheet sheet = workbook.getSheetAt(0);
@@ -184,9 +178,12 @@ public class ExcelWriterUtil {
 		style = workbook.createCellStyle();
 		style.setWrapText(true);
 
-		// sheet.autoSizeColumn();
+		if (boolPrebub) {
+	//	removePrepubColumns(sheet);
+			addPrepubHeaders(sheet);
+		}
 
-		// TODO Mode Publication et prepublication versus milestonStatus
+		// TODO Mode prepublication => données pour les 5 dernières colonnes
 
 		// ecriture des données
 		nextLine = REM_FIRST_EMPTY_LINE;
@@ -221,11 +218,71 @@ public class ExcelWriterUtil {
 			}
 
 		} // exigences
-
+	
 		LOGGER.error(" **************  fin remplissage du woorkbook: " + workbook);
+	}
+	
+	public void addPrepubHeaders(Sheet sheet) {
+		
+		Row refrow = sheet.getRow(0);
+		Cell refcell = refrow.getCell(REM_COLUMN_SCENARIO_CONFORMITE);
+		CellStyle style = refcell.getCellStyle();
+		style.setWrapText(true);
+		style.setFillForegroundColor(IndexedColors.BROWN.getIndex());
 
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_BON_POUR_PUBLICATION, "bon pour publication", style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE, "référence exigence", style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST, "référence cas de test", style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE, "référence exigence socle", style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_POINTS_DE_VERIF, "points de vérification", style);
+			
+		refrow = sheet.getRow(1);
+		refcell = refrow.getCell(REM_COLUMN_SCENARIO_CONFORMITE);
+		style = refcell.getCellStyle();
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_BON_POUR_PUBLICATION,String.valueOf(PREPUB_COLUMN_BON_POUR_PUBLICATION +1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE,String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE +1 ) , style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST, String.valueOf(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST +1 ), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE, String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE +1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_POINTS_DE_VERIF, String.valueOf(PREPUB_COLUMN_POINTS_DE_VERIF), style);			
 	}
 
+	//rename generic => addCell ? ...
+	public void addHeadColumnPrepub(Row targetRow, int columnIndex, String label, CellStyle style) {
+		Cell newcell = targetRow.createCell(columnIndex);
+		newcell.setCellStyle(style);
+		newcell.setCellValue(label);
+	}
+
+	
+//	public void removePrepubColumns(Sheet sheet) {
+//		LOGGER.error("PREPUB_COLUMN_BON_POUR_PUBLICATION " + PREPUB_COLUMN_BON_POUR_PUBLICATION);
+//		deleteColumns(sheet, PREPUB_COLUMN_BON_POUR_PUBLICATION);
+//		LOGGER.error("PREPUB_COLUMN_POINTS_DE_VERIF " + PREPUB_COLUMN_POINTS_DE_VERIF);
+//		deleteColumns(sheet, PREPUB_COLUMN_POINTS_DE_VERIF);
+//		LOGGER.error("PREPUB_COLUMN_REFERENCE_CAS_DE_TEST " + PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
+//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
+//		LOGGER.error("PREPUB_COLUMN_REFERENCE_EXIGENCE " + PREPUB_COLUMN_REFERENCE_EXIGENCE);
+//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_EXIGENCE);
+//		LOGGER.error("PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE " + PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+//		
+//	}
+
+	
+//	public void deleteColumns(Sheet sheet, int columnIndex) {
+//	    for (Row row : sheet) {
+//	    	LOGGER.error("row NUM" + row.getRowNum());
+//	        int j = 0;
+//
+//	        for (Cell cell : row) {
+//	            if (j >= columnIndex) {
+//	                row.removeCell(cell);
+//	            }
+//	            j++;
+//	        }
+//	    }
+//	}
+	
 	public void writeExigencePart(ExcelData data, Sheet sheet, int nextline) {
 		// ecriture des données
 
@@ -267,8 +324,9 @@ public class ExcelWriterUtil {
 		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
 		cell.setCellValue(testcase.getReference());
 
+		//cas des CTs non coeur de métier
 		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
-		cell.setCellValue(Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n !!!!! oups..TODO  !!!! \n  "
+		cell.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n Description: \n  "
 				+ Parser.convertHTMLtoString(testcase.getDescription()));
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10

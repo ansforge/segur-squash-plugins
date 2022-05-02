@@ -86,45 +86,15 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	@Inject
 	private DSLContext dsl;
 
-	// non utilisé?  à supprimer?
-//	@Override
-//	public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
-//
-//		List<ReqModel> reqList = dsl
-//				.select(PROJECT.PROJECT_ID, REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
-//						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
-//						RESOURCE.DESCRIPTION)
-//				.from(REQUIREMENT)
-//				.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
-//				.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(REQUIREMENT_LIBRARY_NODE.PROJECT_ID))
-//				.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
-//				.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
-//				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
-//				.where(PROJECT.NAME.eq("DSR_DUI_MS1")
-//						.and(REQUIREMENT_VERSION.REFERENCE.in("M/A.01A", "M/A.03", "M/A.04A", "M/A.08C")))
-//				.fetchInto(ReqModel.class);
-//
-//		return reqList;
-//	}
-
 	@Override	
 public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 		return dsl
 				.select(MILESTONE.LABEL.as("milestoneName"), MILESTONE.STATUS.as("milestoneStatus"))
 				.from(MILESTONE)
 				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
-				//.fetchOneInto(ExtractedData.class);
 				.fetchOne().into(ExtractedData.class);
 }
 
-//	@Override
-//	public String readMilestoneStatus(Long milestoneId) {
-//		return dsl.select(MILESTONE.STATUS)
-//				.from(MILESTONE)
-//				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
-//				.fetchOne().into(String.class);			
-//	}
-	
 	@Override
 	public String findProjectNameByProjectId(Long projectId) {
 		return dsl
@@ -160,22 +130,22 @@ public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 
 	
 	//a supprimer? valable uniquement pour type CUF = 'CF' ...
-	@Override
-	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId) {
-	
-		List<Cuf> cufs = dsl
-				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL)
-				.from(CUSTOM_FIELD_VALUE)
-				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
-				
-				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
-				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
-						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(resId))
-				.fetchInto(Cuf.class);
-
-		return cufs;
-	}
+//	@Override
+//	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId) {
+//	
+//		List<Cuf> cufs = dsl
+//				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL)
+//				.from(CUSTOM_FIELD_VALUE)
+//				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+//				
+//				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+//				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
+//				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
+//						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(resId))
+//				.fetchInto(Cuf.class);
+//
+//		return cufs;
+//	}
 	
 	@Override
 	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long entityId) {
@@ -206,12 +176,7 @@ public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 		         
 	}
 	
-//	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, String cufCode, Long resId) {
-//		
-//	}
-//	
-	
-	
+
 	@Override
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId) {
 

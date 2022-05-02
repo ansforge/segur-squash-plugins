@@ -85,8 +85,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	// critères
 	Long selectedMilestonesId = null;
 	Long selectedProjectId = null;
-	//default FileName
-	String fileName = "ERROR_SUGUR_EXPORT.xlsx";
+	Boolean boolPrebub = true;
+	//default Error FileName
+	String fileName = "ERROR_SEGUR_EXPORT.xlsx";
 	ExtractedData extractedData;
 
 	@Override
@@ -95,23 +96,20 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" SquashTm-segur plugin report ");
 
 		// lecture des critères
-		getSelectedIdsFromCrietrias(criterias);
-		
-
-		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId);
+		getSelectedIdsFromCrietrias(criterias);		
+		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
 
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
 		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
+		boolPrebub = ( extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED) ? true:false);
+		LOGGER.info(" prépublication: " + boolPrebub);
 
-		//
 		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
 		extractedData.setProjectId(String.valueOf(selectedProjectId));
-//		extractedData.setMilestoneName(milestone.getMilestoneName());
-//		extractedData.setMilestoneStatus(milestone.getMilestoneStatus());
 		
 		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
-		LOGGER.info(" lecture du nom du projet en base: " + extractedData.getProjectName());
+
 		// lecture des exigences
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(selectedProjectId,
 				selectedMilestonesId);
@@ -124,7 +122,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		for (Long res_id : reqKetSet) {
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
 			reqs.get(res_id).setCufs(cufs);
-			// mies à jour des champs de ExcelData pour l'exigence
+			// mise à jour des champs de ExcelData pour l'exigence
 			reqs.get(res_id).updateData();
 		}
 
@@ -159,21 +157,10 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		excel.putDatasInWorkbook(extractedData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps);
+		//todo refactor => utilisation de ExtractedData
+		excel.putDatasInWorkbook(extractedData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps,boolPrebub);
 
-		// ecriture dans le fichier
-//		File report = null;
-//		try {
-//			String fileName = excel.createOutputFileName(false, "INS", "V1.3");
-//			report = excel.flushToTemporaryFile(excel.getWorkbook(), fileName);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return report;
 		
-		//TODO ...
-		Boolean boolPrebub = ( extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED) ? true:false);
 		fileName = excel.createOutputFileName(boolPrebub, ExcelWriterUtil.getTrigramProject(extractedData.getProjectName()), extractedData.getMilestoneName());
 		return writeInFile(excel.getWorkbook(),fileName);
 	}
@@ -187,8 +174,6 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		if (keys.contains("milestones")) {
 			selectedMilestonesIds = (List<Integer>) criterias.get("milestones").getValue();
-			LOGGER.info(" ICI selectedMilestonesIds.size " + selectedMilestonesIds.size());
-			LOGGER.info(" selectedMilestonesIds.get(0) " + selectedMilestonesIds.get(0).toString());
 			// TODO: erreur si 0 ou plus d'un jalon selectedMilestonesIds.size() 0 ou >2
 			selectedMilestonesId = Long.valueOf(selectedMilestonesIds.get(0));
 		}
@@ -196,8 +181,6 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		if (keys.contains("projects")) {
 			selectedProjectIds = (List<String>) criterias.get("projects").getValue();
 			// TODO: erreur si 0 ou plus d'un projet selectedProjectIds.size()
-			LOGGER.info(" ICI selectedProjectIds.size " + selectedProjectIds.size());
-			LOGGER.info(" selectedProjectIds.get(0) " + selectedProjectIds.get(0).toString());
 			selectedProjectId = Long.parseLong(selectedProjectIds.get(0));
 		}
 	}

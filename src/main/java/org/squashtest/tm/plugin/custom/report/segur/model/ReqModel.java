@@ -32,17 +32,6 @@ public class ReqModel extends BasicReqModel {
 	private String idSection;
 	private String section;
 	
-	//constructeur pour requête Jooq
-//	public ReqModel( Long projectId, Long resId, String reference,
-//			String requirementStatus, String categorie, String description) {
-//		super();
-//		this.resId = resId;
-//		this.projectId = projectId;
-//		this.categorie = categorie;
-//		this.description = description;
-//		this.reference = reference;
-//		this.requirementStatus = requirementStatus;
-//	}
 	
 	public ReqModel( Long resId, String reference,
 			String requirementStatus, String categorie, String description) {
@@ -57,7 +46,6 @@ public class ReqModel extends BasicReqModel {
 	public void updateData () {
 		//les cufs ont �t� lus en BDD, on met � jour "excelData"
 
-		//
 		Cuf rawProfil =  findSpecificCuf(Constantes.PROFIL);
 		calculExigenceConditionelle(rawProfil.getLabel()); 
 	
@@ -110,10 +98,10 @@ public class ReqModel extends BasicReqModel {
 		}
 	}
 	
-	public String calculFonction() {
-		return "TODO: parse du CUF fonction = ";
-	}
-	
+//	public String calculFonction() {
+//		return "TODO: parse du CUF fonction = ";
+//	}
+//	
 	public void calculExigenceConditionelle(String labelProfil) {
 		if (labelProfil.equalsIgnoreCase(Constantes.PROFIL_GENERAL)) {
 			excelData.setBoolExigenceConditionnelle_1(Constantes.NON);
