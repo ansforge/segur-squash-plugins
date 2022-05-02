@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +61,8 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.Milestone;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -86,6 +87,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	Long selectedProjectId = null;
 	//default FileName
 	String fileName = "ERROR_SUGUR_EXPORT.xlsx";
+	ExtractedData extractedData;
 
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
@@ -96,14 +98,24 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		getSelectedIdsFromCrietrias(criterias);
 		
 
-		// lecture du statut du jalon => mode publication ou prépublication
-		String milestoneStatus = reqCollector.readMilestoneStatus(selectedMilestonesId);
-		LOGGER.info(" lecture du statut du jalon en base: " + milestoneStatus);
+		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId);
 
+		// lecture du statut et du nom du jalon => mode publication ou prépublication
+		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
+		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
+
+		//
+		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
+		extractedData.setProjectId(String.valueOf(selectedProjectId));
+//		extractedData.setMilestoneName(milestone.getMilestoneName());
+//		extractedData.setMilestoneStatus(milestone.getMilestoneStatus());
+		
+		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
+		LOGGER.info(" lecture du nom du projet en base: " + extractedData.getProjectName());
 		// lecture des exigences
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(selectedProjectId,
 				selectedMilestonesId);
-		LOGGER.info(" nombre d'exigences trouvées: reqs.size: " + reqs.size());
+		LOGGER.info(" nombre d'exigences trouvées:eqs.size: " + reqs.size());
 
 		Set<Long> reqKetSet = reqs.keySet();
 
@@ -147,7 +159,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		excel.putDatasInWorkbook(milestoneStatus, new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps);
+		excel.putDatasInWorkbook(extractedData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps);
 
 		// ecriture dans le fichier
 //		File report = null;
@@ -161,8 +173,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 //		return report;
 		
 		//TODO ...
-		Boolean boolPrebub = ( milestoneStatus.equalsIgnoreCase(Constantes.MILESTONE_LOCKED) ? true:false);
-		fileName = excel.createOutputFileName(boolPrebub, "INS", "V1.3");
+		Boolean boolPrebub = ( extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED) ? true:false);
+		fileName = excel.createOutputFileName(boolPrebub, ExcelWriterUtil.getTrigramProject(extractedData.getProjectName()), extractedData.getMilestoneName());
 		return writeInFile(excel.getWorkbook(),fileName);
 	}
 
@@ -175,6 +187,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		if (keys.contains("milestones")) {
 			selectedMilestonesIds = (List<Integer>) criterias.get("milestones").getValue();
+			LOGGER.info(" ICI selectedMilestonesIds.size " + selectedMilestonesIds.size());
+			LOGGER.info(" selectedMilestonesIds.get(0) " + selectedMilestonesIds.get(0).toString());
 			// TODO: erreur si 0 ou plus d'un jalon selectedMilestonesIds.size() 0 ou >2
 			selectedMilestonesId = Long.valueOf(selectedMilestonesIds.get(0));
 		}
@@ -182,6 +196,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		if (keys.contains("projects")) {
 			selectedProjectIds = (List<String>) criterias.get("projects").getValue();
 			// TODO: erreur si 0 ou plus d'un projet selectedProjectIds.size()
+			LOGGER.info(" ICI selectedProjectIds.size " + selectedProjectIds.size());
+			LOGGER.info(" selectedProjectIds.get(0) " + selectedProjectIds.get(0).toString());
 			selectedProjectId = Long.parseLong(selectedProjectIds.get(0));
 		}
 	}

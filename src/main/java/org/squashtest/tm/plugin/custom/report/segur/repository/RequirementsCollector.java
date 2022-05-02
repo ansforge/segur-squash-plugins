@@ -47,6 +47,8 @@ import java.util.Set;
 
 import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.Milestone;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -57,6 +59,13 @@ public interface RequirementsCollector {
 
 	// todelete ?
 	//public List<ReqModel> findRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
+	
+	//public ExtractedData  findMilestoneByMilestoneId(Long milestoneId);
+	public ExtractedData findMilestoneByMilestoneId(Long milestoneId);
+	
+	
+	public String findProjectNameByProjectId(Long projectId);
+	
 
 	public List<Cuf> findCUFsByResId(Long resId);
 	
@@ -75,8 +84,7 @@ public interface RequirementsCollector {
 	//todelete ?
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId);
 	
-	//TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus qu'une référence ...
-	public String readMilestoneStatus(Long milestoneId); 
+	//public String readMilestoneStatus(Long milestoneId); 
 	
 	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId);
 	

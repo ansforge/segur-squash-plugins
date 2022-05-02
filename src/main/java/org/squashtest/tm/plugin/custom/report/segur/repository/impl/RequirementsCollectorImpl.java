@@ -41,33 +41,26 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur.repository.impl;
 
+import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
-import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
-import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
-import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
-import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
-import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
-import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
 
-
-
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,8 +70,9 @@ import javax.inject.Inject;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
-import org.squashtest.tm.plugin.custom.report.segur.model.BasicReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.Milestone;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -113,6 +107,34 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		return reqList;
 //	}
 
+	@Override	
+public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
+		return dsl
+				.select(MILESTONE.LABEL.as("milestoneName"), MILESTONE.STATUS.as("milestoneStatus"))
+				.from(MILESTONE)
+				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
+				//.fetchOneInto(ExtractedData.class);
+				.fetchOne().into(ExtractedData.class);
+}
+
+//	@Override
+//	public String readMilestoneStatus(Long milestoneId) {
+//		return dsl.select(MILESTONE.STATUS)
+//				.from(MILESTONE)
+//				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
+//				.fetchOne().into(String.class);			
+//	}
+	
+	@Override
+	public String findProjectNameByProjectId(Long projectId) {
+		return dsl
+				.select(PROJECT.NAME)
+				.from(PROJECT)
+				.where(PROJECT.PROJECT_ID.eq(projectId))
+				.fetchOneInto(String.class);
+	}
+	
+	
 	@Override
 	public List<Cuf> findCUFsByResId(Long resId) {
 //		String query = "select " + "cuf.code, cufvo.label" + " from custom_field_value cufv "
@@ -234,17 +256,6 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	}
 	
 	
-	
-	
-	
-	@Override
-	public String readMilestoneStatus(Long milestoneId) {
-		return dsl.select(MILESTONE.STATUS)
-				.from(MILESTONE)
-				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
-				.fetchOne().into(String.class);			
-	}
-	
 	@Override
 	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId) {
 //		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID
@@ -307,4 +318,5 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				.where(TEST_CASE.TCLN_ID.in(tc_ids))
 				.fetch().intoMap(ACTION_TEST_STEP.TEST_STEP_ID, Step.class);
 	}
+
 }

@@ -27,14 +27,14 @@ public class ExcelWiterTest {
 	}
 	
 	@Test
-	public void todelete() {
-		String trigram = excel.getTrigramProject("sc_fdsre_trrt_fdsdf");
+	public void getTrigramProjectTest() {
+		String trigram = ExcelWriterUtil.getTrigramProject("sc_fdsre_trrt_fdsdf");
 		assertEquals(trigram,"sc_fdsre_trrt_fdsdf"); //trigram>3...
 		
-		trigram = excel.getTrigramProject("sc_123_trrt_fdsdf");
+		trigram = ExcelWriterUtil.getTrigramProject("sc_123_trrt_fdsdf");
 		assertEquals(trigram,"123"); //trigram>3...
 
-		trigram = excel.getTrigramProject("sc_123");
+		trigram = ExcelWriterUtil.getTrigramProject("sc_123");
 		assertEquals(trigram,"sc_123");
 
 	}

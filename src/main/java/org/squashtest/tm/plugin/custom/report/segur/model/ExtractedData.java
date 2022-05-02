@@ -17,9 +17,19 @@ public class ExtractedData {
 //		tech_map_requirement 
 //	}
 	// project
-	private String tech_project_id;
-	private String tech_project_name;
+	private String projectId;
+	private String projectName;
+	
+	private String milestoneId;
+	private String milestoneName;
+	private String milestoneStatus;
+	
 
+	 public void extractedData(String milestoneName, String milestoneStatus) {
+		 this.milestoneName = milestoneName;
+		 this.milestoneStatus = milestoneStatus;
+	 }
+	 
 	// requirements
 	private Map<String, ReqModel> tech_map_requirement = new HashMap<String, ReqModel>();
 
