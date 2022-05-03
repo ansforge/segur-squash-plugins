@@ -48,7 +48,7 @@ import java.util.Set;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
@@ -81,12 +81,16 @@ public interface RequirementsCollector {
 	//public String readMilestoneStatus(Long milestoneId); 
 	
 	// Tableau lien Exigence - CT-Step (sans filtre Jalon sur CT)
-	public List<ReqStepCaseBinding> findTestRequirementBinding(Set<Long> reqId);
+	public List<ReqStepBinding> findTestStepRequirementBinding(Set<Long> reqId);
 	// Tableau lien Exigence - CT-Step (avec filtre Jalon sur CT)
 	//public List<ReqStepCaseBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId);
 	
+	//Tableau lien Exigence -CT (avec filtre sur la jalon) 
+//	public List<ReqTestCaseBinding> findTestRequirementBinding(Set<Long> reqId);
 	
 	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) ;
+	
+	public List<Long> findStepsByTestCaseId(Long tc_id) ;
 	
 	public Map<Long, Step> findSteps(List<Long> tc_ids);
 	

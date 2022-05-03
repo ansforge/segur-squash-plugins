@@ -29,7 +29,7 @@ import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCaseStep;
@@ -167,7 +167,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void putDatasInWorkbook(String milestoneStatus, List<ReqModel> datas, List<ReqStepCaseBinding> liste,
+	public void putDatasInWorkbook(String milestoneStatus, List<ReqModel> datas, List<ReqStepBinding> liste,
 			Map<Long, TestCase> mapCT, Map<Long, Step> steps, boolean boolPrebub) {
 
 		workbook.getSheetName(0);
@@ -206,14 +206,23 @@ public class ExcelWriterUtil {
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
 				testCase = mapCT.get(tcID);
-
-				// liste des steps pour l'exigence ET le cas de test courant
-				bindingSteps = liste.stream().filter(p -> p.getResId().equals(req.getResId()))
-						.map(val -> val.getStepId()).distinct().collect(Collectors.toList());
-
 				// on ecrit (ou réecrit) les colonnes sur les exigences
 				writeExigencePart(req.getExcelData(), sheet, nextLine);
-				writeCaseTestPart(testCase, bindingSteps, steps);
+				
+				// liste des steps pour l'exigence ET le cas de test courant
+				if (testCase.getIsCoeurDeMetier()) 
+				{
+				
+//				bindingSteps = liste.stream().filter(p -> p.getResId().equals(req.getResId()))
+//						.map(val -> val.getStepId()).distinct().collect(Collectors.toList());
+				writeCaseTestPartCoeurDeMetier(testCase, bindingSteps, steps);
+				}
+				else { // non coeur de métier => on prends tous les steps du CT
+					writeCaseTestPart(testCase, steps);
+				}
+
+				
+				
 				nextLine += 1;
 			}
 
@@ -318,7 +327,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void writeCaseTestPart(TestCase testcase, List<Long> bindingSteps, Map<Long, Step> steps) {
+	public void writeCaseTestPart(TestCase testcase,  Map<Long, Step> steps) {
 		// ecriture des données
 
 		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
@@ -332,12 +341,11 @@ public class ExcelWriterUtil {
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		// TODO trier les steps à partir du StepOrder ....
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
-		for (Long stepId : bindingSteps) {
-			LOGGER.error(" ******** BUG STEP stepId:." + stepId);
-			LOGGER.error(" ******** BUG STEP map steps" + steps);
-
+		for (Long stepId : testcase.getOrderedStepIds()) {
+//			LOGGER.error(" ******** BUG STEP stepId:." + stepId);
+//			LOGGER.error(" ******** BUG STEP map steps" + steps);
 			currentStep = steps.get(stepId);
-			LOGGER.error(" ******** BUG cuurentStep expectedResult" + currentStep.getExpectedResult());
+//			LOGGER.error(" ******** BUG cuurentStep expectedResult" + currentStep.getExpectedResult());
 
 			cell = row.createCell(currentExcelColumn);
 			cell.setCellValue(currentStep.getReference());
@@ -348,6 +356,17 @@ public class ExcelWriterUtil {
 			currentExcelColumn++;
 		}
 
+	}
+	
+	
+	public void writeCaseTestPartCoeurDeMetier (TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps) {
+		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
+		cell.setCellValue(testcase.getReference());
+
+		//cas des CTs  coeur de métier
+		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
+		cell.setCellValue(" Cas de Test Coeur de métier ... ");
+		//TODO cf. SFD
 	}
 
 	public static File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {

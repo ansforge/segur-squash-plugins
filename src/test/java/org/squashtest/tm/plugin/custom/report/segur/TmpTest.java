@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 
 import java.util.stream.Collectors;

@@ -62,9 +62,8 @@ import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
-import org.squashtest.tm.plugin.custom.report.segur.model.Milestone;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepCaseBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
@@ -88,6 +87,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	Boolean boolPrebub = true;
 	//default Error FileName
 	String fileName = "ERROR_SEGUR_EXPORT.xlsx";
+	//l'objet ExtractedData construit sur lecture du Milestone (name, status) en base de données
 	ExtractedData extractedData;
 
 	@Override
@@ -128,39 +128,71 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			// mise à jour des champs de ExcelData pour l'exigence
 			reqs.get(res_id).updateData();
 		}
+					
 		
+	//	List<Long> coeurMetierIds = reqCollector.findCoeurMetierIdsByRootTcln_Id(extractedData.getTclnIdFolderMetier());
+	//	LOGGER.info(" Nombre de cas de test coeurMetierIds trouvé sur le projet: " + coeurMetierIds.size());
 		
-		//lecture des IDs des CTs coeur de métier => ous un répertoire "_METIER"
-//		Long rootMetierId = reqCollector.findIdFolderMetier(selectedProjectId);
-//		LOGGER.info(" rootMetierId: " + rootMetierId);
-//		List<Long> coeurMetierIds = reqCollector.findCoeurMetierIdsByRootTcln_Id(rootMetierId);
-//		LOGGER.info(" coeurMetierIds size: " + coeurMetierIds.size());
-		
-		// test lecture lien exigence-CT-Step
-		List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
+		// test lecture lien exigence-CT-(Step ou null) 
+		//(coeur de métier => c'est un pas de test qui vérifie à une exigence ...
+		//si ce n'est pas un CT coeur de métier c'est tout le cas de test qui vérifie l'exigence ici le step doit être null
+		List<ReqStepBinding> liste = reqCollector.findTestStepRequirementBinding(reqKetSet);
 		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + liste.size());
-
+		
+//		List<ReqTestCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
+//		LOGGER.info(" lecture en base des liens exigence/CT : " + liste.size());
+		
 		// liste des CT à récupérer
 		List<Long> distinctCT = liste.stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
 
 		Map<Long, TestCase> mapCT = reqCollector.findTestCase(distinctCT);
 		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + mapCT.size());
 
+		//mise à jour de la liste des Step dans les CTs
+		TestCase tcTmp;
+		for (Long testCaseId : mapCT.keySet()) {
+			tcTmp = mapCT.get(testCaseId);
+			tcTmp.setOrderedStepIds(reqCollector.findStepsByTestCaseId(testCaseId));
+			mapCT.put(testCaseId, tcTmp);
+		}
+		
 		Map<Long, Step> steps = reqCollector.findSteps(distinctCT);
 		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + steps.size());
 
-		// on ne garde que les Steps qui sont dans la Binding et on lit les références
-		List<Long> usedStepKey = liste.stream().map(val -> val.getStepId()).distinct().collect(Collectors.toList());
-		Map<Long, Step> usedSteps = new HashMap<Long, Step>();
+		// Idetification des tests Coeur de metier 
+		//lecture des IDs des CTs coeur de métier => ous un répertoire "_METIER"
+				extractedData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
+				LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' " + extractedData.getTclnIdFolderMetier());
+				extractedData.setIdsCasDeTestCoeurDeMetier(reqCollector.findCoeurMetierIdsByRootTcln_Id(extractedData.getTclnIdFolderMetier()));
+				LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: " + extractedData.getIdsCasDeTestCoeurDeMetier().size());
+		//Mise à jour de la propriété isCOeurDeMetier dans TestCase
+				TestCase tmp = null;
+		for (Long coeurDeMetierId : extractedData.getIdsCasDeTestCoeurDeMetier()) {
+			if (mapCT.containsKey(coeurDeMetierId)) 
+			{
+				tmp = mapCT.get(coeurDeMetierId);
+				tmp.setIsCoeurDeMetier(true);
+				mapCT.put(coeurDeMetierId, tmp);
+			}
+		}
+		
+		
+		//TODO ? Pour les COEUR de METIER => on ne garde que les Steps qui sont dans la Binding TODO
+//		List<Long> usedStepKey = liste.stream().map(val -> val.getStepId()).distinct().collect(Collectors.toList());
+//		Map<Long, Step> usedSteps = new HashMap<Long, Step>();
 		String ref_step = "";
 		Step currentStep = null;
-		for (Long stepId : usedStepKey) {
-			// !!!! TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus
-			// qu'une référence ...
+		int nbRef = 0;
+		for (Long stepId : steps.keySet()) {
+			// !!!! TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus d'une reference
+//			nbRef = reqCollector.countStepReferenceByStepID(stepId);
+//			if (nbRef!=1) {
+//				//pb ...
+//			}
 			ref_step = reqCollector.findStepReferenceByTestStepId(stepId);
 			currentStep = steps.get(stepId);
 			currentStep.setReference(ref_step);
-			usedSteps.put(stepId, currentStep);
+			steps.put(stepId, currentStep);
 		}
 
 		excel.loadWorkbookTemplate();

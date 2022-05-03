@@ -1,6 +1,7 @@
 package org.squashtest.tm.plugin.custom.report.segur.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
@@ -24,16 +25,19 @@ public class ExtractedData {
 	private String milestoneName;
 	private String milestoneStatus;
 	
-
+    private Long tclnIdFolderMetier;
+	
+	
 	 public void extractedData(String milestoneName, String milestoneStatus) {
 		 this.milestoneName = milestoneName;
 		 this.milestoneStatus = milestoneStatus;
 	 }
 	 
 	// requirements
-	private Map<String, ReqModel> tech_map_requirement = new HashMap<String, ReqModel>();
+//	private Map<String, ReqModel> tech_map_requirement = new HashMap<String, ReqModel>();
 
 	// Donn�es tri�es, format�es
 	//private List<ExcelData> datas;
-	
+
+	List<Long> IdsCasDeTestCoeurDeMetier;
 }
