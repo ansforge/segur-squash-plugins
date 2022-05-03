@@ -102,13 +102,16 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
 		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
-		boolPrebub = ( extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED) ? true:false);
+		LOGGER.info(" .... " + extractedData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
+		if (extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
+			boolPrebub = false;
+		};
 		LOGGER.info(" prépublication: " + boolPrebub);
 
 		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
 		extractedData.setProjectId(String.valueOf(selectedProjectId));
 		
-		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
+		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));		
 
 		// lecture des exigences
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(selectedProjectId,
@@ -125,7 +128,14 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			// mise à jour des champs de ExcelData pour l'exigence
 			reqs.get(res_id).updateData();
 		}
-
+		
+		
+		//lecture des IDs des CTs coeur de métier => ous un répertoire "_METIER"
+//		Long rootMetierId = reqCollector.findIdFolderMetier(selectedProjectId);
+//		LOGGER.info(" rootMetierId: " + rootMetierId);
+//		List<Long> coeurMetierIds = reqCollector.findCoeurMetierIdsByRootTcln_Id(rootMetierId);
+//		LOGGER.info(" coeurMetierIds size: " + coeurMetierIds.size());
+		
 		// test lecture lien exigence-CT-Step
 		List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
 		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + liste.size());
@@ -195,5 +205,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 		return report;
 	}
+	
+		
+
 
 }

@@ -117,7 +117,7 @@ public class CustomReportSegurConfig {
 		picker.setLabelKey("select.milestone");
 		picker.setPickerLabelKey("select.milestone");
 		picker.setPickerName("milestones"); // 
-		picker.setDefaultSelected(true);
+		picker.setDefaultSelected(false);
 		return picker;
 	}
 	
@@ -127,7 +127,7 @@ public class CustomReportSegurConfig {
 		picker.setLabelKey("select.project"); 
 		picker.setPickerLabelKey("select.project");
 		picker.setPickerName("projects"); 
-		picker.setDefaultSelected(false);
+		picker.setDefaultSelected(true);
 		return picker;
 	}
 	

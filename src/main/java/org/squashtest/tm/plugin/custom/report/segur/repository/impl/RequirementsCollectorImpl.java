@@ -57,6 +57,7 @@ import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
@@ -222,7 +223,7 @@ public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 	
 	
 	@Override
-	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId) {
+	public List<ReqStepCaseBinding> findTestRequirementBinding(Set<Long> reqId) {
 //		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID
 //		from REQUIREMENT_VERSION_COVERAGE rvc
 //		RIGHT JOIN VERIFYING_STEPS vs on rvc.REQUIREMENT_VERSION_COVERAGE_ID = vs.REQUIREMENT_VERSION_COVERAGE_ID 
@@ -233,12 +234,31 @@ public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 				       REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.as("tclnId"),
 				       VERIFYING_STEPS.TEST_STEP_ID.as("stepId") )
 				.from(REQUIREMENT_VERSION_COVERAGE)
-				.rightJoin(VERIFYING_STEPS).on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
+				//cas de CT sans step encore défini => leftjoin
+				.leftJoin(VERIFYING_STEPS).on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
 				.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(reqId))
-				.fetchInto(ReqStepCaseBinding.class);
-				
-				
+				.fetchInto(ReqStepCaseBinding.class);			
 	}
+	
+//	@Override
+//	public List<ReqStepCaseBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId) {
+//		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID
+//		from REQUIREMENT_VERSION_COVERAGE rvc
+//		INNER JOIN TEST_CASE tc on tc.tcln_id = rvc.VERIFYING_TEST_CASE_ID
+//		INNER JOIN MILESTONE_TEST_CASE mtc ON mtc.test_case_id = tc.tcln_id
+//		RIGHT JOIN VERIFYING_STEPS vs on rvc.REQUIREMENT_VERSION_COVERAGE_ID = vs.REQUIREMENT_VERSION_COVERAGE_ID 
+//		where rvc.VERIFIED_REQ_VERSION_ID IN ('7386','7390', '7391', '7397', '7462') and mtc.MILESTONE_ID = '19'
+		
+//		return  dsl.select(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.as("reqVersionCoverageId"), 
+//				       REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("resId"),
+//				       REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.as("tclnId"),
+//				       VERIFYING_STEPS.TEST_STEP_ID.as("stepId") )
+//				.from(REQUIREMENT_VERSION_COVERAGE)
+//				.rightJoin(VERIFYING_STEPS).on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
+//				.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(reqId))
+//				.fetchInto(ReqStepCaseBinding.class);			
+//	}
+//	
 	
 	@Override
 	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) {
@@ -284,4 +304,37 @@ public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
 				.fetch().intoMap(ACTION_TEST_STEP.TEST_STEP_ID, Step.class);
 	}
 
+	
+	//2 méthodes suivantes => liste des CTs coeur de métier à exclure	
+//	--1°) recup du tcln_id du folder '_METIER'
+//	--2° recup des IDs de tous les CTs qui sont sous le dossier '_METIER'
+
+	
+	//1°) pour lesite des CTS coeur de métier
+	@Override
+    public Long findIdFolderMetier(Long projectId) {
+//		select * from test_case_library_node where name = '_METIER' and project_id='19'   folder racine tcln_id = 8857
+    	return dsl.select(TEST_CASE_LIBRARY_NODE.TCLN_ID)
+				.from(TEST_CASE_LIBRARY_NODE)
+				.where(TEST_CASE_LIBRARY_NODE.NAME.eq(Constantes.FOLDER_CT_METIER))
+				      .and(TEST_CASE_LIBRARY_NODE.PROJECT_ID.eq(projectId))
+				      .fetchOneInto(Long.class);
+    }
+	
+  //2°) pour lesite des CTS coeur de métier
+	@Override
+    public List<Long> findCoeurMetierIdsByRootTcln_Id(Long rootTcln_id) {
+//		select descendant_id from tcln_relationship_closure trc 
+//		   inner join test_case_library_node tcln on tcln.tcln_id = trc.descendant_id
+//		   inner join TEST_CASE tc on tc.tcln_id = tcln.tcln_id --ne garder que les CTs
+//		   where trc.ancestor_id = '8857' and trc.depth !=0
+    	return dsl.select(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)
+				.from(TCLN_RELATIONSHIP_CLOSURE)
+				.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID))
+				.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
+				.where(TCLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.eq(rootTcln_id))
+				      //.and(TCLN_RELATIONSHIP_CLOSURE.DEPTH.ne(0))
+				.fetchInto(Long.class);	
+		
+	}
 }

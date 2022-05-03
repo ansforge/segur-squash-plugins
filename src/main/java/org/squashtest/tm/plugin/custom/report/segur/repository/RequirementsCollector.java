@@ -80,10 +80,19 @@ public interface RequirementsCollector {
 	
 	//public String readMilestoneStatus(Long milestoneId); 
 	
-	public List<ReqStepCaseBinding>findTestRequirementBinding(Set<Long> reqId);
+	// Tableau lien Exigence - CT-Step (sans filtre Jalon sur CT)
+	public List<ReqStepCaseBinding> findTestRequirementBinding(Set<Long> reqId);
+	// Tableau lien Exigence - CT-Step (avec filtre Jalon sur CT)
+	//public List<ReqStepCaseBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId);
 	
 	
 	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) ;
 	
 	public Map<Long, Step> findSteps(List<Long> tc_ids);
+	
+	//test parcours de l'arbre
+	public Long findIdFolderMetier(Long projectId);
+	
+	public List<Long> findCoeurMetierIdsByRootTcln_Id(Long rootTcln_id);
+
 }
