@@ -86,13 +86,14 @@ public class ExcelWriterUtil {
 	private int nextLine = REM_FIRST_EMPTY_LINE;
 
 	//
-	private ExcelData data = null;
+//	private ExcelData data = null;
+	
 	private Cell cell = null;
 	private Row row = null;
 	private List<Long> bindingCT = null;
 	private Sheet sheet = null;
 	private TestCase testCase = null;
-	private List<Long> bindingSteps = null;
+//	private List<Long> bindingSteps = null;
 	private Step currentStep = null;
 
 	@Getter
@@ -119,36 +120,24 @@ public class ExcelWriterUtil {
 
 	public void loadWorkbookTemplate() {
 
-		// File file = new ClassPathResource(TEMPLATE_NAME).getFile();
-		LOGGER.error(" ******** tada ....");
-
 		Resource resource = new ClassPathResource(TEMPLATE_NAME);
-
-		LOGGER.error(" ******** loadWorkbookTemplate resource:" + resource);
-		LOGGER.error(" ************ existe ?: " + resource.exists());
-
 		InputStream template = null;
 		try {
 			template = resource.getInputStream();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			LOGGER.error(" ******** ça plante ici ... ");
+			LOGGER.error(" erreur sur chargement du template excel ... ");
 		}
-
-		LOGGER.error(" ******** templatee :" + template);
 
 		// création du workbook
 
 		try {
 			workbook = new XSSFWorkbook(template);
-			LOGGER.error(" ******** XSSFWorkbook :" + workbook);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			LOGGER.error(" ******** ça plante la ... ");
-			LOGGER.error(" ******** " + e.getMessage());
-			LOGGER.error(" ******** " + e.toString());
+			LOGGER.error(" erreur sur création du workbook ... ");
 		}
 
 		try {
@@ -215,7 +204,7 @@ public class ExcelWriterUtil {
 				
 //				bindingSteps = liste.stream().filter(p -> p.getResId().equals(req.getResId()))
 //						.map(val -> val.getStepId()).distinct().collect(Collectors.toList());
-				writeCaseTestPartCoeurDeMetier(testCase, bindingSteps, steps);
+				writeCaseTestPartCoeurDeMetier(testCase, null, steps);
 				}
 				else { // non coeur de métier => on prends tous les steps du CT
 					writeCaseTestPart(testCase, steps);
@@ -377,7 +366,6 @@ public class ExcelWriterUtil {
 
 		FileOutputStream out = null;
 		out = new FileOutputStream(temFile);
-		LOGGER.error(" **************  workbook: " + workbook);
 		workbook.write(out);
 		workbook.close();
 		out.close();

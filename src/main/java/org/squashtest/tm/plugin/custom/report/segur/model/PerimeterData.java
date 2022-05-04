@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExtractedData {
+public class PerimeterData {
 	/* ********************************************** */
 	// prefix 'tech_' => data will not appear in excel
 	/* ********************************************** */
@@ -39,5 +39,6 @@ public class ExtractedData {
 	// Donn�es tri�es, format�es
 	//private List<ExcelData> datas;
 
+	 //liste des CTs coeur de metier 
 	List<Long> IdsCasDeTestCoeurDeMetier;
 }

@@ -72,7 +72,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -87,12 +87,12 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	private DSLContext dsl;
 
 	@Override	
-public ExtractedData findMilestoneByMilestoneId(Long milestoneId) {
+public PerimeterData findMilestoneByMilestoneId(Long milestoneId) {
 		return dsl
 				.select(MILESTONE.LABEL.as("milestoneName"), MILESTONE.STATUS.as("milestoneStatus"))
 				.from(MILESTONE)
 				.where(MILESTONE.MILESTONE_ID.eq(milestoneId))
-				.fetchOne().into(ExtractedData.class);
+				.fetchOne().into(PerimeterData.class);
 }
 
 	@Override

@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReqModel extends BasicReqModel {
+public class ReqModel {
 
 	//id de requirement version
 //	private String sResId;

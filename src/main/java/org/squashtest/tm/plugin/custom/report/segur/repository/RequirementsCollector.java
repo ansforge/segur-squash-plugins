@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -55,7 +55,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
 public interface RequirementsCollector {
 
-	public ExtractedData findMilestoneByMilestoneId(Long milestoneId);
+	public PerimeterData findMilestoneByMilestoneId(Long milestoneId);
 	
 	
 	public String findProjectNameByProjectId(Long projectId);

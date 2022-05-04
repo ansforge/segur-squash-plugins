@@ -45,7 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +60,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExtractedData;
+import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -87,8 +86,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	Boolean boolPrebub = true;
 	//default Error FileName
 	String fileName = "ERROR_SEGUR_EXPORT.xlsx";
-	//l'objet ExtractedData construit sur lecture du Milestone (name, status) en base de données
-	ExtractedData extractedData;
+	//l'objet perimeterData construit sur lecture du Milestone (name, status) en base de données
+	PerimeterData perimeterData;
 
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
@@ -100,18 +99,21 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
 
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
-		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
-		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
-		LOGGER.info(" .... " + extractedData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
-		if (extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
-			boolPrebub = false;
-		};
-		LOGGER.info(" prépublication: " + boolPrebub);
-
-		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
-		extractedData.setProjectId(String.valueOf(selectedProjectId));
+		completePerimeterData();
 		
-		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));		
+		
+//		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
+//		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
+//		LOGGER.info(" .... " + extractedData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
+//		if (extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
+//			boolPrebub = false;
+//		};
+//		LOGGER.info(" prépublication: " + boolPrebub);
+//
+//		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
+//		extractedData.setProjectId(String.valueOf(selectedProjectId));
+//		
+//		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));		
 
 		// lecture des exigences
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(selectedProjectId,
@@ -159,15 +161,14 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		Map<Long, Step> steps = reqCollector.findSteps(distinctCT);
 		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + steps.size());
 
-		// Idetification des tests Coeur de metier 
-		//lecture des IDs des CTs coeur de métier => ous un répertoire "_METIER"
-				extractedData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
-				LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' " + extractedData.getTclnIdFolderMetier());
-				extractedData.setIdsCasDeTestCoeurDeMetier(reqCollector.findCoeurMetierIdsByRootTcln_Id(extractedData.getTclnIdFolderMetier()));
-				LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: " + extractedData.getIdsCasDeTestCoeurDeMetier().size());
+		//lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER"
+				perimeterData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
+				LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' " + perimeterData.getTclnIdFolderMetier());
+				perimeterData.setIdsCasDeTestCoeurDeMetier(reqCollector.findCoeurMetierIdsByRootTcln_Id(perimeterData.getTclnIdFolderMetier()));
+				LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: " + perimeterData.getIdsCasDeTestCoeurDeMetier().size());
 		//Mise à jour de la propriété isCOeurDeMetier dans TestCase
 				TestCase tmp = null;
-		for (Long coeurDeMetierId : extractedData.getIdsCasDeTestCoeurDeMetier()) {
+		for (Long coeurDeMetierId : perimeterData.getIdsCasDeTestCoeurDeMetier()) {
 			if (mapCT.containsKey(coeurDeMetierId)) 
 			{
 				tmp = mapCT.get(coeurDeMetierId);
@@ -200,14 +201,29 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		// ecriture du workbook
 		//todo refactor => utilisation de ExtractedData
-		excel.putDatasInWorkbook(extractedData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps,boolPrebub);
+		excel.putDatasInWorkbook(perimeterData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps,boolPrebub);
 
 		
-		fileName = excel.createOutputFileName(boolPrebub, ExcelWriterUtil.getTrigramProject(extractedData.getProjectName()), extractedData.getMilestoneName());
+		fileName = excel.createOutputFileName(boolPrebub, ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
 		return writeInFile(excel.getWorkbook(),fileName);
 	}
 
 // ***************************************************************************************************	
+	
+	public void completePerimeterData() {
+		perimeterData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
+		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName()  + " ; " + perimeterData.getMilestoneStatus());
+		LOGGER.info(" .... " + perimeterData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
+		if (perimeterData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
+			boolPrebub = false;
+		};
+		LOGGER.info(" prépublication: " + boolPrebub);
+
+		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
+		perimeterData.setProjectId(String.valueOf(selectedProjectId));
+		
+		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));	
+	}
 	
 	public void getSelectedIdsFromCrietrias(Map<String, Criteria> criterias) {
 		Set<String> keys = criterias.keySet();

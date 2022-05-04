@@ -102,7 +102,6 @@ public class CustomReportSegurConfig {
 		button.setLabelKey("button.label.key");
 		button.setName("segurSelectionMode");
 		button.setRequired(true);
-	//	button.setOptions(Collections.singletonList(milestonePickerOption));
 		List<OptionInput> options = new ArrayList<OptionInput>();
 		options.add(projectPickerOption);
 		options.add(milestonePickerOption);	
