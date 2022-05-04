@@ -55,38 +55,22 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
 public interface RequirementsCollector {
 
-	public PerimeterData findMilestoneByMilestoneId(Long milestoneId);
 	
+	public PerimeterData findMilestoneByMilestoneId(Long milestoneId);
 	
 	public String findProjectNameByProjectId(Long projectId);
 	
-
 	public List<Cuf> findCUFsByResId(Long resId);
 	
-	//todelete?
-//	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId);
-	
 	//lecture de CUF de type 'CF' (valeur dans custom_field_value.value)
-	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long resId);
+//	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long resId);
 	
 	public String findStepReferenceByTestStepId(Long testStepId);
 	
-	//public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, String cufCode, Long resId);
-	
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
-
-	//todelete ?
-	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestoneBRIDEEEEEEE(Long projectId, Long milestoneId);
 	
-	//public String readMilestoneStatus(Long milestoneId); 
-	
-	// Tableau lien Exigence - CT-Step (sans filtre Jalon sur CT)
-	public List<ReqStepBinding> findTestStepRequirementBinding(Set<Long> reqId);
 	// Tableau lien Exigence - CT-Step (avec filtre Jalon sur CT)
-	//public List<ReqStepCaseBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId);
-	
-	//Tableau lien Exigence -CT (avec filtre sur la jalon) 
-//	public List<ReqTestCaseBinding> findTestRequirementBinding(Set<Long> reqId);
+	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId);
 	
 	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) ;
 	

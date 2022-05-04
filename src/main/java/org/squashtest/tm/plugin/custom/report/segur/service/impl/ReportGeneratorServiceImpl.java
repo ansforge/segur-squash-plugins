@@ -105,7 +105,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		Set<Long> reqIds = setRequirementData(selectedProjectId, selectedMilestonesId);
 
 		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
-		List<Long> distinctCT = setBinding(reqIds);
+		List<Long> distinctCT = setBinding(reqIds, selectedMilestonesId);
 
 		// lecture des données sur les CTs
 		setMapTestCase(distinctCT);
@@ -196,9 +196,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		return reqKetSet;
 	}
 
-	public List<Long> setBinding(Set<Long> xreqIds) {
+	public List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId) {
 
-		excel.setBindings(reqCollector.findTestStepRequirementBinding(xreqIds));
+		excel.setBindings(reqCollector.findTestRequirementBindingFiltreJalonTC(xreqIds, xmilestonesId));
 		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + excel.getBindings().size());
 
 		// liste des CT à récupérer
