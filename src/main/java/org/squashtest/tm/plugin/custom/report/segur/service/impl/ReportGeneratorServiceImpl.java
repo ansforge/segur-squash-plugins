@@ -44,7 +44,6 @@ package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,10 +58,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
+import org.squashtest.tm.plugin.custom.report.segur.Level;
+import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
@@ -72,8 +72,9 @@ import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorServi
 public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportGeneratorServiceImpl.class);
 
-	List<String> headers = Arrays.asList("Name", "Description", "Reference", "Created by");
-
+	@Autowired
+	Traceur traceur;
+	
 	@Inject
 	RequirementsCollector reqCollector;
 
@@ -93,7 +94,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public File generateReport(Map<String, Criteria> criterias) {
 
 		LOGGER.info(" SquashTm-segur plugin report ");
-
+		
+		reset();
+		
 		// lecture des critères
 		getSelectedIdsFromCrietrias(criterias);
 		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
@@ -135,11 +138,13 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		perimeterData = reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
 		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName() + " ; "
 				+ perimeterData.getMilestoneStatus());
-		LOGGER.info(" .... " + perimeterData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
 		if (perimeterData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
 			boolPrebub = false;
 		}
-		;
+		else {
+			boolPrebub = true;
+		}
+		
 		LOGGER.info(" prépublication: " + boolPrebub);
 
 		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
@@ -182,6 +187,10 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" nombre d'exigences trouvées:eqs.size: " + reqs.size());
 
 		Set<Long> reqKetSet = reqs.keySet();
+		if (reqKetSet.size() ==0) {
+			traceur.addMessage(Level.WARNING, "aucune exigence trouvée pour le projetId = "
+					+ selectedProjectId + " et le jalon id = " + selectedMilestonesId);
+		}
 
 		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
 		// custom_field_value_option
@@ -259,4 +268,11 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 	}
 
+	public void reset() {
+		selectedMilestonesId = null;
+		selectedProjectId = null;
+		boolPrebub = true;
+		perimeterData = null;
+		traceur.reset();
+	}
 }

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
+import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
+import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,7 +46,14 @@ public class ReqModel {
 		//les cufs ont �t� lus en BDD, on met � jour "excelData"
 
 		Cuf rawProfil =  findSpecificCuf(Constantes.PROFIL);
-		calculExigenceConditionelle(rawProfil.getLabel()); 
+		if (rawProfil == null)
+		{
+	//		ExcelWriterUtil.addMessage(Level.ERROR, "res_Id = " + this.resId + "  CUF profil non trouvé impossible de calculer 'exigenceConditionnelle'");
+		}
+		else
+		{	
+		calculExigenceConditionelle(rawProfil.getLabel());
+		}
 	
 		excelData.setProfil_2(rawProfil.getLabel());
 		
@@ -77,7 +86,8 @@ public class ReqModel {
 		}
 		else {
 			//TODO tracer les erreurs ....
-			System.out.println("findSpecificCuf " + cufCode + "aucun element trouv� ou plus d'un elt"); 
+	//		ExcelWriterUtil.addMessage(Level.WARNING, "res_Id = " + this.resId + "cuf (" + cufCode + ") non trouvé ou plusieurs valeurs possibles");
+			//System.out.println("findSpecificCuf " + cufCode + "aucun element trouv� ou plus d'un elt"); 
 		}
 		return null; //TODO � supprimer ...
 	}
@@ -85,7 +95,8 @@ public class ReqModel {
 	public void splitSectionAndSetExcelData(String cufSection) {
 		int separator = cufSection.indexOf(Constantes.SECTION_SEPARATOR);
 		if (separator == -1 ) { 
-			System.out.println("TODO erreur � tracer sur plit du cuf section");
+	//		ExcelWriterUtil.addMessage(Level.WARNING, "res_Id = " + this.resId + "  Erreur sur découpage du cuf 'SECTION' : " + cufSection);
+		//	System.out.println("TODO erreur � tracer sur plit du cuf section");
 		//TODO tracer une erreur et renvoyer chaine vide ou cuf Non splitter? ....
 	}
 		else 

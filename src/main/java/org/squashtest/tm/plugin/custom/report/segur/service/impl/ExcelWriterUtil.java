@@ -19,10 +19,13 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.plugin.custom.report.segur.Message;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
+import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
@@ -35,47 +38,58 @@ import lombok.Setter;
 @Component
 public class ExcelWriterUtil {
 
+	@Autowired
+	Traceur traceur;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterUtil.class);
 
 	// nom et chemin du template dans src/main/resources
-	public static String CLASS_PATH_TEMPLATE_NAME = "classpath:templates/template-segur-requirement-export.xlsx";
-	public static String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	public static final String CLASS_PATH_TEMPLATE_NAME = "classpath:templates/template-segur-requirement-export.xlsx";
+	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
 
 	// nom du fichier Excel
-	public static String REM = "REM";
-	public static String PREPUB = "prepub";
-	public static String UNDERSCORE = "_";
-	public static String EXTENSION = ".xlsx";
+	public static final String REM = "REM";
+	public static final String PREPUB = "prepub";
+	public static final String UNDERSCORE = "_";
+	public static final String EXTENSION = ".xlsx";
 
 	// onglets
-	public static int REM_SHEET_INDEX = 0;
-	public static int METIER_SHEET_INDEX = 1;
-	public static int ERROR_SHEET_INDEX = 2;
+	public static final int REM_SHEET_INDEX = 0;
+	public static final int METIER_SHEET_INDEX = 1;
+	//public static final int ERROR_SHEET_INDEX = 2;
+	public static final String ERROR_SHEET_NAME = "WARNING-ERROR";
 
 	// onglet 0
-	public static int REM_FIRST_EMPTY_LINE = 2; // 0-based index '2' <=> line 3
-	public static int REM_COLUMN_CONDITIONNELLE = 0;
-	public static int REM_COLUMN_PROFIL = 1;
-	public static int REM_COLUMN_ID_SECTION = 2;
-	public static int REM_COLUMN_SECTION = 3;
-	public static int REM_COLUMN_BLOC = 4;
-	public static int REM_COLUMN_FONCTION = 5;
-	public static int REM_COLUMN_NATURE = 6;
-	public static int REM_COLUMN_NUMERO_EXIGENCE = 7;
-	public static int REM_COLUMN_ENONCE = 8;
-	public static int REM_COLUMN_NUMERO_SCENARIO = 9;
-	public static int REM_COLUMN_SCENARIO_CONFORMITE = 10;
+	public static final int REM_FIRST_EMPTY_LINE = 2; // 0-based index '2' <=> line 3
+	public static final int REM_COLUMN_CONDITIONNELLE = 0;
+	public static final int REM_COLUMN_PROFIL = 1;
+	public static final int REM_COLUMN_ID_SECTION = 2;
+	public static final int REM_COLUMN_SECTION = 3;
+	public static final int REM_COLUMN_BLOC = 4;
+	public static final int REM_COLUMN_FONCTION = 5;
+	public static final int REM_COLUMN_NATURE = 6;
+	public static final int REM_COLUMN_NUMERO_EXIGENCE = 7;
+	public static final int REM_COLUMN_ENONCE = 8;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
 
-	public static int MAX_STEP_NUMBER = 10;
-	public static int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
+	public static final int MAX_STEP_NUMBER = 10;
+	public static final int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
-	public static int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
-	public static int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
-	public static int PREPUB_COLUMN_REFERENCE_CAS_DE_TEST = PREPUB_COLUMN_REFERENCE_EXIGENCE + 1;
-	public static int PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE = PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1;
-	public static int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
+	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
+	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
+	public static final int PREPUB_COLUMN_REFERENCE_CAS_DE_TEST = PREPUB_COLUMN_REFERENCE_EXIGENCE + 1;
+	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE = PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1;
+	public static final int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
 
 	private XSSFCellStyle style = null;
+	
+	
+//	private List<Message> msg = new ArrayList<Message>();
+//	private static int COUNTER_MSG = 0;
+//	private static final int MAX_MSG = 30;
+	public static final int ERROR_COLUMN_LEVEL = 0;
+	public static final int ERROR_COLUMN_MSG = 1;
 
 	// index de la ligne à créer
 	private int nextLine = REM_FIRST_EMPTY_LINE;
@@ -96,7 +110,7 @@ public class ExcelWriterUtil {
 	@Getter
 	@Setter
 	Map<Long, Step> steps;
-
+	
 	// references réutilisées
 	private Cell cell = null;
 	private Row row = null;
@@ -107,7 +121,7 @@ public class ExcelWriterUtil {
 
 	@Getter
 	private XSSFWorkbook workbook = null;
-
+	
 	public String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
 
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
@@ -219,6 +233,8 @@ public class ExcelWriterUtil {
 
 		} // exigences
 
+		writeErrorSheet();
+		
 		LOGGER.error("  fin remplissage du woorkbook: " + workbook);
 	}
 
@@ -359,4 +375,26 @@ public class ExcelWriterUtil {
 		return trigram;
 	}
 
+
+	
+	public void writeErrorSheet() {
+		List<Message> msg = traceur.getMsg();
+		if (msg.size() != 0) {
+			  Sheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
+			  int line = 0;
+			  row = errorSheet.createRow(line);
+			  cell = row.createCell(ERROR_COLUMN_MSG);
+			  cell.setCellValue("ATTENTION, le nombre maximum d'erreurs/warnings affichés est : " + Traceur.getMAX_MSG());
+			  line++;
+			  
+			  for (Message msgLine : msg) {
+				  row = errorSheet.createRow(line);
+				  cell = row.createCell(ERROR_COLUMN_LEVEL);
+				  cell.setCellValue(msgLine.getLevel().name());
+				  cell = row.createCell(ERROR_COLUMN_MSG);
+				  cell.setCellValue(msgLine.getMsg());	  
+				  line++;
+			}
+		}
+	}
 }
