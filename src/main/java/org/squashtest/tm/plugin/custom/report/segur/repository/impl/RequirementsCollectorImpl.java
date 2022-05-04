@@ -297,7 +297,7 @@ public PerimeterData findMilestoneByMilestoneId(Long milestoneId) {
 	}
 	
 	@Override
-	public List<Long> findStepsByTestCaseId(Long tc_id) {
+	public List<Long> findStepIdsByTestCaseId(Long tc_id) {
 //		select tcs.step_id, tcs.step_order from TEST_CASE tc
 //		inner join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id
 //		inner join TEST_CASE_STEPS tcs on  tcs.test_case_id = tc.tcln_id

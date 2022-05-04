@@ -21,7 +21,7 @@ public class TestCase {
 	
 	Boolean isCoeurDeMetier = false;
 	
-	//Steps du TestCase ordonné
+	//Steps du TestCase ordonnés
 	List<Long> orderedStepIds;
 	
 	public TestCase(Long tcln_id, String reference, String prerequisite, String description) {

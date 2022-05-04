@@ -1,8 +1,6 @@
 package org.squashtest.tm.plugin.custom.report.segur.model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,31 +12,21 @@ public class PerimeterData {
 	// prefix 'tech_' => data will not appear in excel
 	/* ********************************************** */
 
-//	public ExtractedData() {
-//		tech_map_requirement 
-//	}
 	// project
 	private String projectId;
 	private String projectName;
-	
+
 	private String milestoneId;
 	private String milestoneName;
 	private String milestoneStatus;
-	
-    private Long tclnIdFolderMetier;
-	
-	
-	 public void extractedData(String milestoneName, String milestoneStatus) {
-		 this.milestoneName = milestoneName;
-		 this.milestoneStatus = milestoneStatus;
-	 }
-	 
-	// requirements
-//	private Map<String, ReqModel> tech_map_requirement = new HashMap<String, ReqModel>();
 
-	// Donn�es tri�es, format�es
-	//private List<ExcelData> datas;
+	private Long tclnIdFolderMetier;
 
-	 //liste des CTs coeur de metier 
+	public void extractedData(String milestoneName, String milestoneStatus) {
+		this.milestoneName = milestoneName;
+		this.milestoneStatus = milestoneStatus;
+	}
+
+	// liste des CTs coeur de metier
 	List<Long> IdsCasDeTestCoeurDeMetier;
 }

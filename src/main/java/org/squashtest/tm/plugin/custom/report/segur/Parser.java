@@ -20,8 +20,6 @@ public class Parser {
 	private Parser() {
 	};
 
-//	public static String CR_CURRENT_SYSTEM = System.getProperty("line.separator");
-
 	// IN: html fragment between <ul> tag
 	public static String convertHtmlBulletedListToString(String ulHTMlString) {
 		Document doc = Jsoup.parseBodyFragment(ulHTMlString);
@@ -32,10 +30,10 @@ public class Parser {
 		return liste.stream().collect(Collectors.joining(""));
 	}
 
+	 //IN: html fragment between <ol> tag
 	public static String convertHtmlOrderedListToString(String ulHTMlString) {
 		int prefix = 1;
 		String pt = ". ";
-
 		Document doc = Jsoup.parseBodyFragment(ulHTMlString);
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		Elements lis = doc.select("li");
@@ -46,90 +44,78 @@ public class Parser {
 			listeResult.add("\t" + prefix + pt + ligne);
 			prefix++;
 		}
-
 		return listeResult.stream().collect(Collectors.joining(""));
 	}
 
 	public static String convertHTMLtoString(String html) {
-		System.out.println("non parsé ...");
-		System.out.println(html);
 		Document doc = Jsoup.parseBodyFragment(html);
-		
 		List<String> htmlFragment = new LinkedList<String>();
-		
-		StringBuilder  out = new StringBuilder();
-		String tmp ="";
-		System.out.println("result NODE ...");
+		StringBuilder out = new StringBuilder();
+		String tmp = "";
 		for (Node node : doc.body().childNodes()) {
-			System.out.println("-----------");
-			System.out.println(node.toString());
-			System.out.println(node.nodeName());
-			tmp = node.toString();		
-			tmp = tmp.replace("<br />",Constantes.CRLF);
-			System.out.println(tmp);
+			tmp = node.toString();
+			tmp = tmp.replace("<br />", Constantes.CRLF);
 			switch (node.nodeName()) {
 			case "p":
-				out.append(Parser.htmlParagrapheToText(tmp) );
+				out.append(Parser.htmlParagrapheToText(tmp));
 				break;
 			case "ul":
-				out.append(Parser.convertHtmlBulletedListToString(tmp) );
+				out.append(Parser.convertHtmlBulletedListToString(tmp));
 				break;
 			case "ol":
-				out.append(Parser.convertHtmlOrderedListToString(tmp) );
-				break;	
+				out.append(Parser.convertHtmlOrderedListToString(tmp));
+				break;
 			default:
-				//si on ne sait pas =>  ne rien faire ...
+				// si on ne sait pas => ne rien faire ...
 				out.append(tmp);
 				break;
-			}		
+			}
 		}
-		System.out.println(" *******************************" );		
-		System.out.println("out: " + out);		
 		return out.toString();
 	}
 
-	//non utilisé?
+
 	public static String htmlParagrapheToText(String html) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		Jsoup.parse(html).body().select("p").stream().map(Element::text).forEach(pw::println);
 		return sw.toString();
 	}
-	
-	// A supprimer utiliser juste dans un test ...
-	public static List<String> todeleteParseHtml(String str) {
-		System.out.println("ICI parse du html");
-		org.jsoup.nodes.Document doc = Jsoup.parse(str);
 
-		final List<String> wordList = new ArrayList<String>();
-
-		doc.body().traverse(new NodeVisitor() {
-
-			@Override
-			public void head(Node arg0, int arg1) {
-				if (arg1 == 1) {
-					// String value = Jsoup.parse(arg0.outerHtml()).text();
-					String value = arg0.outerHtml();
-					if (!wordList.contains(value))
-						wordList.add(arg0.outerHtml());
-
-				}
-
-			}
-
-			@Override
-			public void tail(Node arg0, int arg1) {
-
-			}
-		});
-		
-		System.out.println("ICI bnre elt de la liste: " + wordList.size());
-		for (String word : wordList) {
-			System.out.println(" -------------");
-			System.out.println(word);
-			System.out.println(" -------------");
-		}
-
-		return wordList;
-	}
+//	// A supprimer utiliser juste dans un test ...
+//	public static List<String> todeleteParseHtml(String str) {
+//		System.out.println("ICI parse du html");
+//		org.jsoup.nodes.Document doc = Jsoup.parse(str);
+//
+//		final List<String> wordList = new ArrayList<String>();
+//
+//		doc.body().traverse(new NodeVisitor() {
+//
+//			@Override
+//			public void head(Node arg0, int arg1) {
+//				if (arg1 == 1) {
+//					// String value = Jsoup.parse(arg0.outerHtml()).text();
+//					String value = arg0.outerHtml();
+//					if (!wordList.contains(value))
+//						wordList.add(arg0.outerHtml());
+//
+//				}
+//
+//			}
+//
+//			@Override
+//			public void tail(Node arg0, int arg1) {
+//
+//			}
+//		});
+//
+//		System.out.println("ICI bnre elt de la liste: " + wordList.size());
+//		for (String word : wordList) {
+//			System.out.println(" -------------");
+//			System.out.println(word);
+//			System.out.println(" -------------");
+//		}
+//
+//		return wordList;
+//	}
 }

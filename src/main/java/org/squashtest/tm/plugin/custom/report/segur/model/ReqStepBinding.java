@@ -7,10 +7,9 @@ import lombok.Setter;
 @Setter
 public class ReqStepBinding {
 
-	// id du lien avec le CT dans
+	// id du lien avec le CT dans requirement_version_coverage
 	Long reqVersionCoverageId;
 
-	// id de l'exigence (tables resource, requirement_version
 	// requirement_version_coverage_id.verified_req_version_id
 	Long resId;
 

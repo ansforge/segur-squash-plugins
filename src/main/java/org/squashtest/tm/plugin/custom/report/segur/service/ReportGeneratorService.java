@@ -42,10 +42,10 @@
 package org.squashtest.tm.plugin.custom.report.segur.service;
 
 
-import org.squashtest.tm.api.report.criteria.Criteria;
-
 import java.io.File;
 import java.util.Map;
+
+import org.squashtest.tm.api.report.criteria.Criteria;
 
 
 public interface ReportGeneratorService {

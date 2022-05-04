@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Cuf {
-	
+
 	private String code;
-	
+
 	private String label;
 
 	public Cuf(String code, String label) {

@@ -153,10 +153,10 @@ public class ParserTest {
 				+ "	 <li>dernière ligne</li>  \r\n"
 				+ "	</ol>";
 		
-		String expectedResult ="1. ligne1\r\n"
-				+ "2. ligne2 ffffff\r\n"
-				+ "3. ligne 3\r\n"
-				+ "4. dernière ligne\r\n";
+		String expectedResult ="\t1. ligne1\r\n"
+				+ "\t2. ligne2 ffffff\r\n"
+				+ "\t3. ligne 3\r\n"
+				+ "\t4. dernière ligne\r\n";
 		
 		String result = Parser.convertHtmlOrderedListToString(html);
 		System.out.println(result);

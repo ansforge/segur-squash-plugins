@@ -84,9 +84,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	Long selectedMilestonesId = null;
 	Long selectedProjectId = null;
 	Boolean boolPrebub = true;
-	//default Error FileName
+	// default Error FileName
 	String fileName = "ERROR_SEGUR_EXPORT.xlsx";
-	//l'objet perimeterData construit sur lecture du Milestone (name, status) en base de données
+	// l'objet perimeterData est construit sur lecture du Milestone (name, status)
 	PerimeterData perimeterData;
 
 	@Override
@@ -95,136 +95,59 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" SquashTm-segur plugin report ");
 
 		// lecture des critères
-		getSelectedIdsFromCrietrias(criterias);		
+		getSelectedIdsFromCrietrias(criterias);
 		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
 
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		completePerimeterData();
-		
-		
-//		extractedData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
-//		LOGGER.info(" lecture du nom et du statut du jalon en base: " + extractedData.getMilestoneName()  + " ; " + extractedData.getMilestoneStatus());
-//		LOGGER.info(" .... " + extractedData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
-//		if (extractedData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
-//			boolPrebub = false;
-//		};
-//		LOGGER.info(" prépublication: " + boolPrebub);
-//
-//		extractedData.setMilestoneId(String.valueOf(selectedMilestonesId));
-//		extractedData.setProjectId(String.valueOf(selectedProjectId));
-//		
-//		extractedData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));		
 
-		// lecture des exigences
-		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(selectedProjectId,
-				selectedMilestonesId);
-		LOGGER.info(" nombre d'exigences trouvées:eqs.size: " + reqs.size());
+		// lecture des exigences => mise à jour de List<ReqModel> reqs (excelWriter)
+		Set<Long> reqIds = setRequirementData(selectedProjectId, selectedMilestonesId);
 
-		Set<Long> reqKetSet = reqs.keySet();
+		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
+		List<Long> distinctCT = setBinding(reqIds);
 
-		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
-		// custom_field_value_option
-		for (Long res_id : reqKetSet) {
-			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
-			reqs.get(res_id).setCufs(cufs);
-			// mise à jour des champs de ExcelData pour l'exigence
-			reqs.get(res_id).updateData();
-		}
-					
-		
-	//	List<Long> coeurMetierIds = reqCollector.findCoeurMetierIdsByRootTcln_Id(extractedData.getTclnIdFolderMetier());
-	//	LOGGER.info(" Nombre de cas de test coeurMetierIds trouvé sur le projet: " + coeurMetierIds.size());
-		
-		// test lecture lien exigence-CT-(Step ou null) 
-		//(coeur de métier => c'est un pas de test qui vérifie à une exigence ...
-		//si ce n'est pas un CT coeur de métier c'est tout le cas de test qui vérifie l'exigence ici le step doit être null
-		List<ReqStepBinding> liste = reqCollector.findTestStepRequirementBinding(reqKetSet);
-		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + liste.size());
-		
-//		List<ReqTestCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);
-//		LOGGER.info(" lecture en base des liens exigence/CT : " + liste.size());
-		
-		// liste des CT à récupérer
-		List<Long> distinctCT = liste.stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
+		// lecture des données sur les CTs
+		setMapTestCase(distinctCT);
 
-		Map<Long, TestCase> mapCT = reqCollector.findTestCase(distinctCT);
-		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + mapCT.size());
+		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
+		// mise à jour de la propriété dans de l'objet TestCase
+		findTestCaseCoeurDeMetier();
 
-		//mise à jour de la liste des Step dans les CTs
-		TestCase tcTmp;
-		for (Long testCaseId : mapCT.keySet()) {
-			tcTmp = mapCT.get(testCaseId);
-			tcTmp.setOrderedStepIds(reqCollector.findStepsByTestCaseId(testCaseId));
-			mapCT.put(testCaseId, tcTmp);
-		}
-		
-		Map<Long, Step> steps = reqCollector.findSteps(distinctCT);
-		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + steps.size());
+		// lecture des données sur les steps
+		setStepsData(distinctCT);
 
-		//lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER"
-				perimeterData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
-				LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' " + perimeterData.getTclnIdFolderMetier());
-				perimeterData.setIdsCasDeTestCoeurDeMetier(reqCollector.findCoeurMetierIdsByRootTcln_Id(perimeterData.getTclnIdFolderMetier()));
-				LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: " + perimeterData.getIdsCasDeTestCoeurDeMetier().size());
-		//Mise à jour de la propriété isCOeurDeMetier dans TestCase
-				TestCase tmp = null;
-		for (Long coeurDeMetierId : perimeterData.getIdsCasDeTestCoeurDeMetier()) {
-			if (mapCT.containsKey(coeurDeMetierId)) 
-			{
-				tmp = mapCT.get(coeurDeMetierId);
-				tmp.setIsCoeurDeMetier(true);
-				mapCT.put(coeurDeMetierId, tmp);
-			}
-		}
-		
-		
-		//TODO ? Pour les COEUR de METIER => on ne garde que les Steps qui sont dans la Binding TODO
-//		List<Long> usedStepKey = liste.stream().map(val -> val.getStepId()).distinct().collect(Collectors.toList());
-//		Map<Long, Step> usedSteps = new HashMap<Long, Step>();
-		String ref_step = "";
-		Step currentStep = null;
-		int nbRef = 0;
-		for (Long stepId : steps.keySet()) {
-			// !!!! TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus d'une reference
-//			nbRef = reqCollector.countStepReferenceByStepID(stepId);
-//			if (nbRef!=1) {
-//				//pb ...
-//			}
-			ref_step = reqCollector.findStepReferenceByTestStepId(stepId);
-			currentStep = steps.get(stepId);
-			currentStep.setReference(ref_step);
-			steps.put(stepId, currentStep);
-		}
-
+		// chargement du template Excel
 		excel.loadWorkbookTemplate();
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		//todo refactor => utilisation de ExtractedData
-		excel.putDatasInWorkbook(perimeterData.getMilestoneStatus(), new ArrayList<ReqModel>(reqs.values()), liste, mapCT, steps,boolPrebub);
+		excel.putDatasInWorkbook(perimeterData.getMilestoneStatus(), boolPrebub);
 
-		
-		fileName = excel.createOutputFileName(boolPrebub, ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
-		return writeInFile(excel.getWorkbook(),fileName);
+		fileName = excel.createOutputFileName(boolPrebub,
+				ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
+		return writeInFile(excel.getWorkbook(), fileName);
 	}
 
 // ***************************************************************************************************	
-	
+
 	public void completePerimeterData() {
-		perimeterData =   reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
-		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName()  + " ; " + perimeterData.getMilestoneStatus());
+		perimeterData = reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
+		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName() + " ; "
+				+ perimeterData.getMilestoneStatus());
 		LOGGER.info(" .... " + perimeterData.getMilestoneStatus() + " .." + Constantes.MILESTONE_LOCKED);
 		if (perimeterData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
 			boolPrebub = false;
-		};
+		}
+		;
 		LOGGER.info(" prépublication: " + boolPrebub);
 
 		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
 		perimeterData.setProjectId(String.valueOf(selectedProjectId));
-		
-		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));	
+
+		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
 	}
-	
+
 	public void getSelectedIdsFromCrietrias(Map<String, Criteria> criterias) {
 		Set<String> keys = criterias.keySet();
 		List<Integer> selectedMilestonesIds = null;
@@ -243,7 +166,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 	}
 
-	public File writeInFile (XSSFWorkbook workbook, String fileName) {
+	public File writeInFile(XSSFWorkbook workbook, String fileName) {
 		File report = null;
 		try {
 			report = ExcelWriterUtil.flushToTemporaryFile(workbook, fileName);
@@ -253,8 +176,87 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 		return report;
 	}
-	
-		
 
+	public Set<Long> setRequirementData(Long xprojectId, Long xmilestonesId) {
+		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(xprojectId, xmilestonesId);
+		LOGGER.info(" nombre d'exigences trouvées:eqs.size: " + reqs.size());
+
+		Set<Long> reqKetSet = reqs.keySet();
+
+		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
+		// custom_field_value_option
+		for (Long res_id : reqKetSet) {
+			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
+			reqs.get(res_id).setCufs(cufs);
+			// mise à jour des champs de ExcelData pour l'exigence
+			reqs.get(res_id).updateData();
+		}
+
+		excel.setReqs(new ArrayList<ReqModel>(reqs.values()));
+		return reqKetSet;
+	}
+
+	public List<Long> setBinding(Set<Long> xreqIds) {
+
+		excel.setBindings(reqCollector.findTestStepRequirementBinding(xreqIds));
+		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + excel.getBindings().size());
+
+		// liste des CT à récupérer
+		return excel.getBindings().stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
+	}
+
+	public void setMapTestCase(List<Long> xdistinctCT) {
+		excel.setMapCT(reqCollector.findTestCase(xdistinctCT));
+		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + excel.getMapCT().size());
+
+		// mise à jour de la liste des Step dans les CTs
+		TestCase tcTmp;
+		for (Long testCaseId : excel.getMapCT().keySet()) {
+			tcTmp = excel.getMapCT().get(testCaseId);
+			tcTmp.setOrderedStepIds(reqCollector.findStepIdsByTestCaseId(testCaseId));
+			excel.getMapCT().put(testCaseId, tcTmp);
+		}
+	}
+
+	public void findTestCaseCoeurDeMetier() {
+		perimeterData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
+		LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' "
+				+ perimeterData.getTclnIdFolderMetier());
+		perimeterData.setIdsCasDeTestCoeurDeMetier(
+				reqCollector.findCoeurMetierIdsByRootTcln_Id(perimeterData.getTclnIdFolderMetier()));
+		LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: "
+				+ perimeterData.getIdsCasDeTestCoeurDeMetier().size());
+		// Mise à jour de la propriété isCOeurDeMetier dans TestCase
+		TestCase tmp = null;
+		Map<Long, TestCase> map = excel.getMapCT();
+		for (Long coeurDeMetierId : perimeterData.getIdsCasDeTestCoeurDeMetier()) {
+			if (map.containsKey(coeurDeMetierId)) {
+				tmp = map.get(coeurDeMetierId);
+				tmp.setIsCoeurDeMetier(true);
+				map.put(coeurDeMetierId, tmp);
+			}
+		}
+	}
+
+	public void setStepsData(List<Long> distinctCT) {
+		excel.setSteps(reqCollector.findSteps(distinctCT));
+		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + excel.getSteps().size());
+		// lecture des references des pas de test (CUF)
+		String ref_step = "";
+		Step currentStep = null;
+		int nbRef = 0;
+		for (Long stepId : excel.getSteps().keySet()) {
+			// TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus
+			// d'une reference
+//		nbRef = reqCollector.countStepReferenceByStepID(stepId);
+//		if (nbRef!=1) {
+//			//pb ...
+//		}
+			ref_step = reqCollector.findStepReferenceByTestStepId(stepId);
+			currentStep = excel.getSteps().get(stepId);
+			currentStep.setReference(ref_step);
+			excel.getSteps().put(stepId, currentStep);
+		}
+	}
 
 }

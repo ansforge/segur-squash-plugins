@@ -13,8 +13,6 @@ import lombok.Setter;
 @Setter
 public class ReqModel {
 
-	//id de requirement version
-//	private String sResId;
 	
 	private Long resId;
 	private Long projectId;
@@ -25,7 +23,6 @@ public class ReqModel {
 	
 	private ExcelData excelData = new ExcelData();
 	
-	//tmp?
 	private List<Cuf> cufs;
 			
 	//calcul�e
@@ -98,10 +95,6 @@ public class ReqModel {
 		}
 	}
 	
-//	public String calculFonction() {
-//		return "TODO: parse du CUF fonction = ";
-//	}
-//	
 	public void calculExigenceConditionelle(String labelProfil) {
 		if (labelProfil.equalsIgnoreCase(Constantes.PROFIL_GENERAL)) {
 			excelData.setBoolExigenceConditionnelle_1(Constantes.NON);

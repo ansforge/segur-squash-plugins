@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Milestone {
-	
+
 	private String milestoneName;
 	private String milestoneStatus;
-	
+
 }

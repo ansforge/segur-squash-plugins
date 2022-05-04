@@ -90,7 +90,7 @@ public interface RequirementsCollector {
 	
 	public Map<Long, TestCase> findTestCase(List<Long> tc_ids) ;
 	
-	public List<Long> findStepsByTestCaseId(Long tc_id) ;
+	public List<Long> findStepIdsByTestCaseId(Long tc_id) ;
 	
 	public Map<Long, Step> findSteps(List<Long> tc_ids);
 	

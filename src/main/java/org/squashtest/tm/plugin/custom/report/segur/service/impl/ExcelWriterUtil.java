@@ -1,7 +1,6 @@
 package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,26 +15,22 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
-import org.squashtest.tm.plugin.custom.report.segur.model.TestCaseStep;
 
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.Setter;
 
 @Component
 public class ExcelWriterUtil {
@@ -85,15 +80,29 @@ public class ExcelWriterUtil {
 	// index de la ligne à créer
 	private int nextLine = REM_FIRST_EMPTY_LINE;
 
-	//
-//	private ExcelData data = null;
-	
+	// données extraites de la base de données => à insérer dans excel
+	@Getter
+	@Setter
+	List<ReqModel> reqs;
+
+	@Getter
+	@Setter
+	List<ReqStepBinding> bindings;
+
+	@Getter
+	@Setter
+	Map<Long, TestCase> mapCT;
+
+	@Getter
+	@Setter
+	Map<Long, Step> steps;
+
+	// references réutilisées
 	private Cell cell = null;
 	private Row row = null;
 	private List<Long> bindingCT = null;
 	private Sheet sheet = null;
 	private TestCase testCase = null;
-//	private List<Long> bindingSteps = null;
 	private Step currentStep = null;
 
 	@Getter
@@ -156,8 +165,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void putDatasInWorkbook(String milestoneStatus, List<ReqModel> datas, List<ReqStepBinding> liste,
-			Map<Long, TestCase> mapCT, Map<Long, Step> steps, boolean boolPrebub) {
+	public void putDatasInWorkbook(String milestoneStatus, boolean boolPrebub) {
 
 		workbook.getSheetName(0);
 		Sheet sheet = workbook.getSheetAt(0);
@@ -168,7 +176,7 @@ public class ExcelWriterUtil {
 		style.setWrapText(true);
 
 		if (boolPrebub) {
-	//	removePrepubColumns(sheet);
+			// removePrepubColumns(sheet);
 			addPrepubHeaders(sheet);
 		}
 
@@ -177,14 +185,11 @@ public class ExcelWriterUtil {
 		// ecriture des données
 		nextLine = REM_FIRST_EMPTY_LINE;
 
-		// TODO voir passage de la row courrante entre les methodes writeExigencePart,
-		// writeCaseTestPart
-
 		// boucle sur les exigences
-		for (ReqModel req : datas) {
+		for (ReqModel req : reqs) {
 
 			// extraire les CTs liés de la map du binding
-			bindingCT = liste.stream().filter(p -> p.getResId().equals(req.getResId())).map(val -> val.getTclnId())
+			bindingCT = bindings.stream().filter(p -> p.getResId().equals(req.getResId())).map(val -> val.getTclnId())
 					.distinct().collect(Collectors.toList());
 
 			if (bindingCT.isEmpty()) {
@@ -197,31 +202,28 @@ public class ExcelWriterUtil {
 				testCase = mapCT.get(tcID);
 				// on ecrit (ou réecrit) les colonnes sur les exigences
 				writeExigencePart(req.getExcelData(), sheet, nextLine);
-				
+
 				// liste des steps pour l'exigence ET le cas de test courant
-				if (testCase.getIsCoeurDeMetier()) 
-				{
-				
+				if (testCase.getIsCoeurDeMetier()) {
+
+					// TODO onglet coeur de métier => lecture des steps dans le binding
 //				bindingSteps = liste.stream().filter(p -> p.getResId().equals(req.getResId()))
 //						.map(val -> val.getStepId()).distinct().collect(Collectors.toList());
-				writeCaseTestPartCoeurDeMetier(testCase, null, steps);
-				}
-				else { // non coeur de métier => on prends tous les steps du CT
+					writeCaseTestPartCoeurDeMetier(testCase, null, steps);
+				} else { // non coeur de métier => on prends tous les steps du CT
 					writeCaseTestPart(testCase, steps);
 				}
 
-				
-				
 				nextLine += 1;
 			}
 
 		} // exigences
-	
-		LOGGER.error(" **************  fin remplissage du woorkbook: " + workbook);
+
+		LOGGER.error("  fin remplissage du woorkbook: " + workbook);
 	}
-	
+
 	public void addPrepubHeaders(Sheet sheet) {
-		
+
 		Row refrow = sheet.getRow(0);
 		Cell refcell = refrow.getCell(REM_COLUMN_SCENARIO_CONFORMITE);
 		CellStyle style = refcell.getCellStyle();
@@ -233,59 +235,33 @@ public class ExcelWriterUtil {
 		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST, "référence cas de test", style);
 		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE, "référence exigence socle", style);
 		addHeadColumnPrepub(refrow, PREPUB_COLUMN_POINTS_DE_VERIF, "points de vérification", style);
-			
+
 		refrow = sheet.getRow(1);
 		refcell = refrow.getCell(REM_COLUMN_SCENARIO_CONFORMITE);
 		style = refcell.getCellStyle();
-		addHeadColumnPrepub(refrow, PREPUB_COLUMN_BON_POUR_PUBLICATION,String.valueOf(PREPUB_COLUMN_BON_POUR_PUBLICATION +1), style);
-		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE,String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE +1 ) , style);
-		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST, String.valueOf(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST +1 ), style);
-		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE, String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE +1), style);
-		addHeadColumnPrepub(refrow, PREPUB_COLUMN_POINTS_DE_VERIF, String.valueOf(PREPUB_COLUMN_POINTS_DE_VERIF), style);			
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_BON_POUR_PUBLICATION,
+				String.valueOf(PREPUB_COLUMN_BON_POUR_PUBLICATION + 1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE,
+				String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE + 1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST,
+				String.valueOf(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE,
+				String.valueOf(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1), style);
+		addHeadColumnPrepub(refrow, PREPUB_COLUMN_POINTS_DE_VERIF, String.valueOf(PREPUB_COLUMN_POINTS_DE_VERIF),
+				style);
 	}
 
-	//rename generic => addCell ? ...
 	public void addHeadColumnPrepub(Row targetRow, int columnIndex, String label, CellStyle style) {
 		Cell newcell = targetRow.createCell(columnIndex);
 		newcell.setCellStyle(style);
 		newcell.setCellValue(label);
 	}
 
-	
-//	public void removePrepubColumns(Sheet sheet) {
-//		LOGGER.error("PREPUB_COLUMN_BON_POUR_PUBLICATION " + PREPUB_COLUMN_BON_POUR_PUBLICATION);
-//		deleteColumns(sheet, PREPUB_COLUMN_BON_POUR_PUBLICATION);
-//		LOGGER.error("PREPUB_COLUMN_POINTS_DE_VERIF " + PREPUB_COLUMN_POINTS_DE_VERIF);
-//		deleteColumns(sheet, PREPUB_COLUMN_POINTS_DE_VERIF);
-//		LOGGER.error("PREPUB_COLUMN_REFERENCE_CAS_DE_TEST " + PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
-//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
-//		LOGGER.error("PREPUB_COLUMN_REFERENCE_EXIGENCE " + PREPUB_COLUMN_REFERENCE_EXIGENCE);
-//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_EXIGENCE);
-//		LOGGER.error("PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE " + PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-//		deleteColumns(sheet, PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-//		
-//	}
-
-	
-//	public void deleteColumns(Sheet sheet, int columnIndex) {
-//	    for (Row row : sheet) {
-//	    	LOGGER.error("row NUM" + row.getRowNum());
-//	        int j = 0;
-//
-//	        for (Cell cell : row) {
-//	            if (j >= columnIndex) {
-//	                row.removeCell(cell);
-//	            }
-//	            j++;
-//	        }
-//	    }
-//	}
-	
 	public void writeExigencePart(ExcelData data, Sheet sheet, int nextline) {
 		// ecriture des données
 
 		row = sheet.createRow(nextLine);
-		// row.setRowStyle(style); ça marche pas ...
+		// row.setRowStyle(style);
 
 		cell = row.createCell(REM_COLUMN_CONDITIONNELLE);
 		cell.setCellValue(data.getBoolExigenceConditionnelle_1());
@@ -316,25 +292,22 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void writeCaseTestPart(TestCase testcase,  Map<Long, Step> steps) {
+	public void writeCaseTestPart(TestCase testcase, Map<Long, Step> steps) {
 		// ecriture des données
 
 		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
 		cell.setCellValue(testcase.getReference());
 
-		//cas des CTs non coeur de métier
+		// cas des CTs non coeur de métier
 		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
-		cell.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n Description: \n  "
-				+ Parser.convertHTMLtoString(testcase.getDescription()));
+		cell.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite())
+				+ "\n Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
-		// TODO trier les steps à partir du StepOrder ....
+		// les steps sont ordonnées dans la liste à partir du StepOrder
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
 		for (Long stepId : testcase.getOrderedStepIds()) {
-//			LOGGER.error(" ******** BUG STEP stepId:." + stepId);
-//			LOGGER.error(" ******** BUG STEP map steps" + steps);
 			currentStep = steps.get(stepId);
-//			LOGGER.error(" ******** BUG cuurentStep expectedResult" + currentStep.getExpectedResult());
 
 			cell = row.createCell(currentExcelColumn);
 			cell.setCellValue(currentStep.getReference());
@@ -346,16 +319,15 @@ public class ExcelWriterUtil {
 		}
 
 	}
-	
-	
-	public void writeCaseTestPartCoeurDeMetier (TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps) {
+
+	public void writeCaseTestPartCoeurDeMetier(TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps) {
 		cell = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
 		cell.setCellValue(testcase.getReference());
 
-		//cas des CTs  coeur de métier
+		// cas des CTs coeur de métier
 		cell = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
 		cell.setCellValue(" Cas de Test Coeur de métier ... ");
-		//TODO cf. SFD
+		// TODO cf. SFD
 	}
 
 	public static File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
@@ -375,7 +347,6 @@ public class ExcelWriterUtil {
 	public static String getTrigramProject(String projectName) {
 
 		String trigram = "";
-
 		// CH_ANN_xxxxx SC_ANN_xxx ou prefix_ANN_xxxxxxxxxxx
 		String[] frags = projectName.split(UNDERSCORE);
 		if ((frags.length < 3) || (frags[1].length() != 3)) {
