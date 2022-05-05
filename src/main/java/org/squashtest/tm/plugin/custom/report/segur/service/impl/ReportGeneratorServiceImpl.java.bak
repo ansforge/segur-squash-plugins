@@ -196,14 +196,23 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
 		// custom_field_value_option
+		ReqModel exigence = null;
 		List<ExcelData> datas = new ArrayList<ExcelData>();
 		for (Long res_id : reqKetSet) {
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
-			reqs.get(res_id).setCufs(cufs);
-			// mise à jour des champs de ExcelData pour l'exigence
-			datas.add(reqs.get(res_id).updateData());			
+//			reqs.get(res_id).setCufs(cufs);
+//			// mise à jour des champs de ExcelData pour l'exigence
+//			reqs.get(res_id).updateData();
+			
+			//4mai ReqModel
+			exigence = reqs.get(res_id);
+			ExcelData excelData = new ExcelData();
+			
+			datas.add(excelData);
+			
 		}
 
+	//	excel.setReqs(new ArrayList<ReqModel>(reqs.values()));
 		excel.setReqs(datas);
 		return reqKetSet;
 	}

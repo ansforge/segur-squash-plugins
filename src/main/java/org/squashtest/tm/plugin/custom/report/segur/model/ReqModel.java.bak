@@ -31,7 +31,7 @@ public class ReqModel {
 	private String idSection;
 	private String section;
 	
-//	private Traceur traceur;
+	private Traceur traceur;
 	
 	
 	public ReqModel( Long resId, String reference,
@@ -44,12 +44,8 @@ public class ReqModel {
 		this.requirementStatus = requirementStatus;
 	}
 	
-	 //public Exceldata updateData (Traceur traceur) {	
-		public ExcelData updateData () {
-
-		//id nécessaire pour lecture des liens exigence-CTs-(steps)
-		excelData.setResId(resId);	
-			
+	public Exceldata updateData (Traceur traceur) {
+		this.traceur = traceur;
 		//les cufs ont �t� lus en BDD, on met � jour "excelData"
 
 		Cuf rawProfil =  findSpecificCuf(Constantes.PROFIL);
@@ -79,7 +75,6 @@ public class ReqModel {
 	
 		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description)); 
 		
-		return excelData;
 	}
 	
 	public Cuf findSpecificCuf(String cufCode) {

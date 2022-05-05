@@ -97,7 +97,7 @@ public class ExcelWriterUtil {
 	// données extraites de la base de données => à insérer dans excel
 	@Getter
 	@Setter
-	List<ExcelData> reqs;
+	List<ReqModel> reqs;
 
 	@Getter
 	@Setter
@@ -200,14 +200,14 @@ public class ExcelWriterUtil {
 		nextLine = REM_FIRST_EMPTY_LINE;
 
 		// boucle sur les exigences
-		for (ExcelData req : reqs) {
+		for (ReqModel req : reqs) {
 
 			// extraire les CTs liés de la map du binding
 			bindingCT = bindings.stream().filter(p -> p.getResId().equals(req.getResId())).map(val -> val.getTclnId())
 					.distinct().collect(Collectors.toList());
 
 			if (bindingCT.isEmpty()) {
-				writeExigencePart(req, sheet, nextLine);
+				writeExigencePart(req.getExcelData(), sheet, nextLine);
 				nextLine += 1;
 			}
 
@@ -215,7 +215,7 @@ public class ExcelWriterUtil {
 			for (Long tcID : bindingCT) {
 				testCase = mapCT.get(tcID);
 				// on ecrit (ou réecrit) les colonnes sur les exigences
-				writeExigencePart(req, sheet, nextLine);
+				writeExigencePart(req.getExcelData(), sheet, nextLine);
 
 				// liste des steps pour l'exigence ET le cas de test courant
 				if (testCase.getIsCoeurDeMetier()) {

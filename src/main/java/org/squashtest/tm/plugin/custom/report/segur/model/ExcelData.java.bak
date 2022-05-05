@@ -10,9 +10,6 @@ public class ExcelData {
 	/* ********************************************** */
 	// Données pour la partie exigence du template excel
 	/* ********************************************** */
-	//non excel mais nécessaire pour le binding
-	private Long resId;
-	
 	// Donn�e calcul�e NON l'exigence est rattach�e au profil 'G�n�ral' (CUF)
 	private String boolExigenceConditionnelle_1;
 
@@ -43,5 +40,8 @@ public class ExcelData {
 	// description texte RTE (html � parser en BDD TODO � remplacer par CEllRich?
 	private String enonceExigence_9;
 
+	// R�f�rence du cas de test TODO => liste...de CT contenant une liste de pas de
+	// test
+	private String numeroScenario_10;
 
 }
