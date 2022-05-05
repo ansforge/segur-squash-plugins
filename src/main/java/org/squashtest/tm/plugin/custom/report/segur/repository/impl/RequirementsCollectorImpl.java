@@ -217,7 +217,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //le nombre de pas de test liés à une exigence se calcule à partir de => List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);		
 		return dsl
 				.select(TEST_CASE.TCLN_ID, TEST_CASE.REFERENCE, TEST_CASE.PREREQUISITE,
-						TEST_CASE_LIBRARY_NODE.DESCRIPTION)
+						TEST_CASE_LIBRARY_NODE.DESCRIPTION,  TEST_CASE.TC_STATUS)
 				.from(TEST_CASE).innerJoin(TEST_CASE_LIBRARY_NODE)
 				.on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID)).where(TEST_CASE.TCLN_ID.in(tc_ids)).fetch()
 				.intoMap(TEST_CASE.TCLN_ID, TestCase.class);

@@ -45,5 +45,7 @@ public class ExcelData {
 	// description texte RTE (html � parser en BDD TODO � remplacer par CEllRich?
 	private String enonceExigence_9;
 
-
+    //pour les colonnes de prépublication
+	private String reqStatus;
+	private String reference;
 }

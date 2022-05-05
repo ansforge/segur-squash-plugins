@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Message;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
@@ -209,9 +210,18 @@ public class ExcelWriterUtil {
 
 			if (bindingCT.isEmpty()) {
 				writeExigencePart(req, sheet, nextLine);
+				//si prépublication => MAJ des données sur l'exigence
+				if (boolPrebub) {
+					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
+					cell.setCellValue(req.getReference());
+					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+					cell.setCellValue(" a ");
+				}
 				nextLine += 1;
 			}
 
+			
+			
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
 				testCase = mapCT.get(tcID);
@@ -229,6 +239,28 @@ public class ExcelWriterUtil {
 					writeCaseTestPart(testCase, steps);
 				}
 
+				//colonnes prépublication nécessitant le CT
+				if (boolPrebub) {
+					cell = row.createCell(PREPUB_COLUMN_BON_POUR_PUBLICATION);
+					if ((req.getReqStatus().equals(Constantes.STATUS_APPROVED)) && 
+							(testCase.getTcStatus().equals(Constantes.STATUS_APPROVED)))
+							{
+							cell.setCellValue(" X ");
+							}
+					else
+					{
+						cell.setCellValue(" ");
+					}
+					
+					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
+					cell.setCellValue(req.getReference());
+					cell = row.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
+					cell.setCellValue(testCase.getReference());
+					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+					cell.setCellValue(" a ");
+					cell = row.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
+					cell.setCellValue(" ... ");										
+				}
 				nextLine += 1;
 			}
 

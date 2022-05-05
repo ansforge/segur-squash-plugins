@@ -1,6 +1,5 @@
 package org.squashtest.tm.plugin.custom.report.segur.model;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,7 +7,6 @@ import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
-import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -73,6 +71,10 @@ public class ReqModel {
 		excelData.setNumeroExigence_8(reference);
 
 		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description));
+		
+		//colonnes prepublications:
+		excelData.setReqStatus(requirementStatus);
+		excelData.setReference(reference);
 
 		return excelData;
 	}

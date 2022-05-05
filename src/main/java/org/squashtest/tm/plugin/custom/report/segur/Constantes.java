@@ -26,6 +26,7 @@ public class Constantes {
 	// valeurs BDD
 	public final static String MILESTONE_LOCKED = "LOCKED";
 	public final static String FOLDER_CT_METIER = "_METIER";
+	public final static String STATUS_APPROVED = "APPROVED";
 
 	// valeurs affich�es dans Excel
 	public final static String OUI = "OUI";

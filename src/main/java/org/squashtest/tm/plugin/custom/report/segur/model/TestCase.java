@@ -19,15 +19,18 @@ public class TestCase {
 	
 	String description;
 	
+	String tcStatus;
+	
 	Boolean isCoeurDeMetier = false;
 	
 	//Steps du TestCase ordonnés
 	List<Long> orderedStepIds;
 	
-	public TestCase(Long tcln_id, String reference, String prerequisite, String description) {
+	public TestCase(Long tcln_id, String reference, String prerequisite, String description, String tcStatus) {
 		this.tcln_id = tcln_id;
 		this.reference = reference;
 		this.prerequisite = prerequisite;
-		this.description = description;				
+		this.description = description;		
+		this.tcStatus = tcStatus;
 	}
 }
