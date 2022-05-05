@@ -1,5 +1,7 @@
 package org.squashtest.tm.plugin.custom.report.segur.model;
 
+import org.squashtest.tm.plugin.custom.report.segur.Constantes;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +16,7 @@ public class ExcelData {
 	private Long resId;
 	
 	// Donn�e calcul�e NON l'exigence est rattach�e au profil 'G�n�ral' (CUF)
-	private String boolExigenceConditionnelle_1;
+	private String boolExigenceConditionnelle_1 = Constantes.NON_RENSEIGNE;
 
 	// CUF Profil
 	private String profil_2;

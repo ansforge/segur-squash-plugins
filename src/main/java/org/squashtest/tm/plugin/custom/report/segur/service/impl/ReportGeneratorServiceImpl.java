@@ -190,7 +190,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		Set<Long> reqKetSet = reqs.keySet();
 		if (reqKetSet.size() ==0) {
-			traceur.addMessage(Level.WARNING, "aucune exigence trouvée pour le projetId = "
+			traceur.addMessage(Level.WARNING, "", "aucune exigence trouvée pour le projetId = "
 					+ selectedProjectId + " et le jalon id = " + selectedMilestonesId);
 		}
 
@@ -201,7 +201,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
 			reqs.get(res_id).setCufs(cufs);
 			// mise à jour des champs de ExcelData pour l'exigence
-			datas.add(reqs.get(res_id).updateData());			
+			datas.add(reqs.get(res_id).updateData(traceur));			
 		}
 
 		excel.setReqs(datas);

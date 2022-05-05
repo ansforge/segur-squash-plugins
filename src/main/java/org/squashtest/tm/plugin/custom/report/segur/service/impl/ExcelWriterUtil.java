@@ -89,7 +89,8 @@ public class ExcelWriterUtil {
 //	private static int COUNTER_MSG = 0;
 //	private static final int MAX_MSG = 30;
 	public static final int ERROR_COLUMN_LEVEL = 0;
-	public static final int ERROR_COLUMN_MSG = 1;
+	public static final int ERROR_COLUMN_RESID = 1;
+	public static final int ERROR_COLUMN_MSG = 2;
 
 	// index de la ligne à créer
 	private int nextLine = REM_FIRST_EMPTY_LINE;
@@ -391,6 +392,8 @@ public class ExcelWriterUtil {
 				  row = errorSheet.createRow(line);
 				  cell = row.createCell(ERROR_COLUMN_LEVEL);
 				  cell.setCellValue(msgLine.getLevel().name());
+				  cell = row.createCell(ERROR_COLUMN_RESID);
+				  cell.setCellValue(msgLine.getResId());
 				  cell = row.createCell(ERROR_COLUMN_MSG);
 				  cell.setCellValue(msgLine.getMsg());	  
 				  line++;

@@ -14,7 +14,7 @@ public class Constantes {
 	public final static String NATPREUVE = "NATPREUVE";
 	public final static String VERIF_PREUVE = "VERIF_PREUVE";
 
-	public final static String PROFIL_GENERAL = "G�n�ral";
+	public final static String PROFIL_GENERAL = "Général";
 
 	// CUFs
 	public final static String CUF_TYPE_OBJECT_REQ = "REQUIREMENT_VERSION";
@@ -30,6 +30,7 @@ public class Constantes {
 	// valeurs affich�es dans Excel
 	public final static String OUI = "OUI";
 	public final static String NON = "NON";
+	public final static String NON_RENSEIGNE = "---";
 
 	public final static String CATEGORIE_EXIGENCE = "EXIGENCE";
 	public final static String CATEGORIE_PRECONISATION = "PRECONISATION";
