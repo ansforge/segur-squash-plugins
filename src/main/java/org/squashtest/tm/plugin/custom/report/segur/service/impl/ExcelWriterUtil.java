@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -30,7 +29,6 @@ import org.squashtest.tm.plugin.custom.report.segur.Message;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
@@ -43,7 +41,7 @@ public class ExcelWriterUtil {
 
 	@Autowired
 	Traceur traceur;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterUtil.class);
 
 	// nom et chemin du template dans src/main/resources
@@ -59,7 +57,7 @@ public class ExcelWriterUtil {
 	// onglets
 	public static final int REM_SHEET_INDEX = 0;
 	public static final int METIER_SHEET_INDEX = 1;
-	//public static final int ERROR_SHEET_INDEX = 2;
+	// public static final int ERROR_SHEET_INDEX = 2;
 	public static final String ERROR_SHEET_NAME = "WARNING-ERROR";
 
 	// onglet 0
@@ -79,15 +77,15 @@ public class ExcelWriterUtil {
 	public static final int MAX_STEP_NUMBER = 10;
 	public static final int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
-	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
+	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
+			+ 1;
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
 	public static final int PREPUB_COLUMN_REFERENCE_CAS_DE_TEST = PREPUB_COLUMN_REFERENCE_EXIGENCE + 1;
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE = PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1;
 	public static final int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
 
 	private XSSFCellStyle style = null;
-	
-	
+
 //	private List<Message> msg = new ArrayList<Message>();
 //	private static int COUNTER_MSG = 0;
 //	private static final int MAX_MSG = 30;
@@ -114,7 +112,7 @@ public class ExcelWriterUtil {
 	@Getter
 	@Setter
 	Map<Long, Step> steps;
-	
+
 	// references réutilisées
 	private Cell cell = null;
 	private Row row = null;
@@ -125,7 +123,7 @@ public class ExcelWriterUtil {
 
 	@Getter
 	private XSSFWorkbook workbook = null;
-	
+
 	public String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
 
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
@@ -211,7 +209,7 @@ public class ExcelWriterUtil {
 
 			if (bindingCT.isEmpty()) {
 				writeExigencePart(req, sheet, nextLine);
-				//si prépublication => MAJ des données sur l'exigence
+				// si prépublication => MAJ des données sur l'exigence
 				if (boolPrebub) {
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					cell.setCellValue(req.getReference());
@@ -221,8 +219,6 @@ public class ExcelWriterUtil {
 				nextLine += 1;
 			}
 
-			
-			
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
 				testCase = mapCT.get(tcID);
@@ -240,19 +236,16 @@ public class ExcelWriterUtil {
 					writeCaseTestPart(testCase, steps);
 				}
 
-				//colonnes prépublication nécessitant le CT
+				// colonnes prépublication nécessitant le CT
 				if (boolPrebub) {
 					cell = row.createCell(PREPUB_COLUMN_BON_POUR_PUBLICATION);
-					if ((req.getReqStatus().equals(Constantes.STATUS_APPROVED)) && 
-							(testCase.getTcStatus().equals(Constantes.STATUS_APPROVED)))
-							{
-							cell.setCellValue(" X ");
-							}
-					else
-					{
+					if ((req.getReqStatus().equals(Constantes.STATUS_APPROVED))
+							&& (testCase.getTcStatus().equals(Constantes.STATUS_APPROVED))) {
+						cell.setCellValue(" X ");
+					} else {
 						cell.setCellValue(" ");
 					}
-					
+
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					cell.setCellValue(req.getReference());
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
@@ -260,7 +253,7 @@ public class ExcelWriterUtil {
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
 					cell.setCellValue(" todo ... ");
 					cell = row.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
-					cell.setCellValue(testCase.getPointsDeVerification());										
+					cell.setCellValue(testCase.getPointsDeVerification());
 				}
 				nextLine += 1;
 			}
@@ -268,9 +261,9 @@ public class ExcelWriterUtil {
 		} // exigences
 
 		writeErrorSheet();
-		
+
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
-		
+
 		if (!boolPrebub) {
 			lockWorkbook(workbook);
 		}
@@ -413,66 +406,67 @@ public class ExcelWriterUtil {
 		return trigram;
 	}
 
-
-	
 	public void writeErrorSheet() {
 		List<Message> msg = traceur.getMsg();
 		if (msg.size() != 0) {
-			  XSSFSheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
-			  int line = 0;
-			  row = errorSheet.createRow(line);
-			  cell = row.createCell(ERROR_COLUMN_MSG);
-			  cell.setCellValue("ATTENTION, le nombre maximum d'erreurs/warnings affichés est : " + Traceur.getMAX_MSG());
-			  line++;
-			  
-			  for (Message msgLine : msg) {
-				  row = errorSheet.createRow(line);
-				  cell = row.createCell(ERROR_COLUMN_LEVEL);
-				  cell.setCellValue(msgLine.getLevel().name());
-				  cell = row.createCell(ERROR_COLUMN_RESID);
-				  cell.setCellValue(msgLine.getResId());
-				  cell = row.createCell(ERROR_COLUMN_MSG);
-				  cell.setCellValue(msgLine.getMsg());	  
-				  line++;
+			XSSFSheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
+			int line = 0;
+			row = errorSheet.createRow(line);
+			cell = row.createCell(ERROR_COLUMN_MSG);
+			cell.setCellValue("ATTENTION, le nombre maximum d'erreurs/warnings affichés est : " + Traceur.getMAX_MSG());
+			line++;
+
+			for (Message msgLine : msg) {
+				row = errorSheet.createRow(line);
+				cell = row.createCell(ERROR_COLUMN_LEVEL);
+				cell.setCellValue(msgLine.getLevel().name());
+				cell = row.createCell(ERROR_COLUMN_RESID);
+				cell.setCellValue(msgLine.getResId());
+				cell = row.createCell(ERROR_COLUMN_MSG);
+				cell.setCellValue(msgLine.getMsg());
+				line++;
 			}
 		}
 	}
-	
-	public void lockWorkbook( XSSFWorkbook workbookx) {
+
+	public void lockWorkbook(XSSFWorkbook workbookx) {
 		LOGGER.error("Apel pour lock d'une feuille du workbook");
-		 String password= "abcd";
-		    byte[] pwdBytes = null;
+		String password = "abcd";
+		byte[] pwdBytes = null;
 //		    try {
 //		        pwdBytes  = Hex.decodeHex(password.toCharArray());
 //		    } catch (DecoderException e) {
 //		        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //		        LOGGER.error("erreur sur encodage du password");
 //		    }
-	//	    XSSFSheet sheet =  workbookx.getSheetAt(0);
-		    lockSheet(workbookx.getSheetAt(0));
-		    lockSheet(workbookx.getSheetAt(1));
-		   
+		// XSSFSheet sheet = workbookx.getSheetAt(0);
+		lockSheet(workbookx.getSheetAt(0));
+		lockSheet(workbookx.getSheetAt(1));
 
-		    workbookx.lockStructure();
-		   // workbookx.lockWindows();
-		    workbookx.lockRevision();
+		workbookx.lockStructure();
+		// workbookx.lockWindows();
+		workbookx.lockRevision();
 
 	}
-	
+
 	public void lockSheet(XSSFSheet sheet) {
-		 sheet.lockDeleteRows(true);
-		    sheet.lockDeleteColumns(true);
-		    sheet.lockInsertColumns(true);
-		    sheet.lockInsertRows(true);
-		    
-		    
-		    sheet.lockSort(false);
-		    sheet.lockFormatCells(false);
-		    sheet.lockFormatColumns(false);
-		    sheet.lockFormatRows(false);
-		    
-		  //  sheet.protectSheet(password);
-		    
-		    sheet.enableLocking();
+		sheet.lockDeleteRows(true);
+		sheet.lockDeleteColumns(true);
+		sheet.lockInsertColumns(true);
+		sheet.lockInsertRows(true);
+
+		sheet.lockSort(false);
+		sheet.lockFormatCells(false);
+		sheet.lockFormatColumns(false);
+		sheet.lockFormatRows(false);
+
+		sheet.protectSheet(generateRandomPassword());
+
+		sheet.enableLocking();
 	}
+
+	public String generateRandomPassword() {
+		return RandomStringUtils.random(255, 33, 122, false, false);
+	}
+
 }
