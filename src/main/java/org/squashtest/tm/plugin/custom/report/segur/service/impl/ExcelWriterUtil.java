@@ -257,9 +257,9 @@ public class ExcelWriterUtil {
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
 					cell.setCellValue(testCase.getReference());
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-					cell.setCellValue(" a ");
+					cell.setCellValue(" todo ... ");
 					cell = row.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
-					cell.setCellValue(" ... ");										
+					cell.setCellValue(testCase.getPointsDeVerification());										
 				}
 				nextLine += 1;
 			}

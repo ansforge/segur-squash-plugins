@@ -22,6 +22,7 @@ public class Constantes {
 	public final static String CUF_TYPE_OBJECT_TEST_STEP = "TEST_STEP";
 	public final static String CUF_FIELD_TYPE_MSF = "MSF";
 	public final static String CUF_FIELD_TYPE_CF = "CF";
+	public final static String CUF_FIELD_TYPE_RTF = "RTF";
 
 	// valeurs BDD
 	public final static String MILESTONE_LOCKED = "LOCKED";

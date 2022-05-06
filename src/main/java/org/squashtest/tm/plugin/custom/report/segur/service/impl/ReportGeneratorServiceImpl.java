@@ -59,6 +59,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Level;
+import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
@@ -115,7 +116,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		setMapTestCase(distinctCT);
 
 		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
-		// mise à jour de la propriété dans de l'objet TestCase
+		// mise à jour de la propriété dans l'objet TestCase
 		findTestCaseCoeurDeMetier();
 
 		// lecture des données sur les steps
@@ -222,11 +223,26 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		// mise à jour de la liste des Step dans les CTs
 		TestCase tcTmp;
+		List<Long> ctSteps;
+		
 		for (Long testCaseId : excel.getMapCT().keySet()) {
 			tcTmp = excel.getMapCT().get(testCaseId);
-			tcTmp.setOrderedStepIds(reqCollector.findStepIdsByTestCaseId(testCaseId));
+			ctSteps = reqCollector.findStepIdsByTestCaseId(testCaseId);
+			tcTmp.setOrderedStepIds(ctSteps);
+			if (boolPrebub) {
+				LOGGER.error("lecture des points de verif");
+				List<String> ptsDeVerif = reqCollector.findPointsDeVerificationByTcStepsIds(ctSteps);
+				StringBuilder builder = new StringBuilder();
+				    for (String verif : ptsDeVerif) {
+				    	LOGGER.error(" verif: " + verif);
+				    	builder.append(Parser.convertHTMLtoString(verif));
+					}
+				    traceur.addMessage(Level.INFO, "", ".. " + builder.toString());
+				    tcTmp.setPointsDeVerification(builder.toString());
+			}	
+			//tcTmp.setOrderedStepIds(reqCollector.findStepIdsByTestCaseId(testCaseId));
 			excel.getMapCT().put(testCaseId, tcTmp);
-		}
+		}		
 	}
 
 	public void findTestCaseCoeurDeMetier() {

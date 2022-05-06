@@ -65,6 +65,8 @@ public interface RequirementsCollector {
 	//lecture de CUF de type 'CF' (valeur dans custom_field_value.value)
 //	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long resId);
 	
+	public List<String> findPointsDeVerificationByTcStepsIds(List<Long> steps); 
+	
 	public String findStepReferenceByTestStepId(Long testStepId);
 	
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);

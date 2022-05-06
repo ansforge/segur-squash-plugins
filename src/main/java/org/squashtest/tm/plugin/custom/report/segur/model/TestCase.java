@@ -26,6 +26,10 @@ public class TestCase {
 	//Steps du TestCase ordonnés
 	List<Long> orderedStepIds;
 	
+	//concatenation des CUfs pts de verif des step
+	//non renseigné publication
+	String pointsDeVerification;
+	
 	public TestCase(Long tcln_id, String reference, String prerequisite, String description, String tcStatus) {
 		this.tcln_id = tcln_id;
 		this.reference = reference;

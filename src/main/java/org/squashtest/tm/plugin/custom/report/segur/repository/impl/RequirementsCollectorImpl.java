@@ -118,37 +118,32 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 		return cufs;
 	}
 
-	// a supprimer? valable uniquement pour type CUF = 'CF' ...
-//	@Override
-//	public List<Cuf> findCUFsForTypeAndByEntityId(String entityType, Long resId) {
-//	
-//		List<Cuf> cufs = dsl
-//				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL)
-//				.from(CUSTOM_FIELD_VALUE)
-//				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
-//				
-//				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-//				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
-//				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
-//						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(resId))
-//				.fetchInto(Cuf.class);
-//
-//		return cufs;
-//	}
 
-//	@Override
-//	public List<Cuf> findCUFsTypeCFForEntityTypeAndByEntity(String entityType, Long entityId) {
-//		return dsl
-//				.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE.VALUE)
-//				.from(CUSTOM_FIELD_VALUE)
-//				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
-//				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-//				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityType))
-//				        .and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_CF))
-//						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityId))
-//				.fetchInto(Cuf.class);
-//
-//	}
+	@Override
+	public List<String> findPointsDeVerificationByTcStepsIds(List<Long> steps) {
+//		select cfv.large_value, tcs.step_order from custom_field_value cfv
+//		inner join custom_field_binding cfb on cfb.cfb_id = cfv.cfb_id
+//		inner join custom_field cf on cfb.cf_id = cf.cf_id
+//		inner join test_case_steps tcs on tcs.step_id = cfv.bound_entity_id
+//		where cfv.bound_entity_type ='TEST_STEP' and cfv.field_type = 'RTF'
+//		and cf.code='VERIF_PREUVE'
+//		and cfv.bound_entity_id in ('10754','10755', '10756')
+//		order by tcs.step_order ASC
+
+		return dsl
+				.select(CUSTOM_FIELD_VALUE.LARGE_VALUE)
+				.from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+				.innerJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.STEP_ID.eq(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID))
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_TEST_STEP))
+				        .and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_RTF))
+						.and(CUSTOM_FIELD.CODE.eq(Constantes.VERIF_PREUVE))
+						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.in(steps))
+				.orderBy(TEST_CASE_STEPS.STEP_ORDER.asc())
+				.fetchInto(String.class);
+		
+	}
 
 	@Override
 	public String findStepReferenceByTestStepId(Long testStepId) {

@@ -52,11 +52,11 @@ public class CufToExcelDataTest {
 	@Test
 	public void calculExigenceConditionelleTest() {
 		ReqModel reqModel = new  ReqModel(null,null,null,null,null);
-		reqModel.calculExigenceConditionelle("G�n�ral");
+		reqModel.calculExigenceConditionelle("Général");
 		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.NON);
-		reqModel.calculExigenceConditionelle("g�N�ral");
+		reqModel.calculExigenceConditionelle("général");
 		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.NON);
-		reqModel.calculExigenceConditionelle("quelquonque_g�n�ral");
+		reqModel.calculExigenceConditionelle("quelquonque_général");
 		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.OUI);		
 	}
 	
@@ -69,16 +69,16 @@ public class CufToExcelDataTest {
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("Exigence (Doit)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
-		reqModel.calculCategorieNature("�xigence (Doit)");
+		reqModel.calculCategorieNature("Éxigence (Doit)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
-		reqModel.calculCategorieNature("�xigence (Doit)");
+		reqModel.calculCategorieNature("éxigence (Doit)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		
-		reqModel.calculCategorieNature("pr�conisation (Peut)");
+		reqModel.calculCategorieNature("préconisation (Peut)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
 		reqModel.calculCategorieNature("preconisation (Peut)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
-		reqModel.calculCategorieNature("Pr�conisation (Peut)");
+		reqModel.calculCategorieNature("PrÉconisation (Peut)");
 		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
 
 

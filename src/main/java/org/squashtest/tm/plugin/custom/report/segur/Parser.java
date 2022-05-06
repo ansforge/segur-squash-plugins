@@ -48,10 +48,12 @@ public class Parser {
 	}
 
 	public static String convertHTMLtoString(String html) {
+		String tmp = "";
+		if (html == null || html.isEmpty()) { return tmp; };
 		Document doc = Jsoup.parseBodyFragment(html);
 		List<String> htmlFragment = new LinkedList<String>();
 		StringBuilder out = new StringBuilder();
-		String tmp = "";
+		
 		for (Node node : doc.body().childNodes()) {
 			tmp = node.toString();
 			tmp = tmp.replace("<br />", Constantes.CRLF);
