@@ -128,7 +128,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		// ecriture du workbook
 		excel.putDatasInWorkbook(perimeterData.getMilestoneStatus(), boolPrebub);
-
+		
 		fileName = excel.createOutputFileName(boolPrebub,
 				ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
 		return writeInFile(excel.getWorkbook(), fileName);
@@ -230,17 +230,13 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			ctSteps = reqCollector.findStepIdsByTestCaseId(testCaseId);
 			tcTmp.setOrderedStepIds(ctSteps);
 			if (boolPrebub) {
-				LOGGER.error("lecture des points de verif");
 				List<String> ptsDeVerif = reqCollector.findPointsDeVerificationByTcStepsIds(ctSteps);
 				StringBuilder builder = new StringBuilder();
 				    for (String verif : ptsDeVerif) {
-				    	LOGGER.error(" verif: " + verif);
 				    	builder.append(Parser.convertHTMLtoString(verif));
 					}
-				    traceur.addMessage(Level.INFO, "", ".. " + builder.toString());
 				    tcTmp.setPointsDeVerification(builder.toString());
 			}	
-			//tcTmp.setOrderedStepIds(reqCollector.findStepIdsByTestCaseId(testCaseId));
 			excel.getMapCT().put(testCaseId, tcTmp);
 		}		
 	}

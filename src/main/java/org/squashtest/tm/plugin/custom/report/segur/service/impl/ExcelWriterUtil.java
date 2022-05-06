@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +119,7 @@ public class ExcelWriterUtil {
 	private Cell cell = null;
 	private Row row = null;
 	private List<Long> bindingCT = null;
-	private Sheet sheet = null;
+	private XSSFSheet sheet = null;
 	private TestCase testCase = null;
 	private Step currentStep = null;
 
@@ -183,8 +185,7 @@ public class ExcelWriterUtil {
 
 	public void putDatasInWorkbook(String milestoneStatus, boolean boolPrebub) {
 
-		workbook.getSheetName(0);
-		Sheet sheet = workbook.getSheetAt(0);
+		XSSFSheet sheet = workbook.getSheetAt(0);
 
 		// essai autosize de la largeur des lignes
 		// global.. => XSSFCellStyle style pour ne pas avoir à le passer en argument ...
@@ -268,10 +269,14 @@ public class ExcelWriterUtil {
 
 		writeErrorSheet();
 		
-		LOGGER.error("  fin remplissage du woorkbook: " + workbook);
+		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
+		
+		if (!boolPrebub) {
+			lockWorkbook(workbook);
+		}
 	}
 
-	public void addPrepubHeaders(Sheet sheet) {
+	public void addPrepubHeaders(XSSFSheet sheet) {
 
 		Row refrow = sheet.getRow(0);
 		Cell refcell = refrow.getCell(REM_COLUMN_SCENARIO_CONFORMITE);
@@ -306,7 +311,7 @@ public class ExcelWriterUtil {
 		newcell.setCellValue(label);
 	}
 
-	public void writeExigencePart(ExcelData data, Sheet sheet, int nextline) {
+	public void writeExigencePart(ExcelData data, XSSFSheet sheet, int nextline) {
 		// ecriture des données
 
 		row = sheet.createRow(nextLine);
@@ -413,7 +418,7 @@ public class ExcelWriterUtil {
 	public void writeErrorSheet() {
 		List<Message> msg = traceur.getMsg();
 		if (msg.size() != 0) {
-			  Sheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
+			  XSSFSheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
 			  int line = 0;
 			  row = errorSheet.createRow(line);
 			  cell = row.createCell(ERROR_COLUMN_MSG);
@@ -431,5 +436,43 @@ public class ExcelWriterUtil {
 				  line++;
 			}
 		}
+	}
+	
+	public void lockWorkbook( XSSFWorkbook workbookx) {
+		LOGGER.error("Apel pour lock d'une feuille du workbook");
+		 String password= "abcd";
+		    byte[] pwdBytes = null;
+//		    try {
+//		        pwdBytes  = Hex.decodeHex(password.toCharArray());
+//		    } catch (DecoderException e) {
+//		        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//		        LOGGER.error("erreur sur encodage du password");
+//		    }
+	//	    XSSFSheet sheet =  workbookx.getSheetAt(0);
+		    lockSheet(workbookx.getSheetAt(0));
+		    lockSheet(workbookx.getSheetAt(1));
+		   
+
+		    workbookx.lockStructure();
+		   // workbookx.lockWindows();
+		    workbookx.lockRevision();
+
+	}
+	
+	public void lockSheet(XSSFSheet sheet) {
+		 sheet.lockDeleteRows(true);
+		    sheet.lockDeleteColumns(true);
+		    sheet.lockInsertColumns(true);
+		    sheet.lockInsertRows(true);
+		    
+		    
+		    sheet.lockSort(false);
+		    sheet.lockFormatCells(false);
+		    sheet.lockFormatColumns(false);
+		    sheet.lockFormatRows(false);
+		    
+		  //  sheet.protectSheet(password);
+		    
+		    sheet.enableLocking();
 	}
 }
