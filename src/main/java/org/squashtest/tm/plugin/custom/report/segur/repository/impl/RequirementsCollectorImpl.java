@@ -160,6 +160,16 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 	@Override
 	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
 
+//		select rv.RES_ID, rv.REFERENCE, rv.REQUIREMENT_STATUS, ili.LABEL as category, res.DESCRIPTION
+//		from REQUIREMENT r
+//		inner Join REQUIREMENT_LIBRARY_NODE rln on rln.RLN_ID = r.RLN_ID
+//		inner Join REQUIREMENT_VERSION rv on rv.REQUIREMENT_ID = rln.RLN_ID
+//		inner Join RESOURCE res on res.RES_ID = rv.RES_ID
+//		inner Join INFO_LIST_ITEM ili on ili.ITEM_ID = rv.CATEGORY
+//		inner Join MILESTONE_REQ_VERSION mrv on mrv.REQ_VERSION_ID = rv.RES_ID
+//		where rln.PROJECT_ID = '19'
+//				and mrv.MILESTONE_ID = '19'
+		
 		Map<Long, ReqModel> reqList = dsl
 				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
 						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),

@@ -45,6 +45,7 @@ public class Constantes {
 
 	public final static String PREFIX_PROJET_SOCLE = "SC";
 	public final static String PREFIX_PROJET_CHANTIER = "CH";
+	public final static int PREFIX_PROJET__METIER_SIZE = 3;
 	// public final static String PREFIX_PROJET_PROJET = "";
 
 	// voir aussi constantes définies dans ExcelWriterUtil => nom du template,

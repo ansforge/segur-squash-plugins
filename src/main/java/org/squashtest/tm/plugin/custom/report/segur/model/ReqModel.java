@@ -3,10 +3,13 @@ package org.squashtest.tm.plugin.custom.report.segur.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
+import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +20,7 @@ public class ReqModel {
 
 	private Long resId;
 	private Long projectId;
-	private String categorie;
+	private String category;
 	private String description;
 	private String reference;
 	private String requirementStatus;
@@ -31,14 +34,19 @@ public class ReqModel {
 	private String section;
 
 	private Traceur traceur;
+//	private static final Logger LOGGER = LoggerFactory.getLogger(ReqModel.class);
 
-	public ReqModel(Long resId, String reference, String requirementStatus, String categorie, String description) {
+	public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
 		super();
 		this.resId = resId;
-		this.categorie = categorie;
+		this.category = category;
 		this.description = description;
 		this.reference = reference;
 		this.requirementStatus = requirementStatus;
+	}
+
+	public ReqModel() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public ExcelData updateData(Traceur traceur) {
@@ -66,13 +74,13 @@ public class ReqModel {
 
 		excelData.setFonction_6(findSpecificCuf(Constantes.FONCTION).getLabel());
 
-		calculCategorieNature(categorie);
+		calculCategorieNature(category);
 
-		excelData.setNumeroExigence_8(reference);
+		excelData.setNumeroExigence_8(extractNumeroExigence(reference));
 
 		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description));
-		
-		//colonnes prepublications:
+
+		// colonnes prepublications:
 		excelData.setReqStatus(requirementStatus);
 		excelData.setReference(reference);
 
@@ -81,19 +89,18 @@ public class ReqModel {
 
 	public Cuf findSpecificCuf(String cufCode) {
 		List<Cuf> found = cufs.stream().filter(currentCuf -> cufCode.equals(currentCuf.getCode()))
-				.collect(Collectors.toList());		
-		//concatenation si plusieurs tags ...
-		String labels = found.stream()
-        .map( n -> n.getLabel())
-        .collect( Collectors.joining( " , " ) );
+				.collect(Collectors.toList());
+		// concatenation si plusieurs tags ...
+		String labels = found.stream().map(n -> n.getLabel()).collect(Collectors.joining(" , "));
 		found.get(0).setLabel(labels);
-		return found.get(0); 
+		return found.get(0);
 	}
 
 	public void splitSectionAndSetExcelData(String cufSection) {
 		int separator = cufSection.indexOf(Constantes.SECTION_SEPARATOR);
 		if (separator == -1) {
-			traceur.addMessage(Level.ERROR,resId,  "Impossible d'extraitre d'idSection et la section du CUF Section: " + cufSection);
+			traceur.addMessage(Level.ERROR, resId,
+					"Impossible d'extraitre d'idSection et la section du CUF Section: " + cufSection);
 		} else {
 			excelData.setId_section_3(cufSection.substring(0, separator));
 			excelData.setSection_4(cufSection.substring(separator + 1));
@@ -101,12 +108,12 @@ public class ReqModel {
 	}
 
 	public void calculExigenceConditionelle(String labelProfil) {
-	
+
 		if (labelProfil.isEmpty()) {
-			traceur.addMessage(Level.ERROR, resId , "calculExigenceConditionelle impossible cuf Profil non renseigné ");
-			return; //non renseigné par défaut
+			traceur.addMessage(Level.ERROR, resId, "calculExigenceConditionelle impossible cuf Profil non renseigné ");
+			return; // non renseigné par défaut
 		}
-		
+
 		if (labelProfil.equalsIgnoreCase(Constantes.PROFIL_GENERAL)) {
 			excelData.setBoolExigenceConditionnelle_1(Constantes.NON);
 		} else {
@@ -115,17 +122,46 @@ public class ReqModel {
 	}
 
 	public void calculCategorieNature(String categorie) {
-		categorie = categorie.replace('é', 'e');
-		categorie = categorie.replace('É', 'E');
-		
-		if (categorie.toUpperCase().contains(Constantes.CATEGORIE_EXIGENCE)) {
-			excelData.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		} else if (categorie.toUpperCase().contains(Constantes.CATEGORIE_PRECONISATION)) {
-			excelData.setNatureExigence_7(Constantes.CATEGORIE_PRECONISATION);
-		} else {
-			traceur.addMessage(Level.WARNING, resId, "Impossible d'identifier la nature pour l'exigence. Cuf'Catégorie'= " + 
-			categorie);
+		Boolean update = false;
+		if (categorie != null) {
+			categorie = categorie.replace('é', 'e');
+			categorie = categorie.replace('É', 'E');
+
+			if (categorie.toUpperCase().contains(Constantes.CATEGORIE_EXIGENCE)) {
+				excelData.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
+				update = true;
+			} else if (categorie.toUpperCase().contains(Constantes.CATEGORIE_PRECONISATION)) {
+				excelData.setNatureExigence_7(Constantes.CATEGORIE_PRECONISATION);
+				update = true;
+			}
 		}
+		 if (update == false) {	
+			traceur.addMessage(Level.WARNING, resId,
+					"Impossible d'identifier la nature pour l'exigence. Cuf'Catégorie'= " + categorie);
+			excelData.setNatureExigence_7("");
+		 }
+
+	}
+
+	public String extractNumeroExigence(String reference) {
+		// supprime le prefix SC, CH, XXX
+		String numero = "";
+		String prefix = "";
+		int separator = reference.indexOf(".");
+		if (separator >= 1) {
+			prefix = reference.substring(0, separator);
+		}
+
+		if ((prefix.equals(Constantes.PREFIX_PROJET_SOCLE)) || (prefix.equals(Constantes.PREFIX_PROJET_CHANTIER))
+				|| (prefix.length() == Constantes.PREFIX_PROJET__METIER_SIZE)) {
+			numero = reference.substring(separator + 1, reference.length());
+		} else {
+			traceur.addMessage(Level.ERROR, resId,
+					"Calcul du numéro d'exigence: erreur sur suppression du prefix de l'exigence (ni SC., ni CH., ni XXX.): "
+							+ reference);
+			numero = reference;
+		}
+		return numero;
 	}
 
 }
