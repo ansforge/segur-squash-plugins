@@ -114,6 +114,11 @@ public class ExcelWriterUtil {
 	@Getter
 	@Setter
 	Map<Long, Step> steps;
+	
+	@Getter
+	@Setter
+	//utilisé dans ReportGenerator ...
+	Map<Long, Long> linkedReqs;
 
 	// references réutilisées
 	private Cell cell = null;
@@ -212,7 +217,7 @@ public class ExcelWriterUtil {
 		// boucle sur les exigences
 		for (ExcelData req : reqs) {
 
-			// extraire les CTs liés de la map du binding
+			// extraire les CTs liés à l'exigence  de la map du binding
 			bindingCT = bindings.stream().filter(p -> p.getResId().equals(req.getResId())).map(val -> val.getTclnId())
 					.distinct().collect(Collectors.toList());
 

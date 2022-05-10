@@ -53,6 +53,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
@@ -133,6 +135,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		fileName = excel.createOutputFileName(boolPrebub,
 				ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
+		
+		reset();
 		return writeInFile(excel.getWorkbook(), fileName);
 	}
 
@@ -192,8 +196,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// Map des exgicences de l'arbre (projet) avec ID des exigences liées (attention
 		// si une exigence n'est pas lié , elle n'est pas dans la map)
 		Map<Long, Long> linkedReqs = getMapTreeRequirementAndlinkedRequirement(linkedOrNotReqs);
-
+		excel.setLinkedReqs(linkedReqs);
 		// liste des exigences de l'arbre
+
 		Set<Long> treeReqIs = getTreeResId(linkedOrNotReqs);
 
 		// liste de toutes les exigences: arbre et liées
@@ -249,8 +254,19 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 	public List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId, ExcelWriterUtil excel) {
 
-		excel.setBindings(reqCollector.findTestRequirementBindingFiltreJalonTC(xreqIds, xmilestonesId));
-		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + excel.getBindings().size());
+		List<ReqStepBinding> bindings = reqCollector.findTestRequirementBindingFiltreJalonTC(xreqIds, xmilestonesId);
+		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + bindings.size());
+		
+		//écrasement dans la liste des liens Req-Ct des resID des exigences liées par celles qui seront publiées dans excel
+		Map<Long, Long> inversedLinkedReq = MapUtils.invertMap(excel.getLinkedReqs());
+		for (ReqStepBinding reqStepBinding : bindings) {
+			if (inversedLinkedReq.containsKey(reqStepBinding.getResId())) {
+				reqStepBinding.setResId(inversedLinkedReq.get(reqStepBinding.getResId()));
+			}
+		}
+		
+		excel.setBindings(bindings);
+		excel.getLinkedReqs().clear();
 
 		// liste des CT à récupérer
 		return excel.getBindings().stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());

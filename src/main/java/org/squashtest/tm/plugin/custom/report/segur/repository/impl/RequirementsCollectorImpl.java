@@ -225,41 +225,6 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	}
 	
-//	@Override
-//	public Map<Long, LinkedReq> findLinkedReq(Set<Long> reqIds) {
-////		select rvl.requirement_version_id, rvl.related_requirement_version_id, rv.reference
-////		from requirement_version_link rvl
-////		inner join requirement_version rv on rv.res_id = rvl.related_requirement_version_id
-////		inner join milestone_req_version mrv on mrv.req_version_id = rv.res_id
-////		where rvl.requirement_version_id in ('11010','11011','11016','11017','11018')
-////		and mrv.milestone_id = '20'
-////		and rv.reference like 'SC%'
-//		
-//		return dsl
-//		//	.select(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID, REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
-//			.select(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID, REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
-//			.from(REQUIREMENT_VERSION_LINK)
-//			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID))
-////			.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
-//			.where(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.in(reqIds)
-//					.and(REQUIREMENT_VERSION.REFERENCE.startsWith("SC")))
-//			.fetch().intoMap(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID,LinkedReq.class );
-//	}
-	
-	
-//	@Override
-//	public List<Long> findLinkedReq(Long reqId) {
-//		return dsl
-//			.select(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
-//			.from(REQUIREMENT_VERSION_LINK)
-//			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID))
-////			.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
-//			.where(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(reqId)
-//					.and(REQUIREMENT_VERSION.REFERENCE.startsWith("SC")))
-//			.fetchInto(Long.class);
-//	}
-
-	
 	
 	@Override
 	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId) {

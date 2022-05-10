@@ -189,7 +189,7 @@
   <repositories>
     <repository>
       <id>squash</id>
-      <url>https://nexus.squashtest.org/nexus/repository/maven-squashtest-public-releases</url>
+    <url>https://nexus.squashtest.org/nexus/repository/maven-squashtest-public-releases</url>
     </repository>
   </repositories>
 
