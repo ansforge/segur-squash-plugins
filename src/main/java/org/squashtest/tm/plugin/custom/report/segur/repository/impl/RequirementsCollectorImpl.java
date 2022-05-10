@@ -54,6 +54,7 @@ import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_LINK;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
 import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
@@ -70,9 +71,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jooq.DSLContext;
+import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
@@ -157,38 +160,107 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	}
 
+	
 	@Override
-	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId) {
-
+	public Map<Long, ReqModel> mapFindRequirementByResId(Set<Long> resIds) {
 //		select rv.RES_ID, rv.REFERENCE, rv.REQUIREMENT_STATUS, ili.LABEL as category, res.DESCRIPTION
+//		from c rv
+//		inner Join RESOURCE res on res.RES_ID = rv.RES_ID
+//		inner Join INFO_LIST_ITEM ili on ili.ITEM_ID = rv.CATEGORY	
+//		where rv.RES_ID in ('11008', '11010', '11011', '11012', '11013', '11016', '11017', '11018', '10975', '10988', '10977', '10976', '10978', '10983')
+
+		
+		return dsl
+		.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
+				REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+				RESOURCE.DESCRIPTION)
+		.from(REQUIREMENT_VERSION)
+		.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+		.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))		
+		.where(REQUIREMENT_VERSION.RES_ID.in(resIds))
+		.fetch().intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
+	}
+	
+	
+	
+
+//	@Override
+//	public List<Long> findReqWithMultiplelinks(Set<Long> reqIds) {
+//		select tmp.reqId from (
+//				select rvl.requirement_version_id as reqId, count(*) as nb from requirement_version_link rvl
+//				inner join requirement_version rv on rv.res_id = rvl.related_requirement_version_id
+//				where rvl.requirement_version_id in ('11010','11011','11016','11017','11018')
+//				and rv.reference like 'SC%' 
+//				group by rvl.requirement_version_id) tmp
+//					 where tmp.nb !=1
+//		Table<?> nested =
+//			    create.select(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID, count().as("nb"))
+//			          .from(REQUIREMENT_VERSION_LINK)
+//			          .groupBy(BOOK.AUTHOR_ID).asTable("nested");
+//
+//		return dsl
+//		  
+//	}
+	
+	@Override
+	public List<LinkedReq> findLinkedReq(Long projectId, Long milestoneId) {
+//		select rv.RES_ID,  rvl.related_requirement_version_id
 //		from REQUIREMENT r
 //		inner Join REQUIREMENT_LIBRARY_NODE rln on rln.RLN_ID = r.RLN_ID
 //		inner Join REQUIREMENT_VERSION rv on rv.REQUIREMENT_ID = rln.RLN_ID
-//		inner Join RESOURCE res on res.RES_ID = rv.RES_ID
-//		inner Join INFO_LIST_ITEM ili on ili.ITEM_ID = rv.CATEGORY
 //		inner Join MILESTONE_REQ_VERSION mrv on mrv.REQ_VERSION_ID = rv.RES_ID
-//		where rln.PROJECT_ID = '19'
-//				and mrv.MILESTONE_ID = '19'
-		
-		Map<Long, ReqModel> reqList = dsl
-				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
-						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
-						RESOURCE.DESCRIPTION)
-				.from(REQUIREMENT).innerJoin(REQUIREMENT_LIBRARY_NODE)
-				.on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID)).innerJoin(REQUIREMENT_VERSION)
-				.on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
-				.on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID)).innerJoin(INFO_LIST_ITEM)
-				.on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY)).innerJoin(MILESTONE_REQ_VERSION)
-				.on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
-
-				.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
-						.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
-				.fetch().intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
-
-		return reqList;
+//		left join requirement_version_link rvl on rvl.requirement_version_id = rv.res_id 
+//		where rln.PROJECT_ID = '39'
+//				and mrv.MILESTONE_ID = '20'
+		return dsl
+		.select(REQUIREMENT_VERSION.RES_ID.as("resId"), REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID.as("socleResId"))
+		.from(REQUIREMENT)
+		.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
+		.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
+		.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+		.leftJoin(REQUIREMENT_VERSION_LINK).on(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+		.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
+				.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
+		.fetchInto(LinkedReq.class);
 
 	}
+	
+//	@Override
+//	public Map<Long, LinkedReq> findLinkedReq(Set<Long> reqIds) {
+////		select rvl.requirement_version_id, rvl.related_requirement_version_id, rv.reference
+////		from requirement_version_link rvl
+////		inner join requirement_version rv on rv.res_id = rvl.related_requirement_version_id
+////		inner join milestone_req_version mrv on mrv.req_version_id = rv.res_id
+////		where rvl.requirement_version_id in ('11010','11011','11016','11017','11018')
+////		and mrv.milestone_id = '20'
+////		and rv.reference like 'SC%'
+//		
+//		return dsl
+//		//	.select(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID, REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
+//			.select(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID, REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
+//			.from(REQUIREMENT_VERSION_LINK)
+//			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID))
+////			.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
+//			.where(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.in(reqIds)
+//					.and(REQUIREMENT_VERSION.REFERENCE.startsWith("SC")))
+//			.fetch().intoMap(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID,LinkedReq.class );
+//	}
+	
+	
+//	@Override
+//	public List<Long> findLinkedReq(Long reqId) {
+//		return dsl
+//			.select(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID)
+//			.from(REQUIREMENT_VERSION_LINK)
+//			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID))
+////			.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID)).innerJoin(RESOURCE)
+//			.where(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(reqId)
+//					.and(REQUIREMENT_VERSION.REFERENCE.startsWith("SC")))
+//			.fetchInto(Long.class);
+//	}
 
+	
+	
 	@Override
 	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId) {
 //		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID

@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
+import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
@@ -69,7 +70,16 @@ public interface RequirementsCollector {
 	
 	public String findStepReferenceByTestStepId(Long testStepId);
 	
-	public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
+	//lecture des exigences du projet et jalon (exigences dans l'arbre)
+	//public Map<Long, ReqModel> mapFindRequirementByProjectAndMilestone(Long projectId, Long milestoneId);
+	public Map<Long, ReqModel> mapFindRequirementByResId(Set<Long> resIds);
+	
+	//unicité de lien d'une exigence 
+	//public List<Long> findReqWithMultiplelinks(Set<Long> reqIds);
+	
+	//lecture des exigences liées aux exigences de l'arbre
+	public List<LinkedReq>  findLinkedReq(Long projectId, Long milestoneId);
+	//public List<Long> findLinkedReq(Long reqId) ;
 	
 	// Tableau lien Exigence - CT-Step (avec filtre Jalon sur CT)
 	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId);

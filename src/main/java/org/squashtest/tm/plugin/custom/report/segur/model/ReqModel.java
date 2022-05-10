@@ -24,11 +24,15 @@ public class ReqModel {
 	private String description;
 	private String reference;
 	private String requirementStatus;
+	
+	private Long socleResId;
+
 
 	private ExcelData excelData = new ExcelData();
 
 	private List<Cuf> cufs;
-
+	
+	
 	// calcul�e
 	private String idSection;
 	private String section;
@@ -42,19 +46,20 @@ public class ReqModel {
 		this.category = category;
 		this.description = description;
 		this.reference = reference;
-		this.requirementStatus = requirementStatus;
+		this.requirementStatus = requirementStatus;	
 	}
 
 	public ReqModel() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ExcelData updateData(Traceur traceur) {
-//			public ExcelData updateData () {
+	public ExcelData updateData(Traceur traceur, ReqModel reqSocle) {
 		this.traceur = traceur;
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
 		excelData.setResId(resId);
+		
+		
 		// les cufs ont �t� lus en BDD, on met � jour "excelData"
 
 		Cuf rawProfil = findSpecificCuf(Constantes.PROFIL);

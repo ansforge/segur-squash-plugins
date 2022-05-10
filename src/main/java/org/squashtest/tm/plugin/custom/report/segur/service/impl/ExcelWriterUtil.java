@@ -39,8 +39,8 @@ import lombok.Setter;
 @Component
 public class ExcelWriterUtil {
 
-	@Autowired
-	Traceur traceur;
+//	@Autowired
+//	Traceur traceur;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterUtil.class);
 
@@ -96,6 +96,8 @@ public class ExcelWriterUtil {
 	// index de la ligne à créer
 	private int nextLine = REM_FIRST_EMPTY_LINE;
 
+	
+	
 	// données extraites de la base de données => à insérer dans excel
 	@Getter
 	@Setter
@@ -120,10 +122,17 @@ public class ExcelWriterUtil {
 	private XSSFSheet sheet = null;
 	private TestCase testCase = null;
 	private Step currentStep = null;
+	
+	private Traceur traceur;
 
 	@Getter
 	private XSSFWorkbook workbook = null;
 
+	public ExcelWriterUtil(Traceur traceur) {
+		super();
+		this.traceur = traceur;
+	}
+	
 	public String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
 
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls

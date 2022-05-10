@@ -10,7 +10,7 @@ import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil
 
 public class ExcelWiterTest {
 
-	ExcelWriterUtil excel = new ExcelWriterUtil();
+	ExcelWriterUtil excel = new ExcelWriterUtil(new Traceur());
 
 	@Test
 	public void createOutputFilenameTest() {

@@ -44,6 +44,8 @@ package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +65,7 @@ import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
+import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
@@ -80,8 +83,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	@Inject
 	RequirementsCollector reqCollector;
 
-	@Autowired
-	ExcelWriterUtil excel;
+	
 
 	// critères
 	Long selectedMilestonesId = null;
@@ -95,6 +97,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
 
+		ExcelWriterUtil excel = new ExcelWriterUtil(traceur);
+		
 		LOGGER.info(" SquashTm-segur plugin report ");
 		
 		reset();
@@ -107,20 +111,20 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		completePerimeterData();
 
 		// lecture des exigences => mise à jour de List<ReqModel> reqs (excelWriter)
-		Set<Long> reqIds = setRequirementData(selectedProjectId, selectedMilestonesId);
+		Set<Long> reqIds = setRequirementData(selectedProjectId, selectedMilestonesId, excel);
 
 		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
-		List<Long> distinctCT = setBinding(reqIds, selectedMilestonesId);
+		List<Long> distinctCT = setBinding(reqIds, selectedMilestonesId,excel);
 
 		// lecture des données sur les CTs
-		setMapTestCase(distinctCT);
+		setMapTestCase(distinctCT,excel);
 
 		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
 		// mise à jour de la propriété dans l'objet TestCase
-		findTestCaseCoeurDeMetier();
+		findTestCaseCoeurDeMetier(excel);
 
 		// lecture des données sur les steps
-		setStepsData(distinctCT);
+		setStepsData(distinctCT, excel);
 
 		// chargement du template Excel
 		excel.loadWorkbookTemplate();
@@ -184,31 +188,61 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		return report;
 	}
 
-	public Set<Long> setRequirementData(Long xprojectId, Long xmilestonesId) {
-		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByProjectAndMilestone(xprojectId, xmilestonesId);
-		LOGGER.info(" nombre d'exigences trouvées:eqs.size: " + reqs.size());
+	public Set<Long> setRequirementData(Long xprojectId, Long xmilestonesId, ExcelWriterUtil excel) {
+		
+		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(xprojectId, xmilestonesId);
+		
+		//Map  des exgicences de l'arbre (projet) avec ID des exigences liées (attention si une exigence n'est pas lié , elle n'est pas dans la map)
+		Map<Long, Long> linkedReqs = getMapTreeRequirementAndlinkedRequirement(linkedOrNotReqs);
+
+		//liste des exigences de l'arbre
+		Set<Long> treeReqIs = getTreeResId(linkedOrNotReqs);
+		
+		//liste de toutes les exigences: arbre et liées		
+		Set<Long> allReqIds = new HashSet<Long>();
+		allReqIds.addAll(treeReqIs);
+		allReqIds.addAll(linkedReqs.values());
+		//liste des exigences de l'arbre
+	
+		LOGGER.error(" treeReqIs " + treeReqIs.size());
+		LOGGER.error(" allReqIds " + allReqIds.size());
+		LOGGER.error(" linkedReqs " + linkedReqs.size());
+		
+		//Lecture des données de toutes les exigences (arbre et liées) 
+		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByResId(allReqIds);
+		LOGGER.info(" nombre d'exigences lues: " + reqs.size() + " dont nombre d'exigence dans l'arbre: " + treeReqIs.size());
 
 		Set<Long> reqKetSet = reqs.keySet();
 		if (reqKetSet.size() ==0) {
 			traceur.addMessage(Level.WARNING, "", "aucune exigence trouvée pour le projetId = "
 					+ selectedProjectId + " et le jalon id = " + selectedMilestonesId);
 		}
-
+								
 		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
 		// custom_field_value_option
+		//construction liste de Excel pour les exigences de l'arbre
 		List<ExcelData> datas = new ArrayList<ExcelData>();
-		for (Long res_id : reqKetSet) {
+		Long socleResId = null;
+		for (Long res_id : treeReqIs) {
+			//cufs de l'exigence
 			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
 			reqs.get(res_id).setCufs(cufs);
+			//si exigence liée
+			socleResId = linkedReqs.get(res_id);
+			if (socleResId != null) {
+				List<Cuf> cufsSocle = reqCollector.findCUFsByResId(socleResId);
+				reqs.get(socleResId).setCufs(cufsSocle);
+			}
+			
 			// mise à jour des champs de ExcelData pour l'exigence
-			datas.add(reqs.get(res_id).updateData(traceur));			
+			datas.add(reqs.get(res_id).updateData(traceur, reqs.get(socleResId) ));			
 		}
 
 		excel.setReqs(datas);
 		return reqKetSet;
 	}
 
-	public List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId) {
+	public List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId, ExcelWriterUtil excel) {
 
 		excel.setBindings(reqCollector.findTestRequirementBindingFiltreJalonTC(xreqIds, xmilestonesId));
 		LOGGER.info(" lecture en base des liens exigence/CT/step. Nb liens: " + excel.getBindings().size());
@@ -217,7 +251,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		return excel.getBindings().stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
 	}
 
-	public void setMapTestCase(List<Long> xdistinctCT) {
+	public void setMapTestCase(List<Long> xdistinctCT, ExcelWriterUtil excel) {
 		excel.setMapCT(reqCollector.findTestCase(xdistinctCT));
 		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + excel.getMapCT().size());
 
@@ -241,7 +275,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}		
 	}
 
-	public void findTestCaseCoeurDeMetier() {
+	public void findTestCaseCoeurDeMetier(ExcelWriterUtil excel) {
 		perimeterData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(selectedProjectId));
 		LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' "
 				+ perimeterData.getTclnIdFolderMetier());
@@ -261,7 +295,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		}
 	}
 
-	public void setStepsData(List<Long> distinctCT) {
+	public void setStepsData(List<Long> distinctCT, ExcelWriterUtil excel) {
 		excel.setSteps(reqCollector.findSteps(distinctCT));
 		LOGGER.info(" lecture de tous les steps pour les CTs  steps. size: " + excel.getSteps().size());
 		// lecture des references des pas de test (CUF)
@@ -290,5 +324,28 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		traceur.reset();
 	}
 	
+	public Map<Long, Long> getMapTreeRequirementAndlinkedRequirement(List<LinkedReq> linkedReqs) {
+		
+		Map<Long, Long> treeResIdAndLinkedResId = new HashMap();
+		for (LinkedReq linkedReq : linkedReqs) {
+			if (linkedReq.getSocleResId() != null) {
+				if (treeResIdAndLinkedResId.containsKey(linkedReq.getResId())) {
+					traceur.addMessage(Level.ERROR, linkedReq.getResId(),  "Cette exigence est ignorée car elle est liée à au moins 2 autres exigences: ");
+					treeResIdAndLinkedResId.remove(linkedReq.getResId());
+				} else {
+					treeResIdAndLinkedResId.put(linkedReq.getResId(), linkedReq.getSocleResId());				
+				}
+			}
 
+		}		
+		return treeResIdAndLinkedResId;
+	}
+	
+	public Set<Long> getTreeResId(List<LinkedReq> linkedReqs) {
+		Set<Long> result = new HashSet();
+		for (LinkedReq linkedReq : linkedReqs) {
+			result.add(linkedReq.getResId());
+		}
+			return result;
+	}
 }
