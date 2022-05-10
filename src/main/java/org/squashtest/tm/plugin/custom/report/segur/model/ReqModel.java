@@ -25,9 +25,6 @@ public class ReqModel {
 	private String reference;
 	private String requirementStatus;
 	
-	private Long socleResId;
-
-
 	private ExcelData excelData = new ExcelData();
 
 	private List<Cuf> cufs;
@@ -40,6 +37,11 @@ public class ReqModel {
 	private Traceur traceur;
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ReqModel.class);
 
+	
+//	// mise à jour des champs issus des Cufs	
+//	private Cuf rawProfil;
+	
+	
 	public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
 		super();
 		this.resId = resId;
@@ -53,7 +55,7 @@ public class ReqModel {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ExcelData updateData(Traceur traceur, ReqModel reqSocle) {
+	public ExcelData updateData(Traceur traceur) {
 		this.traceur = traceur;
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
@@ -168,5 +170,15 @@ public class ReqModel {
 		}
 		return numero;
 	}
-
 }
+
+//	public void updateFieldsFromSocle(Traceur traceur, ReqModel reqSocle) {
+//		if ( reqSocle == null) {
+//			return;
+//		}
+//		
+//		//
+//		excelData.setReferenceSocle(reqSocle.getReference());
+//		
+//	}
+//}

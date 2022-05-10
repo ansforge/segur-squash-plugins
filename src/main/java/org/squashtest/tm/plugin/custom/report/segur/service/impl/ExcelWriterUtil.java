@@ -223,7 +223,7 @@ public class ExcelWriterUtil {
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					cell.setCellValue(req.getReference());
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-					cell.setCellValue(" a ");
+					cell.setCellValue(req.getReferenceSocle());
 				}
 				nextLine += 1;
 			}
@@ -260,7 +260,7 @@ public class ExcelWriterUtil {
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
 					cell.setCellValue(testCase.getReference());
 					cell = row.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-					cell.setCellValue(" todo ... ");
+					cell.setCellValue(req.getReferenceSocle());
 					cell = row.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
 					cell.setCellValue(testCase.getPointsDeVerification());
 				}
@@ -440,8 +440,8 @@ public class ExcelWriterUtil {
 
 	public void lockWorkbook(XSSFWorkbook workbookx) {
 		LOGGER.error("Apel pour lock d'une feuille du workbook");
-		String password = "abcd";
-		byte[] pwdBytes = null;
+//		String password = "abcd";
+//		byte[] pwdBytes = null;
 //		    try {
 //		        pwdBytes  = Hex.decodeHex(password.toCharArray());
 //		    } catch (DecoderException e) {

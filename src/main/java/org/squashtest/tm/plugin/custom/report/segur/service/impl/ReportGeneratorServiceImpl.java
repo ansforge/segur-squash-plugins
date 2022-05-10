@@ -79,11 +79,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 	@Autowired
 	Traceur traceur;
-	
+
 	@Inject
 	RequirementsCollector reqCollector;
-
-	
 
 	// critères
 	Long selectedMilestonesId = null;
@@ -98,11 +96,11 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public File generateReport(Map<String, Criteria> criterias) {
 
 		ExcelWriterUtil excel = new ExcelWriterUtil(traceur);
-		
+
 		LOGGER.info(" SquashTm-segur plugin report ");
-		
+
 		reset();
-		
+
 		// lecture des critères
 		getSelectedIdsFromCrietrias(criterias);
 		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
@@ -114,10 +112,10 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		Set<Long> reqIds = setRequirementData(selectedProjectId, selectedMilestonesId, excel);
 
 		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
-		List<Long> distinctCT = setBinding(reqIds, selectedMilestonesId,excel);
+		List<Long> distinctCT = setBinding(reqIds, selectedMilestonesId, excel);
 
 		// lecture des données sur les CTs
-		setMapTestCase(distinctCT,excel);
+		setMapTestCase(distinctCT, excel);
 
 		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
 		// mise à jour de la propriété dans l'objet TestCase
@@ -132,7 +130,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		// ecriture du workbook
 		excel.putDatasInWorkbook(perimeterData.getMilestoneStatus(), boolPrebub);
-		
+
 		fileName = excel.createOutputFileName(boolPrebub,
 				ExcelWriterUtil.getTrigramProject(perimeterData.getProjectName()), perimeterData.getMilestoneName());
 		return writeInFile(excel.getWorkbook(), fileName);
@@ -146,11 +144,10 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 				+ perimeterData.getMilestoneStatus());
 		if (perimeterData.getMilestoneStatus().equalsIgnoreCase(Constantes.MILESTONE_LOCKED)) {
 			boolPrebub = false;
-		}
-		else {
+		} else {
 			boolPrebub = true;
 		}
-		
+
 		LOGGER.info(" prépublication: " + boolPrebub);
 
 		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
@@ -189,56 +186,64 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	}
 
 	public Set<Long> setRequirementData(Long xprojectId, Long xmilestonesId, ExcelWriterUtil excel) {
-		
+
 		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(xprojectId, xmilestonesId);
-		
-		//Map  des exgicences de l'arbre (projet) avec ID des exigences liées (attention si une exigence n'est pas lié , elle n'est pas dans la map)
+
+		// Map des exgicences de l'arbre (projet) avec ID des exigences liées (attention
+		// si une exigence n'est pas lié , elle n'est pas dans la map)
 		Map<Long, Long> linkedReqs = getMapTreeRequirementAndlinkedRequirement(linkedOrNotReqs);
 
-		//liste des exigences de l'arbre
+		// liste des exigences de l'arbre
 		Set<Long> treeReqIs = getTreeResId(linkedOrNotReqs);
-		
-		//liste de toutes les exigences: arbre et liées		
+
+		// liste de toutes les exigences: arbre et liées
 		Set<Long> allReqIds = new HashSet<Long>();
 		allReqIds.addAll(treeReqIs);
 		allReqIds.addAll(linkedReqs.values());
-		//liste des exigences de l'arbre
-	
+		// liste des exigences de l'arbre
+
 		LOGGER.error(" treeReqIs " + treeReqIs.size());
 		LOGGER.error(" allReqIds " + allReqIds.size());
 		LOGGER.error(" linkedReqs " + linkedReqs.size());
-		
-		//Lecture des données de toutes les exigences (arbre et liées) 
+
+		// Lecture des données de toutes les exigences (arbre et liées)
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByResId(allReqIds);
-		LOGGER.info(" nombre d'exigences lues: " + reqs.size() + " dont nombre d'exigence dans l'arbre: " + treeReqIs.size());
+		LOGGER.info(" nombre d'exigences lues: " + reqs.size() + " dont nombre d'exigence dans l'arbre: "
+				+ treeReqIs.size());
 
 		Set<Long> reqKetSet = reqs.keySet();
-		if (reqKetSet.size() ==0) {
-			traceur.addMessage(Level.WARNING, "", "aucune exigence trouvée pour le projetId = "
-					+ selectedProjectId + " et le jalon id = " + selectedMilestonesId);
-		}
-								
-		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
-		// custom_field_value_option
-		//construction liste de Excel pour les exigences de l'arbre
-		List<ExcelData> datas = new ArrayList<ExcelData>();
-		Long socleResId = null;
-		for (Long res_id : treeReqIs) {
-			//cufs de l'exigence
-			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
-			reqs.get(res_id).setCufs(cufs);
-			//si exigence liée
-			socleResId = linkedReqs.get(res_id);
-			if (socleResId != null) {
-				List<Cuf> cufsSocle = reqCollector.findCUFsByResId(socleResId);
-				reqs.get(socleResId).setCufs(cufsSocle);
-			}
-			
-			// mise à jour des champs de ExcelData pour l'exigence
-			datas.add(reqs.get(res_id).updateData(traceur, reqs.get(socleResId) ));			
+		if (reqKetSet.size() == 0) {
+			traceur.addMessage(Level.WARNING, "", "aucune exigence trouvée pour le projetId = " + selectedProjectId
+					+ " et le jalon id = " + selectedMilestonesId);
 		}
 
-		excel.setReqs(datas);
+		// lecture des CUFs sur les exigences => cuf.field_type='MSF' => label dans
+		// custom_field_value_option
+		for (Long res_id : reqKetSet) {
+			// cufs de l'exigence
+			List<Cuf> cufs = reqCollector.findCUFsByResId(res_id);
+			reqs.get(res_id).setCufs(cufs);
+			// mise à jour des données
+			reqs.get(res_id).updateData(traceur);
+		}
+
+		// construction de la liste des exigences pour le writer
+		List<ExcelData> excelData = new ArrayList<ExcelData>();
+
+		// Mise à jour des données uniquement pour les exigences de l'arbre liées à une
+		// exigence du socle
+		for (Long resId : linkedReqs.keySet()) {
+			ExcelData projet = reqs.get(resId).getExcelData();
+			ExcelData socle = reqs.get(linkedReqs.get(resId)).getExcelData();
+			ExcelData update = mergeData(projet, socle);
+			reqs.get(resId).setExcelData(update);
+		}
+
+		// ajout des exigences de l'arbre à la liste
+		for (Long resIdP : treeReqIs) {
+			excelData.add(reqs.get(resIdP).getExcelData());
+		}
+		excel.setReqs(excelData);
 		return reqKetSet;
 	}
 
@@ -258,7 +263,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// mise à jour de la liste des Step dans les CTs
 		TestCase tcTmp;
 		List<Long> ctSteps;
-		
+
 		for (Long testCaseId : excel.getMapCT().keySet()) {
 			tcTmp = excel.getMapCT().get(testCaseId);
 			ctSteps = reqCollector.findStepIdsByTestCaseId(testCaseId);
@@ -266,13 +271,13 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 			if (boolPrebub) {
 				List<String> ptsDeVerif = reqCollector.findPointsDeVerificationByTcStepsIds(ctSteps);
 				StringBuilder builder = new StringBuilder();
-				    for (String verif : ptsDeVerif) {
-				    	builder.append(Parser.convertHTMLtoString(verif));
-					}
-				    tcTmp.setPointsDeVerification(builder.toString());
-			}	
+				for (String verif : ptsDeVerif) {
+					builder.append(Parser.convertHTMLtoString(verif));
+				}
+				tcTmp.setPointsDeVerification(builder.toString());
+			}
 			excel.getMapCT().put(testCaseId, tcTmp);
-		}		
+		}
 	}
 
 	public void findTestCaseCoeurDeMetier(ExcelWriterUtil excel) {
@@ -323,29 +328,112 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		perimeterData = null;
 		traceur.reset();
 	}
-	
+
 	public Map<Long, Long> getMapTreeRequirementAndlinkedRequirement(List<LinkedReq> linkedReqs) {
-		
+
 		Map<Long, Long> treeResIdAndLinkedResId = new HashMap();
 		for (LinkedReq linkedReq : linkedReqs) {
 			if (linkedReq.getSocleResId() != null) {
 				if (treeResIdAndLinkedResId.containsKey(linkedReq.getResId())) {
-					traceur.addMessage(Level.ERROR, linkedReq.getResId(),  "Cette exigence est ignorée car elle est liée à au moins 2 autres exigences: ");
+					traceur.addMessage(Level.ERROR, linkedReq.getResId(),
+							"Cette exigence est ignorée car elle est liée à au moins 2 autres exigences: ");
 					treeResIdAndLinkedResId.remove(linkedReq.getResId());
 				} else {
-					treeResIdAndLinkedResId.put(linkedReq.getResId(), linkedReq.getSocleResId());				
+					treeResIdAndLinkedResId.put(linkedReq.getResId(), linkedReq.getSocleResId());
 				}
 			}
 
-		}		
+		}
 		return treeResIdAndLinkedResId;
 	}
-	
+
 	public Set<Long> getTreeResId(List<LinkedReq> linkedReqs) {
 		Set<Long> result = new HashSet();
 		for (LinkedReq linkedReq : linkedReqs) {
 			result.add(linkedReq.getResId());
 		}
-			return result;
+		return result;
+	}
+
+	public ExcelData mergeData(ExcelData projet, ExcelData socle) {
+		ExcelData update = new ExcelData();
+		// champs à ne pas merger
+		update.setReferenceSocle(socle.getReference());
+		update.setReqStatus(projet.getReqStatus());
+		update.setReference(projet.getReference());
+		update.setResId(projet.getResId());
+		//champs mergés
+		if (projet.getBoolExigenceConditionnelle_1().equals(Constantes.NON_RENSEIGNE)) {
+			update.setBoolExigenceConditionnelle_1(socle.getBoolExigenceConditionnelle_1());
+		}
+		else
+		{
+			update.setBoolExigenceConditionnelle_1(projet.getBoolExigenceConditionnelle_1());
+		}
+		
+		if (projet.getEnonceExigence_9().isEmpty()) {
+			update.setEnonceExigence_9(socle.getEnonceExigence_9());
+		}
+		else {
+			update.setEnonceExigence_9(projet.getEnonceExigence_9());
+		}
+		
+		if (projet.getBloc_5().isEmpty()) {
+			update.setBloc_5(socle.getBloc_5());
+		}
+		else {
+			update.setBloc_5(projet.getBloc_5());
+		}
+
+		if (projet.getFonction_6().isEmpty()) {
+			update.setFonction_6(socle.getFonction_6());
+		}
+		else {
+			update.setFonction_6(projet.getFonction_6());
+		}
+		
+		if (projet.getProfil_2().isEmpty()) {
+			update.setProfil_2(socle.getProfil_2());
+		}
+		else {
+			update.setProfil_2(projet.getProfil_2());
+		}
+		
+		if (projet.getProfil_2().isEmpty()) {
+			update.setProfil_2(socle.getProfil_2());
+		}
+		else {
+			update.setProfil_2(projet.getProfil_2());
+		}
+		
+		if (projet.getSection_4().isEmpty()) {
+			update.setSection_4(socle.getSection_4());
+		}
+		else {
+			update.setSection_4(projet.getSection_4());
+		}
+		
+		if (projet.getId_section_3().isEmpty()) {
+			update.setId_section_3(socle.getId_section_3());
+		}
+		else {
+			update.setId_section_3(projet.getId_section_3());
+		}
+		
+		if (projet.getNatureExigence_7().isEmpty()) {
+			update.setNatureExigence_7(socle.getNatureExigence_7());
+		}
+		else {
+			update.setNatureExigence_7(projet.getNatureExigence_7());
+		}
+		
+		if (projet.getNumeroExigence_8().isEmpty()) {
+			update.setNumeroExigence_8(socle.getNumeroExigence_8());
+		}
+		else {
+			update.setNumeroExigence_8(projet.getNumeroExigence_8());
+		}
+		
+		return update;
 	}
 }
