@@ -160,6 +160,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void getSelectedIdsFromCrietrias(Map<String, Criteria> criterias) {
 		Set<String> keys = criterias.keySet();
 		List<Integer> selectedMilestonesIds = null;
@@ -252,6 +253,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		return reqKetSet;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId, ExcelWriterUtil excel) {
 
 		List<ReqStepBinding> bindings = reqCollector.findTestRequirementBindingFiltreJalonTC(xreqIds, xmilestonesId);
@@ -322,7 +324,6 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// lecture des references des pas de test (CUF)
 		String ref_step = "";
 		Step currentStep = null;
-		int nbRef = 0;
 		for (Long stepId : excel.getSteps().keySet()) {
 			// TODO => renvoyer une liste pour gérer proprement les cas ou il y a plus
 			// d'une reference
@@ -347,7 +348,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 	public Map<Long, Long> getMapTreeRequirementAndlinkedRequirement(List<LinkedReq> linkedReqs) {
 
-		Map<Long, Long> treeResIdAndLinkedResId = new HashMap();
+		Map<Long, Long> treeResIdAndLinkedResId = new HashMap<Long, Long>();
 		for (LinkedReq linkedReq : linkedReqs) {
 			if (linkedReq.getSocleResId() != null) {
 				if (treeResIdAndLinkedResId.containsKey(linkedReq.getResId())) {
@@ -364,7 +365,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	}
 
 	public Set<Long> getTreeResId(List<LinkedReq> linkedReqs) {
-		Set<Long> result = new HashSet();
+		Set<Long> result = new HashSet<Long>();
 		for (LinkedReq linkedReq : linkedReqs) {
 			result.add(linkedReq.getResId());
 		}

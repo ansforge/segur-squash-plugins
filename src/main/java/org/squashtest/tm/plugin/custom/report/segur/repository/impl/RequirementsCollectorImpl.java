@@ -54,8 +54,8 @@ import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
-import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_LINK;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_LINK;
 import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
 import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
@@ -71,7 +71,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jooq.DSLContext;
-import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;

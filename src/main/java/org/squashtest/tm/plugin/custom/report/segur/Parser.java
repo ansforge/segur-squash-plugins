@@ -3,7 +3,6 @@ package org.squashtest.tm.plugin.custom.report.segur;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.jsoup.select.NodeVisitor;
 
 public class Parser {
 
@@ -51,7 +49,6 @@ public class Parser {
 		String tmp = "";
 		if (html == null || html.isEmpty()) { return tmp; };
 		Document doc = Jsoup.parseBodyFragment(html);
-		List<String> htmlFragment = new LinkedList<String>();
 		StringBuilder out = new StringBuilder();
 		
 		for (Node node : doc.body().childNodes()) {

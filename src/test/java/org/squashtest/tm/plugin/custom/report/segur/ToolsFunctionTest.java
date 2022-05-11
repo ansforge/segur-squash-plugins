@@ -1,12 +1,10 @@
 package org.squashtest.tm.plugin.custom.report.segur;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,8 +12,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
-
-import com.google.common.collect.ImmutableSet;
 
 public class ToolsFunctionTest {
 
@@ -52,7 +48,7 @@ public class ToolsFunctionTest {
 		linkedReqs.add(l3);
 		linkedReqs.add(l4);
 
-		Map<Long, Long> treeResIdAndLinkedResId = new HashMap();
+		Map<Long, Long> treeResIdAndLinkedResId = new HashMap<Long, Long>();
 		for (LinkedReq linkedReq : linkedReqs) {
 			if (linkedReq.getSocleResId() != null) {
 				if (treeResIdAndLinkedResId.containsKey(linkedReq.getResId())) {

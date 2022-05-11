@@ -2,24 +2,14 @@ package org.squashtest.tm.plugin.custom.report.segur;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
-import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
-import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 
 
 public class ParserTest {

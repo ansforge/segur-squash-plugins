@@ -41,13 +41,14 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur;
 
+import java.io.File;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.squashtest.tm.api.report.BasicDirectDownloadableReport;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.util.Map;
 
 public class SegurExcelReport extends BasicDirectDownloadableReport {
 

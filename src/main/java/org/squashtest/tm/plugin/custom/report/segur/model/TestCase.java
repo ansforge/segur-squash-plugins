@@ -1,7 +1,6 @@
 package org.squashtest.tm.plugin.custom.report.segur.model;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;

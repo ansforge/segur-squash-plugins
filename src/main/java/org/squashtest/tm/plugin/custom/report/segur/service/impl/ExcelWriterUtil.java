@@ -20,7 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -124,7 +123,6 @@ public class ExcelWriterUtil {
 	private Cell cell = null;
 	private Row row = null;
 	private List<Long> bindingCT = null;
-	private XSSFSheet sheet = null;
 	private TestCase testCase = null;
 	private Step currentStep = null;
 	

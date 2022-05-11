@@ -46,8 +46,6 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.squashtest.tm.api.report.Report;
@@ -86,7 +84,7 @@ public class CustomReportSegurConfig {
 	@Bean
 	public Form segurForm(@Named("segurRadioButton") RadioButtonsGroup segurRadioButton) {
 		Form form = new Form();
-		List<Input> inputs = new ArrayList();
+		List<Input> inputs = new ArrayList<Input>();
 		inputs.add(segurRadioButton);
 		form.setInputs(inputs);
 		return form;
