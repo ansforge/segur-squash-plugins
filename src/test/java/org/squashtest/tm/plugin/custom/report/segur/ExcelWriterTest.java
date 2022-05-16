@@ -83,10 +83,10 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement2);
 		
 		//TestCases
-		TestCase test1 = new TestCase(1L, "T-1", "pre-requis", "description du cas de test", Constantes.STATUS_APPROVED);
+		TestCase test1 = new TestCase(1L, "T-1", "pré-requis", "description du cas de test", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
 		//Steps
-		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("resultat attendu"), 0);
+		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu"), 0);
 		List<Long> orderedStepIds = new ArrayList<>();
 		orderedStepIds.add(s1t1.getTestSTepId());
 		test1.setOrderedStepIds(orderedStepIds);

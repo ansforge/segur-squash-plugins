@@ -49,6 +49,7 @@ public class Parser {
 		String tmp = "";
 		if (html == null || html.isEmpty()) { return tmp; };
 		Document doc = Jsoup.parseBodyFragment(html);
+		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		StringBuilder out = new StringBuilder();
 		
 		for (Node node : doc.body().childNodes()) {
