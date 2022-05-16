@@ -15,7 +15,7 @@ public class ExcelData {
 	//non excel mais nécessaire pour le binding
 	private Long resId;
 	
-	// Donn�e calcul�e NON l'exigence est rattach�e au profil 'G�n�ral' (CUF)
+	// Donn�e calcul�e NON l'exigence est rattach�e au profil 'Général' (CUF)
 	private String boolExigenceConditionnelle_1 = Constantes.NON_RENSEIGNE;
 
 	// CUF Profil

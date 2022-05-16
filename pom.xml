@@ -1,195 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.squashtest.tm.plugin</groupId>
-  <artifactId>report.ans.segur</artifactId>
-  <version>1.0.0.RC2</version>
-  <packaging>jar</packaging>
-  <name>segur-rapport-exigences</name>
+	<groupId>org.squashtest.tm.plugin</groupId>
+	<artifactId>report.ans.segur</artifactId>
+	<version>1.0.0.RC2</version>
+	<packaging>jar</packaging>
+	<name>segur-rapport-exigences</name>
 
-  <properties>
-    <java.version>1.8</java.version>
-    <!-- ecraser la version junit embarquée dans squash -->
-    <junit-jupiter.version>5.7.1</junit-jupiter.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <squash.core.version>3.0.5.RELEASE</squash.core.version>
-  </properties>
+	<properties>
+		<java.version>1.8</java.version>
+		<!-- ecraser la version junit embarquée dans squash -->
+		<junit-jupiter.version>5.7.1</junit-jupiter.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<squash.core.version>3.0.5.RELEASE</squash.core.version>
+	</properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.squashtest.tm</groupId>
-        <artifactId>squash-tm-bom</artifactId>
-        <version>${squash.core.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.squashtest.tm</groupId>
+				<artifactId>squash-tm-bom</artifactId>
+				<version>${squash.core.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
-  <dependencies>
+	<dependencies>
 
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <!--======= SQUASHTEST MODULES ======== -->
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.api</artifactId>
-      <version>${squash.core.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<!--======= SQUASHTEST MODULES ======== -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${squash.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.report.api</artifactId>
-      <version>${squash.core.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.report.api</artifactId>
+			<version>${squash.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>tm.domain</artifactId>
-      <version>${squash.core.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${squash.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>tm.service</artifactId>
-      <version>${squash.core.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.service</artifactId>
+			<version>${squash.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <!-- <version>5.8.0</version> -->
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<!-- <version>5.8.0</version> -->
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <!-- <version>5.8.0</version> -->
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<!-- <version>5.8.0</version> -->
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
-      <!-- <version>1.7.2</version> -->
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<!-- <version>1.7.2</version> -->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>2.0.2-beta</version>
+			<scope>test</scope>
+		</dependency>
 
-  </dependencies>
+	</dependencies>
 
-  <build>
-    <resources>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.xlsx</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.xlsx</include>
-        </includes>
-      </resource>
-    </resources>
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.xlsx</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.xlsx</include>
+				</includes>
+			</resource>
+		</resources>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
 
-      <plugin>
-        <groupId>com.google.code.sortpom</groupId>
-        <artifactId>maven-sortpom-plugin</artifactId>
-        <version>2.2.1</version>
-        <configuration>
-          <predefinedSortOrder>custom_1</predefinedSortOrder>
-          <lineSeparator>\n</lineSeparator>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <sortProperties>true</sortProperties>
-          <keepBlankLines>true</keepBlankLines>
-          <sortDependencies>scope, artifactId</sortDependencies>
-          <nrOfIndentSpace>2</nrOfIndentSpace>
-          <expandEmptyElements>false</expandEmptyElements>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-            <phase>verify</phase>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>com.google.code.sortpom</groupId>
+				<artifactId>maven-sortpom-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<predefinedSortOrder>custom_1</predefinedSortOrder>
+					<lineSeparator>\n</lineSeparator>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<sortProperties>true</sortProperties>
+					<keepBlankLines>true</keepBlankLines>
+					<sortDependencies>scope, artifactId</sortDependencies>
+					<nrOfIndentSpace>2</nrOfIndentSpace>
+					<expandEmptyElements>false</expandEmptyElements>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sort</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
-        <configuration>
-          <skipTests>false</skipTests>
-          <testFailureIgnore>true</testFailureIgnore>
-          <forkMode>once</forkMode>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.22.2</version>
-        <configuration>
-          <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-          <argLine>--illegal-access=permit</argLine>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
+				<configuration>
+					<skipTests>false</skipTests>
+					<testFailureIgnore>true</testFailureIgnore>
+					<forkMode>once</forkMode>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.22.2</version>
+				<configuration>
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+					<argLine>--illegal-access=permit</argLine>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-    </plugins>
-  </build>
-  <inceptionYear>2010</inceptionYear>
-  <organization>
-    <name>Henix, henix.fr</name>
-    <url>http://www.squashtest.org</url>
-  </organization>
+		</plugins>
+	</build>
+	<inceptionYear>2010</inceptionYear>
+	<organization>
+		<name>Henix, henix.fr</name>
+		<url>http://www.squashtest.org</url>
+	</organization>
 
-  <repositories>
-    <repository>
-      <id>squash</id>
-      <url>https://nexus.squashtest.org/nexus/repository/maven-squashtest-public-releases</url>
-    </repository>
-  </repositories>
+	<repositories>
+		<repository>
+			<id>squash</id>
+			<url>https://nexus.squashtest.org/nexus/repository/maven-squashtest-public-releases</url>
+		</repository>
+	</repositories>
 
 </project>
