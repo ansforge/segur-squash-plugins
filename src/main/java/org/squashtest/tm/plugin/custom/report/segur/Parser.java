@@ -24,7 +24,7 @@ public class Parser {
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		Elements lis = doc.select("li");
 		List<String> liste = new ArrayList<String>();
-		lis.stream().forEach(li -> liste.add(Constantes.PREFIX_ELEMENT_LSITE_A_PUCES + li.text() + Constantes.CRLF));
+		lis.stream().forEach(li -> liste.add(Constantes.PREFIX_ELEMENT_LSITE_A_PUCES + li.text() + Constantes.CRLF + Constantes.CRLF));
 		return liste.stream().collect(Collectors.joining(""));
 	}
 
@@ -37,9 +37,9 @@ public class Parser {
 		Elements lis = doc.select("li");
 		List<String> liste = new ArrayList<String>();
 		List<String> listeResult = new ArrayList<String>();
-		lis.stream().forEach(li -> liste.add(li.text() + Constantes.CRLF));
+		lis.stream().forEach(li -> liste.add(li.text() + Constantes.CRLF + Constantes.CRLF));
 		for (String ligne : liste) {
-			listeResult.add("\t" + prefix + pt + ligne);
+			listeResult.add(Constantes.PREFIX_ELEMENT_LSITE_A_PUCES + prefix + pt + ligne);
 			prefix++;
 		}
 		return listeResult.stream().collect(Collectors.joining(""));

@@ -284,9 +284,12 @@ public class ExcelWriterUtil {
 
 			row.createCell(currentExcelColumn).setCellValue(currentStep.getReference());
 			currentExcelColumn++;
-
-			row.createCell(currentExcelColumn)
-					.setCellValue(Parser.convertHTMLtoString(currentStep.getExpectedResult()));
+			
+			Cell multiligneCell = row.createCell(currentExcelColumn);
+			CellStyle style = multiligneCell.getCellStyle();
+			style.setWrapText(true);
+			multiligneCell.setCellStyle(style);
+			multiligneCell.setCellValue(currentStep.getExpectedResult());
 			currentExcelColumn++;
 		}
 
