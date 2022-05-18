@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -239,31 +237,36 @@ public class ExcelWriter {
 		// cas des CTs non coeur de métier
 		Cell c11 = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
 		c11.setCellStyle(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
-		c11.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite())
-				+ "\n Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
+			c11.setCellValue("Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+		} else {
+			c11.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite())
+			+ "\n\nDescription:\n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+		}
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
-		List<Step> testSteps = new ArrayList<>();
-		for (Long id : testcase.getOrderedStepIds()) {
-			testSteps.add(steps.get(id));
-		}
-		Collections.sort(testSteps);
-		
-		for (Step step : testSteps) {
+		if (testcase.getOrderedStepIds() != null) {
+			List<Step> testSteps = new ArrayList<>();
+			for (Long id : testcase.getOrderedStepIds()) {
+				testSteps.add(steps.get(id));
+			}
+			Collections.sort(testSteps);
+			for (Step step : testSteps) {
 
-			Cell c12plus = row.createCell(currentExcelColumn);
-			c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
-			c12plus.setCellValue(extractNumberFromReference(step.getReference()));
-			currentExcelColumn++;
+				Cell c12plus = row.createCell(currentExcelColumn);
+				c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
+				c12plus.setCellValue(extractNumberFromReference(step.getReference()));
+				currentExcelColumn++;
 
-			Cell resultCell = row.createCell(currentExcelColumn);
-			CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
-			style.setWrapText(true);
-			resultCell.setCellStyle(style);
-			resultCell.setCellValue(step.getExpectedResult());
-			currentExcelColumn++;
+				Cell resultCell = row.createCell(currentExcelColumn);
+				CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
+				style.setWrapText(true);
+				resultCell.setCellStyle(style);
+				resultCell.setCellValue(step.getExpectedResult());
+				currentExcelColumn++;
+			}
 		}
 
 	}
