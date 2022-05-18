@@ -43,6 +43,8 @@ package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -60,11 +62,17 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportGeneratorServiceImpl.class);
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
 	public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	// nom du fichier Excel
+	public static final String REM = "REM";
+	public static final String PREPUB = "prepub";
+	public static final String NAME_SEPARATOR = "_";
+	public static final String EXTENSION = ".xlsx";
+	
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
 		Traceur traceur = new Traceur();
 
-		ExcelWriterUtil excel = new ExcelWriterUtil(traceur);
+		ExcelWriter excel = new ExcelWriter(traceur);
 
 		LOGGER.info(" SquashTm-segur plugin report ");
 		DSRData data = new DSRData(traceur);
@@ -91,14 +99,52 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// ecriture du workbook
 		excel.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
 
-		String fileName = excel.createOutputFileName(perimeterData.isPrePublication(),
-				ExcelWriterUtil.getProjectTrigram(perimeterData.getProjectName()), perimeterData.getMilestoneName());
-		return writeInFile(workbook, fileName);
+		String fileName = createOutputFileName(perimeterData.isPrePublication(),
+				getProjectTrigram(perimeterData.getProjectName()), perimeterData.getMilestoneName());
+		File report = null;
+		try {
+			report = excel.flushToTemporaryFile(workbook, fileName);
+		} catch (IOException e) {
+			LOGGER.error("Error when writing temp file", e);
+		}
+		return report;
 	}
 
 // ***************************************************************************************************	
 
+	private String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
+		
+		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
+		// prépublication: prepub_[datedujourJJMMAAAA]_REM_[trigramme
+		// projet]_[version].xls
+		// avec versiopn= nom du Jalon courant
+	
+		StringBuilder sFileName = new StringBuilder();
+		if (prepub) {
+			DateTimeFormatter pattern = DateTimeFormatter.ofPattern("ddMMyyyy");
+			LocalDateTime nowDate = LocalDateTime.now();
+			sFileName.append(PREPUB).append(NAME_SEPARATOR).append(nowDate.format(pattern)).append(NAME_SEPARATOR);
+		}
+	
+		sFileName.append(REM).append(NAME_SEPARATOR).append(trigrammeProjet).append(NAME_SEPARATOR).append(versionOuJalon)
+				.append(EXTENSION);
+		return sFileName.toString();
+	}
 
+	private String getProjectTrigram(String projectName) {
+		
+		String trigram = "";
+		// CH_ANN_xxxxx SC_ANN_xxx ou prefix_ANN_xxxxxxxxxxx
+		String[] frags = projectName.split(NAME_SEPARATOR);
+		if ((frags.length < 3) || (frags[1].length() != 3)) {
+			LOGGER.warn("project name format not as expected : " + projectName);
+			// TODO ecrire une trace pour 3ème onglet si format non respecté ...
+			trigram = projectName;
+		} else {
+			trigram = frags[1];
+		}
+		return trigram;
+	}
 
 	@SuppressWarnings("unchecked")
 	private Long getMilestone(Map<String, Criteria> criterias) {
@@ -113,16 +159,4 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		Long selectedProjectId = Long.parseLong(selectedProjectIds.get(0));
 		return selectedProjectId;
 	}
-
-	private File writeInFile(XSSFWorkbook workbook, String fileName) {
-		File report = null;
-		try {
-			report = ExcelWriterUtil.flushToTemporaryFile(workbook, fileName);
-		} catch (IOException e) {
-			LOGGER.error("Error when writing temp file", e);
-		}
-		return report;
-	}
-
-
 }

@@ -1,11 +1,7 @@
 package org.squashtest.tm.plugin.custom.report.segur;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +15,13 @@ import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.DSRData;
-import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil;
+import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriter;
 
 public class ExcelWriterTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterTest.class);
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
-	private ExcelWriterUtil excel;
+	private ExcelWriter excel;
 
 	private DSRData data;
 
@@ -33,7 +29,7 @@ public class ExcelWriterTest {
 	void loadData() {
 		Traceur traceur = new Traceur();
 		data = new DSRData(traceur);
-		excel = new ExcelWriterUtil(new Traceur());
+		excel = new ExcelWriter(new Traceur());
 		ExcelData requirement1 = new ExcelData();
 		requirement1.setResId(1L);
 		requirement1.setBoolExigenceConditionnelle_1(Constantes.NON);
@@ -129,33 +125,6 @@ public class ExcelWriterTest {
 		workbook.write(out);
 		workbook.close();
 		out.close();
-	}
-
-	@Test
-	public void createOutputFilenameTest() {
-
-		String filename = excel.createOutputFileName(false, "INS", "v1.3");
-		assertEquals(filename, "REM_INS_v1.3.xlsx");
-
-		filename = excel.createOutputFileName(true, "INS", "v1.3");
-		DateTimeFormatter pattern = DateTimeFormatter.ofPattern("ddMMyyyy");
-		LocalDateTime nowDate = LocalDateTime.now();
-		String expected = "prepub_" + nowDate.format(pattern) + "_REM_INS_v1.3.xlsx";
-		System.out.println(expected);
-		assertEquals(filename, expected);
-	}
-
-	@Test
-	public void getTrigramProjectTest() {
-		String trigram = ExcelWriterUtil.getProjectTrigram("sc_fdsre_trrt_fdsdf");
-		assertEquals(trigram, "sc_fdsre_trrt_fdsdf"); // trigram>3...
-
-		trigram = ExcelWriterUtil.getProjectTrigram("sc_123_trrt_fdsdf");
-		assertEquals(trigram, "123"); // trigram>3...
-
-		trigram = ExcelWriterUtil.getProjectTrigram("sc_123");
-		assertEquals(trigram, "sc_123");
-
 	}
 
 }

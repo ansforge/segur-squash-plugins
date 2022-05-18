@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +11,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -30,16 +27,9 @@ import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
 @Component
-public class ExcelWriterUtil {
+public class ExcelWriter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterUtil.class);
-
-	// nom du fichier Excel
-	public static final String REM = "REM";
-	public static final String PREPUB = "prepub";
-	public static final String UNDERSCORE = "_";
-	public static final String EXTENSION = ".xlsx";
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
 	// onglets
 	public static final int REM_SHEET_INDEX = 0;
 	public static final int METIER_SHEET_INDEX = 1;
@@ -80,32 +70,13 @@ public class ExcelWriterUtil {
 
 	private Traceur traceur;
 
-	public ExcelWriterUtil(Traceur traceur) {
+	public ExcelWriter(Traceur traceur) {
 		super();
 		this.traceur = traceur;
 	}
 
-	public String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
-
-		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
-		// prépublication: prepub_[datedujourJJMMAAAA]_REM_[trigramme
-		// projet]_[version].xls
-		// avec versiopn= nom du Jalon courant
-
-		StringBuilder sFileName = new StringBuilder();
-		if (prepub) {
-			DateTimeFormatter pattern = DateTimeFormatter.ofPattern("ddMMyyyy");
-			LocalDateTime nowDate = LocalDateTime.now();
-			sFileName.append(PREPUB).append(UNDERSCORE).append(nowDate.format(pattern)).append(UNDERSCORE);
-		}
-
-		sFileName.append(REM).append(UNDERSCORE).append(trigrammeProjet).append(UNDERSCORE).append(versionOuJalon)
-				.append(EXTENSION);
-		return sFileName.toString();
-	}
-
 	public XSSFWorkbook loadWorkbookTemplate(String templateName) {
-
+	
 		InputStream template = null;
 		XSSFWorkbook wk = null;
 		try {
@@ -195,7 +166,21 @@ public class ExcelWriterUtil {
 		}
 	}
 
-	public Row writeRequirementRow(ExcelData data, XSSFSheet sheet, int lineIndex, Row style2apply) {
+	public File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
+	
+		File tempFile = File.createTempFile(FileName, "xlsx");
+		tempFile.deleteOnExit();
+		FileOutputStream out = new FileOutputStream(tempFile);
+		workbook.write(out);
+		workbook.close();
+		out.close();
+		return tempFile;
+	}
+
+
+
+
+	private Row writeRequirementRow(ExcelData data, XSSFSheet sheet, int lineIndex, Row style2apply) {
 		// ecriture des données
 
 		Row row = sheet.createRow(lineIndex);
@@ -242,7 +227,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void writeCaseTestPart(TestCase testcase, Map<Long, Step> steps, Row row, Row style2apply) {
+	private void writeCaseTestPart(TestCase testcase, Map<Long, Step> steps, Row row, Row style2apply) {
 		// ecriture des données
 
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
@@ -276,7 +261,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void writeCaseTestPartCoeurDeMetier(TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps,
+	private void writeCaseTestPartCoeurDeMetier(TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps,
 			Row row, Row style2apply) {
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
 		c10.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
@@ -289,33 +274,7 @@ public class ExcelWriterUtil {
 		// TODO cf. SFD
 	}
 
-	public static File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
-
-		File tempFile = File.createTempFile(FileName, "xlsx");
-		tempFile.deleteOnExit();
-		FileOutputStream out = new FileOutputStream(tempFile);
-		workbook.write(out);
-		workbook.close();
-		out.close();
-		return tempFile;
-	}
-
-	public static String getProjectTrigram(String projectName) {
-
-		String trigram = "";
-		// CH_ANN_xxxxx SC_ANN_xxx ou prefix_ANN_xxxxxxxxxxx
-		String[] frags = projectName.split(UNDERSCORE);
-		if ((frags.length < 3) || (frags[1].length() != 3)) {
-			LOGGER.warn("project name format not as expected : " + projectName);
-			// TODO ecrire une trace pour 3ème onglet si format non respecté ...
-			trigram = projectName;
-		} else {
-			trigram = frags[1];
-		}
-		return trigram;
-	}
-
-	public void writeErrorSheet(XSSFWorkbook workbook) {
+	private void writeErrorSheet(XSSFWorkbook workbook) {
 		List<Message> msg = traceur.getMsg();
 		if (msg.size() != 0) {
 			XSSFSheet errorSheet = workbook.createSheet(ERROR_SHEET_NAME);
@@ -333,7 +292,7 @@ public class ExcelWriterUtil {
 		}
 	}
 
-	public void lockWorkbook(XSSFWorkbook workbook) {
+	private void lockWorkbook(XSSFWorkbook workbook) {
 		LOGGER.info("Appel pour lock d'une feuille du workbook");
 
 		XSSFSheet requirementsSheet = workbook.getSheet("Exigences");
@@ -352,7 +311,7 @@ public class ExcelWriterUtil {
 
 	}
 
-	public void lockSheet(XSSFSheet sheet) {
+	private void lockSheet(XSSFSheet sheet) {
 		sheet.lockDeleteRows(true);
 		sheet.lockDeleteColumns(true);
 		sheet.lockInsertColumns(true);
@@ -368,7 +327,7 @@ public class ExcelWriterUtil {
 		sheet.enableLocking();
 	}
 
-	public String generateRandomPassword() {
+	private String generateRandomPassword() {
 		return RandomStringUtils.random(255, 33, 122, false, false);
 	}
 
