@@ -58,7 +58,8 @@ import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorServi
 @Service
 public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportGeneratorServiceImpl.class);
-
+	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
 		Traceur traceur = new Traceur();
@@ -78,8 +79,13 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		PerimeterData perimeterData = data.completePerimeterData(selectedMilestonesId, selectedProjectId);
 		//Chargement des données
 		data.loadData(perimeterData);
-		// chargement du template Excel
-		XSSFWorkbook workbook = excel.loadWorkbookTemplate();
+		// chargement du template Excel:
+		XSSFWorkbook workbook;
+		if (perimeterData.isPrePublication()) {
+			workbook = excel.loadWorkbookTemplate(TEMPLATE_PREPUB_NAME);
+		} else {
+			workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
+		}
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook

@@ -41,6 +41,7 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur.repository.impl;
 
+import static org.jooq.impl.DSL.nvl2;
 import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
@@ -109,7 +110,8 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //				+ "LEFT JOIN custom_field_value_option cufvo " + "ON cufv.cfv_id = cufvo.cfv_id "
 //				+ "where cufv.bound_entity_type ='REQUIREMENT_VERSION' " + "and cufv.bound_entity_id=?";
 
-		List<Cuf> cufs = dsl.select(CUSTOM_FIELD.CODE, CUSTOM_FIELD_VALUE_OPTION.LABEL).from(CUSTOM_FIELD_VALUE)
+		List<Cuf> cufs = dsl.select(CUSTOM_FIELD.CODE, nvl2(CUSTOM_FIELD_VALUE_OPTION.LABEL,CUSTOM_FIELD_VALUE_OPTION.LABEL,""))
+				.from(CUSTOM_FIELD_VALUE)
 				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
 
 				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
@@ -133,7 +135,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		order by tcs.step_order ASC
 
 		return dsl
-				.select(CUSTOM_FIELD_VALUE.LARGE_VALUE)
+				.select(nvl2(CUSTOM_FIELD_VALUE.LARGE_VALUE,CUSTOM_FIELD_VALUE.LARGE_VALUE,""))
 				.from(CUSTOM_FIELD_VALUE)
 				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
 				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
@@ -149,7 +151,8 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	@Override
 	public String findStepReferenceByTestStepId(Long testStepId) {
-		return dsl.select(CUSTOM_FIELD_VALUE.VALUE).from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
+		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.VALUE,CUSTOM_FIELD_VALUE.VALUE,""))
+				.from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
 				.on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID)).innerJoin(CUSTOM_FIELD)
 				.on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
 				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_TEST_STEP))

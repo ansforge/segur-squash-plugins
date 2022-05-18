@@ -24,6 +24,7 @@ import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriterUtil
 public class ExcelWriterTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterTest.class);
+	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
 	private ExcelWriterUtil excel;
 
 	private DSRData data;
@@ -39,7 +40,7 @@ public class ExcelWriterTest {
 		requirement1.setProfil_2("Général");
 		requirement1.setId_section_3("INS");
 		requirement1.setSection_4("Gestion de l'ins");
-		requirement1.setBloc_5("Alimentation du DMP via une PFI");
+		requirement1.setBloc_5("null");
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
 		requirement1.setNumeroExigence_8("100");
@@ -117,7 +118,7 @@ public class ExcelWriterTest {
 
 	@Test
 	void generateExcelFileWithOneRequirementNoTestCase() throws Exception {
-		XSSFWorkbook workbook = excel.loadWorkbookTemplate();
+		XSSFWorkbook workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
 		// ecriture du workbook
 		excel.putDatasInWorkbook(false, workbook, data);
 		String filename = this.getClass().getResource(".").getPath()
