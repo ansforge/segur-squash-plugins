@@ -1,3 +1,6 @@
+/*
+ * Copyright ANS 2020-2022
+ */
 package org.squashtest.tm.plugin.custom.report.segur;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
