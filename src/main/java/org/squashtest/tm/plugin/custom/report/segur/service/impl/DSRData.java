@@ -17,7 +17,7 @@ import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
@@ -38,7 +38,7 @@ public class DSRData {
 	@Autowired
 	RequirementsCollector reqCollector;
 	
-	private List<ExcelData> requirements = new ArrayList<>();
+	private List<ExcelRow> requirements = new ArrayList<>();
 	
 	private Map<Long, TestCase> testCases = new HashMap<>();
 	
@@ -122,14 +122,14 @@ public class DSRData {
 		}
 
 		// construction de la liste des exigences pour le writer
-		requirements = new ArrayList<ExcelData>();
+		requirements = new ArrayList<ExcelRow>();
 
 		// Mise à jour des données uniquement pour les exigences de l'arbre liées à une
 		// exigence du socle
 		for (Long resId : linkedReqs.keySet()) {
-			ExcelData projet = reqs.get(resId).getExcelData();
-			ExcelData socle = reqs.get(linkedReqs.get(resId)).getExcelData();
-			ExcelData update = mergeData(projet, socle);
+			ExcelRow projet = reqs.get(resId).getExcelData();
+			ExcelRow socle = reqs.get(linkedReqs.get(resId)).getExcelData();
+			ExcelRow update = mergeData(projet, socle);
 			reqs.get(resId).setExcelData(update);
 		}
 
@@ -254,8 +254,8 @@ public class DSRData {
 		return result;
 	}
 	
-	private ExcelData mergeData(ExcelData projet, ExcelData socle) {
-		ExcelData update = new ExcelData();
+	private ExcelRow mergeData(ExcelRow projet, ExcelRow socle) {
+		ExcelRow update = new ExcelRow();
 		// champs à ne pas merger
 		update.setReferenceSocle(socle.getReference());
 		update.setReqStatus(projet.getReqStatus());

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Step  {
+public class Step implements Comparable<Step> {
 
 	Long testSTepId;
 	
@@ -20,5 +20,13 @@ public class Step  {
 		this.testSTepId = testSTepId;
 		this.expectedResult = expectedResult;
 		this.stepOrder = stepOrder;	
+	}
+
+	@Override
+	public int compareTo(Step o) {
+		if (reference == null || o.getReference() == null) {
+		      return 0;
+		    }
+		return reference.compareTo(o.getReference());
 	}
 }

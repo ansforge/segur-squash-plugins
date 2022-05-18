@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -19,10 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
+import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Message;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
@@ -76,7 +81,7 @@ public class ExcelWriter {
 	}
 
 	public XSSFWorkbook loadWorkbookTemplate(String templateName) {
-	
+
 		InputStream template = null;
 		XSSFWorkbook wk = null;
 		try {
@@ -99,7 +104,7 @@ public class ExcelWriter {
 		int lineNumber = REM_FIRST_EMPTY_LINE;
 
 		// boucle sur les exigences
-		for (ExcelData req : data.getRequirements()) {
+		for (ExcelRow req : data.getRequirements()) {
 
 			// extraire les CTs liés à l'exigence de la map du binding
 			List<Long> bindingCT = data.getBindings().stream().filter(p -> p.getResId().equals(req.getResId()))
@@ -167,7 +172,7 @@ public class ExcelWriter {
 	}
 
 	public File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
-	
+
 		File tempFile = File.createTempFile(FileName, "xlsx");
 		tempFile.deleteOnExit();
 		FileOutputStream out = new FileOutputStream(tempFile);
@@ -177,10 +182,7 @@ public class ExcelWriter {
 		return tempFile;
 	}
 
-
-
-
-	private Row writeRequirementRow(ExcelData data, XSSFSheet sheet, int lineIndex, Row style2apply) {
+	private Row writeRequirementRow(ExcelRow data, XSSFSheet sheet, int lineIndex, Row style2apply) {
 		// ecriture des données
 
 		Row row = sheet.createRow(lineIndex);
@@ -215,7 +217,7 @@ public class ExcelWriter {
 
 		Cell c8 = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
 		c8.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
-		c8.setCellValue(data.getNumeroExigence_8());
+		c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
 
 		Cell c9 = row.createCell(REM_COLUMN_ENONCE);
 		c9.setCellStyle(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
@@ -232,7 +234,7 @@ public class ExcelWriter {
 
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
 		c10.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
-		c10.setCellValue(testcase.getReference());
+		c10.setCellValue(extractNumberFromReference(testcase.getReference()));
 
 		// cas des CTs non coeur de métier
 		Cell c11 = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
@@ -241,21 +243,26 @@ public class ExcelWriter {
 				+ "\n Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
-		// les steps sont ordonnées dans la liste à partir du StepOrder
+		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
-		for (Long stepId : testcase.getOrderedStepIds()) {
-			Step currentStep = steps.get(stepId);
+		List<Step> testSteps = new ArrayList<>();
+		for (Long id : testcase.getOrderedStepIds()) {
+			testSteps.add(steps.get(id));
+		}
+		Collections.sort(testSteps);
+		
+		for (Step step : testSteps) {
 
 			Cell c12plus = row.createCell(currentExcelColumn);
 			c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
-			c12plus.setCellValue(currentStep.getReference());
+			c12plus.setCellValue(extractNumberFromReference(step.getReference()));
 			currentExcelColumn++;
 
 			Cell resultCell = row.createCell(currentExcelColumn);
-			CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1 ).getCellStyle();
+			CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
 			style.setWrapText(true);
 			resultCell.setCellStyle(style);
-			resultCell.setCellValue(currentStep.getExpectedResult());
+			resultCell.setCellValue(step.getExpectedResult());
 			currentExcelColumn++;
 		}
 
@@ -290,6 +297,28 @@ public class ExcelWriter {
 				row.createCell(ERROR_COLUMN_MSG).setCellValue(msgLine.getMsg());
 			}
 		}
+	}
+
+	private String extractNumberFromReference(String reference) {
+		// supprime le prefix SC, CH, XXX
+		String numero = "";
+		String prefix = "";
+		if (reference != null) {
+			int separator = reference.indexOf(".");
+			if (separator >= 1) {
+				prefix = reference.substring(0, separator);
+			}
+
+			if ((prefix.equals(Constantes.PREFIX_PROJET_SOCLE)) || (prefix.equals(Constantes.PREFIX_PROJET_CHANTIER))
+					|| (prefix.length() == Constantes.PREFIX_PROJET__METIER_SIZE)) {
+				numero = reference.substring(separator + 1, reference.length());
+			} else {
+				traceur.addMessage(Level.ERROR, reference,
+						"Calcul du numéro à partir de la référence : erreur sur suppression du prefix de l'item (ni SC., ni CH., ni XXX.)");
+				numero = reference;
+			}
+		}
+		return numero;
 	}
 
 	private void lockWorkbook(XSSFWorkbook workbook) {
@@ -333,19 +362,20 @@ public class ExcelWriter {
 
 	/**
 	 * Remove a row by its index
-	 * @param sheet a Excel sheet
+	 * 
+	 * @param sheet    a Excel sheet
 	 * @param rowIndex a 0 based index of removing row
 	 */
 	private void removeRow(XSSFSheet sheet, int rowIndex) {
-	    int lastRowNum=sheet.getLastRowNum();
-	    if(rowIndex>=0&&rowIndex<lastRowNum){
-	        sheet.shiftRows(rowIndex+1,lastRowNum, -1);
-	    }
-	    if(rowIndex==lastRowNum){
-	        XSSFRow removingRow=sheet.getRow(rowIndex);
-	        if(removingRow!=null){
-	            sheet.removeRow(removingRow);
-	        }
-	    }
+		int lastRowNum = sheet.getLastRowNum();
+		if (rowIndex >= 0 && rowIndex < lastRowNum) {
+			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+		}
+		if (rowIndex == lastRowNum) {
+			XSSFRow removingRow = sheet.getRow(rowIndex);
+			if (removingRow != null) {
+				sheet.removeRow(removingRow);
+			}
+		}
 	}
 }

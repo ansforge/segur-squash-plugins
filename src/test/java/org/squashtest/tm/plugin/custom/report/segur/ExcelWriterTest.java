@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.plugin.custom.report.segur.model.ExcelData;
+import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
@@ -30,7 +30,7 @@ public class ExcelWriterTest {
 		Traceur traceur = new Traceur();
 		data = new DSRData(traceur);
 		excel = new ExcelWriter(new Traceur());
-		ExcelData requirement1 = new ExcelData();
+		ExcelRow requirement1 = new ExcelRow();
 		requirement1.setResId(1L);
 		requirement1.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement1.setProfil_2("Général");
@@ -39,13 +39,13 @@ public class ExcelWriterTest {
 		requirement1.setBloc_5("null");
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement1.setNumeroExigence_8("100");
+		requirement1.setNumeroExigence_8("SC.INS.01.01");
 		requirement1.setEnonceExigence_9("texte de l'éxigence non mis en forme");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference(null);
 		requirement1.setReferenceSocle(null);
 		data.getRequirements().add(requirement1);
-		ExcelData requirement2 = new ExcelData();
+		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setResId(2L);
 		requirement2.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement2.setProfil_2("Général");
@@ -80,14 +80,19 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement2);
 		
 		//TestCases
-		TestCase test1 = new TestCase(1L, "T-1", "pré-requis", "description du cas de test<BR/> multiligne", Constantes.STATUS_APPROVED);
+		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "pré-requis", "description du cas de test<BR/> multiligne", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
 		//Steps
-		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
+		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
+		s1t1.setReference("SC.INS.01.10");
+		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("résultat attendu step 1 (order 2)<BR/>"), 1);
+		s2t1.setReference("SC.INS.01.01");
 		List<Long> orderedStepIds = new ArrayList<>();
 		orderedStepIds.add(s1t1.getTestSTepId());
+		orderedStepIds.add(s2t1.getTestSTepId());
 		test1.setOrderedStepIds(orderedStepIds);
 		data.getSteps().put(1L, s1t1);
+		data.getSteps().put(2L, s2t1);
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
 		r1t1.setResId(1L);

@@ -22,7 +22,7 @@ public class ReqModel {
 	private String reference;
 	private String requirementStatus;
 	
-	private ExcelData excelData = new ExcelData();
+	private ExcelRow excelData = new ExcelRow();
 
 	private List<Cuf> cufs;
 	
@@ -48,11 +48,7 @@ public class ReqModel {
 		this.requirementStatus = requirementStatus;	
 	}
 
-	public ReqModel() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public ExcelData updateData(Traceur traceur) {
+	public ExcelRow updateData(Traceur traceur) {
 		this.traceur = traceur;
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
@@ -80,7 +76,7 @@ public class ReqModel {
 
 		calculCategorieNature(category);
 
-		excelData.setNumeroExigence_8(extractNumeroExigence(reference));
+		excelData.setNumeroExigence_8(reference);
 
 		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description));
 
@@ -147,35 +143,4 @@ public class ReqModel {
 
 	}
 
-	public String extractNumeroExigence(String reference) {
-		// supprime le prefix SC, CH, XXX
-		String numero = "";
-		String prefix = "";
-		int separator = reference.indexOf(".");
-		if (separator >= 1) {
-			prefix = reference.substring(0, separator);
-		}
-
-		if ((prefix.equals(Constantes.PREFIX_PROJET_SOCLE)) || (prefix.equals(Constantes.PREFIX_PROJET_CHANTIER))
-				|| (prefix.length() == Constantes.PREFIX_PROJET__METIER_SIZE)) {
-			numero = reference.substring(separator + 1, reference.length());
-		} else {
-			traceur.addMessage(Level.ERROR, resId,
-					"Calcul du numéro d'exigence: erreur sur suppression du prefix de l'exigence (ni SC., ni CH., ni XXX.): "
-							+ reference);
-			numero = reference;
-		}
-		return numero;
-	}
 }
-
-//	public void updateFieldsFromSocle(Traceur traceur, ReqModel reqSocle) {
-//		if ( reqSocle == null) {
-//			return;
-//		}
-//		
-//		//
-//		excelData.setReferenceSocle(reqSocle.getReference());
-//		
-//	}
-//}
