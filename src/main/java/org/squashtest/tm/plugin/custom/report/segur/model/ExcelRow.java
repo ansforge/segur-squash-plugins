@@ -15,9 +15,9 @@ public class ExcelRow {
 	/* ********************************************** */
 	// Données pour la partie exigence du template excel
 	/* ********************************************** */
-	//non excel mais nécessaire pour le binding
+	// non excel mais nécessaire pour le binding
 	private Long resId;
-	
+
 	// Donn�e calcul�e NON l'exigence est rattach�e au profil 'Général' (CUF)
 	private String boolExigenceConditionnelle_1 = Constantes.NON_RENSEIGNE;
 
@@ -30,27 +30,27 @@ public class ExcelRow {
 
 	// CUF section => chaine de caractère après le premier '_' (ex
 	// INS_Gestion de l'ins => Gestion de l'ins)
-	private String section_4 ="";
+	private String section_4 = "";
 
 	// CUF bloc
-	private String bloc_5 ="";
+	private String bloc_5 = "";
 
 	// CUF fonction
-	private String fonction_6 ="";
+	private String fonction_6 = "";
 
 	// si catégorie = Exigence (DOIT)=> valeur EXIGENCE, si catégorie =
 	// Préconisation (PEUT) valeur=PRECONISATION
-	private String natureExigence_7 ="";
+	private String natureExigence_7 = "";
 
 	// Référence
-	private String numeroExigence_8 ="";
+	private String numeroExigence_8 = "";
 
 	// description texte RTE
 	private String enonceExigence_9 = "";
 
-    //pour les colonnes de prépublication
+	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;
 	private String referenceSocle;
-	//private Long socleResId;
+	// private Long socleResId;
 }

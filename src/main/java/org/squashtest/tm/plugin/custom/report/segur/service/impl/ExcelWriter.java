@@ -244,7 +244,7 @@ public class ExcelWriter {
 			c11.setCellValue("Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
 			c11.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite())
-			+ "\n\nDescription:\n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+					+ "\n\nDescription:\n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 		}
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10

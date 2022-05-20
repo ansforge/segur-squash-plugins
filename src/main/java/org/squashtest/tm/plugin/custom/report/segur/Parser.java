@@ -27,11 +27,12 @@ public class Parser {
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		Elements lis = doc.select("li");
 		List<String> liste = new ArrayList<String>();
-		lis.stream().forEach(li -> liste.add(Constantes.PREFIX_ELEMENT_LSITE_A_PUCES + li.text() + Constantes.CRLF + Constantes.CRLF));
+		lis.stream().forEach(li -> liste
+				.add(Constantes.PREFIX_ELEMENT_LSITE_A_PUCES + li.text() + Constantes.CRLF + Constantes.CRLF));
 		return liste.stream().collect(Collectors.joining(""));
 	}
 
-	 //IN: html fragment between <ol> tag
+	// IN: html fragment between <ol> tag
 	public static String convertHtmlOrderedListToString(String ulHTMlString) {
 		int prefix = 1;
 		String pt = ". ";
@@ -50,11 +51,14 @@ public class Parser {
 
 	public static String convertHTMLtoString(String html) {
 		String tmp = "";
-		if (html == null || html.isEmpty()) { return tmp; };
+		if (html == null || html.isEmpty()) {
+			return tmp;
+		}
+		;
 		Document doc = Jsoup.parseBodyFragment(html);
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		StringBuilder out = new StringBuilder();
-		
+
 		for (Node node : doc.body().childNodes()) {
 			tmp = node.toString();
 			tmp = tmp.replace("<br />", Constantes.CRLF);
@@ -76,7 +80,6 @@ public class Parser {
 		}
 		return out.toString();
 	}
-
 
 	public static String htmlParagrapheToText(String html) {
 		StringWriter sw = new StringWriter();

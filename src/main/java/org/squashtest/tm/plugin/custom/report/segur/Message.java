@@ -11,11 +11,11 @@ import lombok.Setter;
 public class Message {
 
 	Level level;
-	
+
 	String resId;
-	
+
 	String msg;
-	
+
 	public Message(Level level, String resId, String message) {
 		this.level = level;
 		this.resId = resId;

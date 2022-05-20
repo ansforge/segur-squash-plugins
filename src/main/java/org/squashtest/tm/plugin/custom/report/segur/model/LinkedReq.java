@@ -15,10 +15,11 @@ public class LinkedReq {
 		this.resId = resId;
 		this.socleResId = socleResId;
 	}
-	//exigencde de l'arbre
+
+	// exigencde de l'arbre
 	Long resId;
-	//exigence (socle) liée
+	// exigence (socle) liée
 	Long socleResId;
-	//référence de l'exigence socle liée
+	// référence de l'exigence socle liée
 //	String relatedReference;
 }

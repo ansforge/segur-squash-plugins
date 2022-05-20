@@ -11,25 +11,25 @@ import lombok.Setter;
 public class Step implements Comparable<Step> {
 
 	Long testSTepId;
-	
+
 	String expectedResult;
-	
-	//CUF
+
+	// CUF
 	String reference;
-	
+
 	int stepOrder;
-	
+
 	public Step(Long testSTepId, String expectedResult, int stepOrder) {
 		this.testSTepId = testSTepId;
 		this.expectedResult = expectedResult;
-		this.stepOrder = stepOrder;	
+		this.stepOrder = stepOrder;
 	}
 
 	@Override
 	public int compareTo(Step o) {
 		if (reference == null || o.getReference() == null) {
-		      return 0;
-		    }
+			return 0;
+		}
 		return reference.compareTo(o.getReference());
 	}
 }

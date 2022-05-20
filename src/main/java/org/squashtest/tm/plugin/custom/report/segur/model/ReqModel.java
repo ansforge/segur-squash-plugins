@@ -24,12 +24,11 @@ public class ReqModel {
 	private String description;
 	private String reference;
 	private String requirementStatus;
-	
+
 	private ExcelRow excelData = new ExcelRow();
 
 	private List<Cuf> cufs;
-	
-	
+
 	// calcul�e
 	private String idSection;
 	private String section;
@@ -37,18 +36,16 @@ public class ReqModel {
 	private Traceur traceur;
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ReqModel.class);
 
-	
 //	// mise à jour des champs issus des Cufs	
 //	private Cuf rawProfil;
-	
-	
+
 	public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
 		super();
 		this.resId = resId;
 		this.category = category;
 		this.description = description;
 		this.reference = reference;
-		this.requirementStatus = requirementStatus;	
+		this.requirementStatus = requirementStatus;
 	}
 
 	public ExcelRow updateData(Traceur traceur) {
@@ -56,8 +53,7 @@ public class ReqModel {
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
 		excelData.setResId(resId);
-		
-		
+
 		// les cufs ont �t� lus en BDD, on met � jour "excelData"
 
 		Cuf rawProfil = findSpecificCuf(Constantes.PROFIL);
@@ -138,11 +134,11 @@ public class ReqModel {
 				update = true;
 			}
 		}
-		 if (update == false) {	
+		if (update == false) {
 			traceur.addMessage(Level.WARNING, resId,
 					"Impossible d'identifier la nature pour l'exigence. Cuf'Catégorie'= " + categorie);
 			excelData.setNatureExigence_7("");
-		 }
+		}
 
 	}
 

@@ -32,48 +32,48 @@ import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsColle
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter 
+@Getter
 @Setter
 public class DSRData {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DSRData.class);
-	
-	@Autowired
+
 	RequirementsCollector reqCollector;
-	
+
 	private List<ExcelRow> requirements = new ArrayList<>();
-	
+
 	private Map<Long, TestCase> testCases = new HashMap<>();
-	
+
 	private List<ReqStepBinding> bindings = new ArrayList<>();
-	
+
 	private Map<Long, Step> steps = new HashMap<>();
-	
+
 	private Traceur traceur;
-	
-	
-	public DSRData(Traceur traceur) {
+
+	public DSRData(Traceur traceur, RequirementsCollector reqCollector) {
 		super();
 		this.traceur = traceur;
+		this.reqCollector = reqCollector;
 	}
 
 	public void loadData(PerimeterData perimeter) {
 
-		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(perimeter.getProjectId(), perimeter.getMilestoneId());
+		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(perimeter.getProjectId(),
+				perimeter.getMilestoneId());
 		// Map des exgicences de l'arbre (projet) avec ID des exigences liées (attention
 		// si une exigence n'est pas lié , elle n'est pas dans la map)
 		Map<Long, Long> linkedReqs = getMapTreeRequirementAndlinkedRequirement(linkedOrNotReqs);
 		Set<Long> reqIds = populateRequirementData(linkedReqs, linkedOrNotReqs);
 		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
 		List<Long> distinctCT = setBinding(reqIds, perimeter.getMilestoneId(), linkedReqs);
-		
+
 		// lecture des données sur les CTs
 		populateTestCases(distinctCT, perimeter);
-		
+
 		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
 		// mise à jour de la propriété dans l'objet TestCase
 		addTestCaseCoeurDeMetier(perimeter);
-		
+
 		// lecture des données sur les steps
 		populateStepsData(distinctCT);
 	}
@@ -88,7 +88,7 @@ public class DSRData {
 		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
 		return perimeterData;
 	}
-	
+
 	private Set<Long> populateRequirementData(Map<Long, Long> linkedReqs, List<LinkedReq> linkedOrNotReqs) {
 
 		// liste des exigences de l'arbre
@@ -162,7 +162,6 @@ public class DSRData {
 			}
 		}
 	}
-	
 
 	private void populateStepsData(List<Long> distinctCT) {
 		steps = reqCollector.findSteps(distinctCT);
@@ -183,7 +182,6 @@ public class DSRData {
 			steps.put(stepId, currentStep);
 		}
 	}
-	
 
 	private void populateTestCases(List<Long> xdistinctCT, PerimeterData perimeterData) {
 		testCases = reqCollector.findTestCase(xdistinctCT);
@@ -208,9 +206,7 @@ public class DSRData {
 			testCases.put(testCaseId, tcTmp);
 		}
 	}
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
 	private List<Long> setBinding(Set<Long> xreqIds, Long xmilestonesId, Map<Long, Long> linkedReqs) {
 
@@ -230,9 +226,8 @@ public class DSRData {
 		return bindings.stream().map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
 	}
 
-
 	private Map<Long, Long> getMapTreeRequirementAndlinkedRequirement(List<LinkedReq> linkedReqs) {
-	
+
 		Map<Long, Long> treeResIdAndLinkedResId = new HashMap<Long, Long>();
 		for (LinkedReq linkedReq : linkedReqs) {
 			if (linkedReq.getSocleResId() != null) {
@@ -244,7 +239,7 @@ public class DSRData {
 					treeResIdAndLinkedResId.put(linkedReq.getResId(), linkedReq.getSocleResId());
 				}
 			}
-	
+
 		}
 		return treeResIdAndLinkedResId;
 	}
@@ -256,7 +251,7 @@ public class DSRData {
 		}
 		return result;
 	}
-	
+
 	private ExcelRow mergeData(ExcelRow projet, ExcelRow socle) {
 		ExcelRow update = new ExcelRow();
 		// champs à ne pas merger

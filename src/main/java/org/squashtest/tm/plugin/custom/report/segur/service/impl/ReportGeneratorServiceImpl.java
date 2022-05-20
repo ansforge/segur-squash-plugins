@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
+import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
 
 @Service
@@ -29,7 +32,10 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public static final String PREPUB = "prepub";
 	public static final String NAME_SEPARATOR = "_";
 	public static final String EXTENSION = ".xlsx";
-	
+
+	@Inject
+	RequirementsCollector reqCollector;
+
 	@Override
 	public File generateReport(Map<String, Criteria> criterias) {
 		Traceur traceur = new Traceur();
@@ -37,7 +43,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		ExcelWriter excel = new ExcelWriter(traceur);
 
 		LOGGER.info(" SquashTm-segur plugin report ");
-		DSRData data = new DSRData(traceur);
+		DSRData data = new DSRData(traceur, reqCollector);
 		// lecture des critères
 
 		Long selectedProjectId = getProjectId(criterias);
@@ -47,7 +53,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		// l'objet perimeterData est construit sur lecture du Milestone (name, status)
 		PerimeterData perimeterData = data.completePerimeterData(selectedMilestonesId, selectedProjectId);
-		//Chargement des données
+		// Chargement des données
 		data.loadData(perimeterData);
 		// chargement du template Excel:
 		XSSFWorkbook workbook;
@@ -75,26 +81,26 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 // ***************************************************************************************************	
 
 	private String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
-		
+
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls
 		// prépublication: prepub_[datedujourJJMMAAAA]_REM_[trigramme
 		// projet]_[version].xls
 		// avec versiopn= nom du Jalon courant
-	
+
 		StringBuilder sFileName = new StringBuilder();
 		if (prepub) {
 			DateTimeFormatter pattern = DateTimeFormatter.ofPattern("ddMMyyyy");
 			LocalDateTime nowDate = LocalDateTime.now();
 			sFileName.append(PREPUB).append(NAME_SEPARATOR).append(nowDate.format(pattern)).append(NAME_SEPARATOR);
 		}
-	
-		sFileName.append(REM).append(NAME_SEPARATOR).append(trigrammeProjet).append(NAME_SEPARATOR).append(versionOuJalon)
-				.append(EXTENSION);
+
+		sFileName.append(REM).append(NAME_SEPARATOR).append(trigrammeProjet).append(NAME_SEPARATOR)
+				.append(versionOuJalon).append(EXTENSION);
 		return sFileName.toString();
 	}
 
 	private String getProjectTrigram(String projectName) {
-		
+
 		String trigram = "";
 		// CH_ANN_xxxxx SC_ANN_xxx ou prefix_ANN_xxxxxxxxxxx
 		String[] frags = projectName.split(NAME_SEPARATOR);

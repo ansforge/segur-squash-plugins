@@ -14,12 +14,11 @@ import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorServi
 
 public class SegurExcelReport extends BasicDirectDownloadableReport {
 
-  @Inject
-  ReportGeneratorService reportGeneratorService;
+	@Inject
+	ReportGeneratorService reportGeneratorService;
 
-
-  @Override
-  public File generateReport(Map<String, Criteria> criterias) {
-    return reportGeneratorService.generateReport(criterias);
-  }
+	@Override
+	public File generateReport(Map<String, Criteria> criterias) {
+		return reportGeneratorService.generateReport(criterias);
+	}
 }

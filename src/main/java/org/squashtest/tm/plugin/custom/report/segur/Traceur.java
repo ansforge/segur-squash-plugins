@@ -15,28 +15,31 @@ public class Traceur {
 
 	@Getter
 	private List<Message> msg = new ArrayList<Message>();
-	
+
 	private int COUNTER_MSG = 0;
-	
+
 	@Getter
 	private static final int MAX_MSG = 50;
-	
+
 	public synchronized void addMessage(Level level, Long resId, String message) {
-		if (COUNTER_MSG >= MAX_MSG) {return; }
-		COUNTER_MSG ++;
-		msg.add(new Message(level,String.valueOf(resId), message ));
-	}
-	
-	public synchronized void addMessage(Level level, String resId, String message) {
-		if (COUNTER_MSG >= MAX_MSG) {return; }
-		COUNTER_MSG ++;
-		msg.add(new Message(level, resId, message ));
+		if (COUNTER_MSG >= MAX_MSG) {
+			return;
+		}
+		COUNTER_MSG++;
+		msg.add(new Message(level, String.valueOf(resId), message));
 	}
 
-	
+	public synchronized void addMessage(Level level, String resId, String message) {
+		if (COUNTER_MSG >= MAX_MSG) {
+			return;
+		}
+		COUNTER_MSG++;
+		msg.add(new Message(level, resId, message));
+	}
+
 	public void reset() {
 		COUNTER_MSG = 0;
 		msg.clear();
-		
+
 	}
 }

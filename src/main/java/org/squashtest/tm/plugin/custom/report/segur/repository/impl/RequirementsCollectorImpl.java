@@ -72,9 +72,10 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //				+ "LEFT JOIN custom_field_value_option cufvo " + "ON cufv.cfv_id = cufvo.cfv_id "
 //				+ "where cufv.bound_entity_type ='REQUIREMENT_VERSION' " + "and cufv.bound_entity_id=?";
 
-		List<Cuf> cufs = dsl.select(CUSTOM_FIELD.CODE, nvl2(CUSTOM_FIELD_VALUE_OPTION.LABEL,CUSTOM_FIELD_VALUE_OPTION.LABEL,""))
-				.from(CUSTOM_FIELD_VALUE)
-				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+		List<Cuf> cufs = dsl
+				.select(CUSTOM_FIELD.CODE, nvl2(CUSTOM_FIELD_VALUE_OPTION.LABEL, CUSTOM_FIELD_VALUE_OPTION.LABEL, ""))
+				.from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
+				.on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
 
 				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
 				.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID))
@@ -83,7 +84,6 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 		return cufs;
 	}
-
 
 	@Override
 	public List<String> findPointsDeVerificationByTcStepsIds(List<Long> steps) {
@@ -96,27 +96,23 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		and cfv.bound_entity_id in ('10754','10755', '10756')
 //		order by tcs.step_order ASC
 
-		return dsl
-				.select(nvl2(CUSTOM_FIELD_VALUE.LARGE_VALUE,CUSTOM_FIELD_VALUE.LARGE_VALUE,""))
-				.from(CUSTOM_FIELD_VALUE)
-				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))				
-				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-				.innerJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.STEP_ID.eq(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID))
+		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.LARGE_VALUE, CUSTOM_FIELD_VALUE.LARGE_VALUE, ""))
+				.from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
+				.on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID)).innerJoin(CUSTOM_FIELD)
+				.on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID)).innerJoin(TEST_CASE_STEPS)
+				.on(TEST_CASE_STEPS.STEP_ID.eq(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID))
 				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_TEST_STEP))
-				        .and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_RTF))
-						.and(CUSTOM_FIELD.CODE.eq(Constantes.VERIF_PREUVE))
-						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.in(steps))
-				.orderBy(TEST_CASE_STEPS.STEP_ORDER.asc())
-				.fetchInto(String.class);
-		
+				.and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_RTF))
+				.and(CUSTOM_FIELD.CODE.eq(Constantes.VERIF_PREUVE)).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.in(steps))
+				.orderBy(TEST_CASE_STEPS.STEP_ORDER.asc()).fetchInto(String.class);
+
 	}
 
 	@Override
 	public String findStepReferenceByTestStepId(Long testStepId) {
-		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.VALUE,CUSTOM_FIELD_VALUE.VALUE,""))
-				.from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
-				.on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID)).innerJoin(CUSTOM_FIELD)
-				.on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
+		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.VALUE, "")).from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
 				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(Constantes.CUF_TYPE_OBJECT_TEST_STEP))
 				.and(CUSTOM_FIELD.FIELD_TYPE.eq(Constantes.CUF_FIELD_TYPE_CF))
 				.and(CUSTOM_FIELD.CODE.eq(Constantes.REF_PREUVE)).and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(testStepId))
@@ -124,7 +120,6 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	}
 
-	
 	@Override
 	public Map<Long, ReqModel> mapFindRequirementByResId(Set<Long> resIds) {
 //		select rv.RES_ID, rv.REFERENCE, rv.REQUIREMENT_STATUS, ili.LABEL as category, res.DESCRIPTION
@@ -133,20 +128,15 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		inner Join INFO_LIST_ITEM ili on ili.ITEM_ID = rv.CATEGORY	
 //		where rv.RES_ID in ('11008', '11010', '11011', '11012', '11013', '11016', '11017', '11018', '10975', '10988', '10977', '10976', '10978', '10983')
 
-		
 		return dsl
-		.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
-				REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
-				RESOURCE.DESCRIPTION)
-		.from(REQUIREMENT_VERSION)
-		.innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
-		.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))		
-		.where(REQUIREMENT_VERSION.RES_ID.in(resIds))
-		.fetch().intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
+				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
+						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+						RESOURCE.DESCRIPTION)
+				.from(REQUIREMENT_VERSION).innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
+				.where(REQUIREMENT_VERSION.RES_ID.in(resIds)).fetch()
+				.intoMap(REQUIREMENT_VERSION.RES_ID, ReqModel.class);
 	}
-	
-	
-	
 
 //	@Override
 //	public List<Long> findReqWithMultiplelinks(Set<Long> reqIds) {
@@ -165,7 +155,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		return dsl
 //		  
 //	}
-	
+
 	@Override
 	public List<LinkedReq> findLinkedReq(Long projectId, Long milestoneId) {
 //		select rv.RES_ID,  rvl.related_requirement_version_id
@@ -177,19 +167,21 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		where rln.PROJECT_ID = '39'
 //				and mrv.MILESTONE_ID = '20'
 		return dsl
-		.select(REQUIREMENT_VERSION.RES_ID.as("resId"), REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID.as("socleResId"))
-		.from(REQUIREMENT)
-		.innerJoin(REQUIREMENT_LIBRARY_NODE).on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID))
-		.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
-		.innerJoin(MILESTONE_REQ_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
-		.leftJoin(REQUIREMENT_VERSION_LINK).on(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
-		.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
-				.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
-		.fetchInto(LinkedReq.class);
+				.select(REQUIREMENT_VERSION.RES_ID.as("resId"),
+						REQUIREMENT_VERSION_LINK.RELATED_REQUIREMENT_VERSION_ID.as("socleResId"))
+				.from(REQUIREMENT).innerJoin(REQUIREMENT_LIBRARY_NODE)
+				.on(REQUIREMENT_LIBRARY_NODE.RLN_ID.eq(REQUIREMENT.RLN_ID)).innerJoin(REQUIREMENT_VERSION)
+				.on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT_LIBRARY_NODE.RLN_ID))
+				.innerJoin(MILESTONE_REQ_VERSION)
+				.on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.leftJoin(REQUIREMENT_VERSION_LINK)
+				.on(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
+						.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
+				.fetchInto(LinkedReq.class);
 
 	}
-	
-	
+
 	@Override
 	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId) {
 //		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID
@@ -204,13 +196,14 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 						REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("resId"),
 						REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.as("tclnId"),
 						VERIFYING_STEPS.TEST_STEP_ID.as("stepId"))
-				.from(REQUIREMENT_VERSION_COVERAGE)
-				.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID))
+				.from(REQUIREMENT_VERSION_COVERAGE).innerJoin(TEST_CASE)
+				.on(TEST_CASE.TCLN_ID.eq(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID))
 				.innerJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
-				.leftJoin(VERIFYING_STEPS).on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
+				.leftJoin(VERIFYING_STEPS)
+				.on(REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID
+						.eq(VERIFYING_STEPS.REQUIREMENT_VERSION_COVERAGE_ID))
 				.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(reqId))
-				  .and(MILESTONE_TEST_CASE.MILESTONE_ID.eq(milestoneId))
-				.fetchInto(ReqStepBinding.class);
+				.and(MILESTONE_TEST_CASE.MILESTONE_ID.eq(milestoneId)).fetchInto(ReqStepBinding.class);
 	}
 
 	@Override
@@ -223,7 +216,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //le nombre de pas de test liés à une exigence se calcule à partir de => List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);		
 		return dsl
 				.select(TEST_CASE.TCLN_ID, TEST_CASE.REFERENCE, TEST_CASE.PREREQUISITE,
-						TEST_CASE_LIBRARY_NODE.DESCRIPTION,  TEST_CASE.TC_STATUS)
+						TEST_CASE_LIBRARY_NODE.DESCRIPTION, TEST_CASE.TC_STATUS)
 				.from(TEST_CASE).innerJoin(TEST_CASE_LIBRARY_NODE)
 				.on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID)).where(TEST_CASE.TCLN_ID.in(tc_ids)).fetch()
 				.intoMap(TEST_CASE.TCLN_ID, TestCase.class);

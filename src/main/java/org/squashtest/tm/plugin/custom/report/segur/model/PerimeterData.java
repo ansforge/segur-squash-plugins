@@ -33,14 +33,15 @@ public class PerimeterData {
 	public Long getProjectId() {
 		return Long.valueOf(projectId);
 	}
-	
+
 	public Long getMilestoneId() {
 		return Long.valueOf(milestoneId);
 	}
-	
+
 	public boolean isPrePublication() {
 		return !milestoneStatus.equalsIgnoreCase(Constantes.MILESTONE_LOCKED);
 	}
+
 	public void extractedData(String milestoneName, String milestoneStatus) {
 		this.milestoneName = milestoneName;
 		this.milestoneStatus = milestoneStatus;
