@@ -100,7 +100,8 @@ public class Parser {
 				break;
 			}
 		}
-		return out.toString();
+		return out.toString().replaceAll("&apos;", "'");
+		
 	}
 
 	/**
@@ -116,40 +117,4 @@ public class Parser {
 		return sw.toString();
 	}
 
-//	// A supprimer utiliser juste dans un test ...
-//	public static List<String> todeleteParseHtml(String str) {
-//		System.out.println("ICI parse du html");
-//		org.jsoup.nodes.Document doc = Jsoup.parse(str);
-//
-//		final List<String> wordList = new ArrayList<String>();
-//
-//		doc.body().traverse(new NodeVisitor() {
-//
-//			@Override
-//			public void head(Node arg0, int arg1) {
-//				if (arg1 == 1) {
-//					// String value = Jsoup.parse(arg0.outerHtml()).text();
-//					String value = arg0.outerHtml();
-//					if (!wordList.contains(value))
-//						wordList.add(arg0.outerHtml());
-//
-//				}
-//
-//			}
-//
-//			@Override
-//			public void tail(Node arg0, int arg1) {
-//
-//			}
-//		});
-//
-//		System.out.println("ICI bnre elt de la liste: " + wordList.size());
-//		for (String word : wordList) {
-//			System.out.println(" -------------");
-//			System.out.println(word);
-//			System.out.println(" -------------");
-//		}
-//
-//		return wordList;
-//	}
 }
