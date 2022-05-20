@@ -347,7 +347,7 @@ public class ExcelWriter {
 				CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
 				style.setWrapText(true);
 				resultCell.setCellStyle(style);
-				resultCell.setCellValue(step.getExpectedResult());
+				resultCell.setCellValue(Parser.convertHTMLtoString(step.getExpectedResult()));
 				currentExcelColumn++;
 			}
 		}

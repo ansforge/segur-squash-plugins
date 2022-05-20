@@ -95,7 +95,7 @@ public class ExcelWriterTest {
 		//Steps
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
 		s1t1.setReference("SC.INS.01.10");
-		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("résultat attendu step 1 (order 2)<BR/>"), 1);
+		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("<p>résultat attendu avec paragraphe (order 2)<BR/></p>"), 1);
 		s2t1.setReference("SC.INS.01.01");
 		List<Long> orderedStepIds = new ArrayList<>();
 		orderedStepIds.add(s1t1.getTestSTepId());
@@ -103,7 +103,7 @@ public class ExcelWriterTest {
 		test1.setOrderedStepIds(orderedStepIds);
 		data.getSteps().put(1L, s1t1);
 		data.getSteps().put(2L, s2t1);
-		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null, "description du cas de test sans pré-requis et sans steps", Constantes.STATUS_APPROVED);
+		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null, "description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(2L, test2);
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
