@@ -21,9 +21,15 @@ import org.squashtest.tm.plugin.custom.report.segur.repository.impl.Requirements
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.DSRData;
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriter;
 
+
+/**
+ * The Class ExcelWriterTest.
+ */
 public class ExcelWriterTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterTest.class);
+	
+	/** The Constant TEMPLATE_NAME. */
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
 	private ExcelWriter excel;
 

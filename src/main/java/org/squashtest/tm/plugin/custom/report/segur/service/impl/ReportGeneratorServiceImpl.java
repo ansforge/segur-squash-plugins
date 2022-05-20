@@ -22,15 +22,31 @@ import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
 
+
+/**
+ * The Class ReportGeneratorServiceImpl.
+ */
 @Service
 public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportGeneratorServiceImpl.class);
+	
+	/** The Constant TEMPLATE_NAME. */
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	
+	/** The Constant TEMPLATE_PREPUB_NAME. */
 	public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	
+	/** The Constant REM. */
 	// nom du fichier Excel
 	public static final String REM = "REM";
+	
+	/** The Constant PREPUB. */
 	public static final String PREPUB = "prepub";
+	
+	/** The Constant NAME_SEPARATOR. */
 	public static final String NAME_SEPARATOR = "_";
+	
+	/** The Constant EXTENSION. */
 	public static final String EXTENSION = ".xlsx";
 
 	@Inject

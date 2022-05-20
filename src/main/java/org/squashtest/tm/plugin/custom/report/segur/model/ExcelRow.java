@@ -8,6 +8,9 @@ import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The Class ExcelRow.
+ */
 @Getter
 @Setter
 public class ExcelRow {

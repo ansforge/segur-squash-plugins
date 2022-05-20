@@ -6,6 +6,10 @@ package org.squashtest.tm.plugin.custom.report.segur.model;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class Step.
+ */
 @Getter
 @Setter
 public class Step implements Comparable<Step> {
@@ -19,6 +23,13 @@ public class Step implements Comparable<Step> {
 
 	int stepOrder;
 
+	/**
+	 * Instantiates a new step.
+	 *
+	 * @param testSTepId the test S tep id
+	 * @param expectedResult the expected result
+	 * @param stepOrder the step order
+	 */
 	public Step(Long testSTepId, String expectedResult, int stepOrder) {
 		this.testSTepId = testSTepId;
 		this.expectedResult = expectedResult;

@@ -8,6 +8,17 @@ import java.util.Map;
 
 import org.squashtest.tm.api.report.criteria.Criteria;
 
+
+/**
+ * The Interface ReportGeneratorService.
+ */
 public interface ReportGeneratorService {
+	
+	/**
+	 * Generate report.
+	 *
+	 * @param criterias the criterias
+	 * @return the file
+	 */
 	File generateReport(Map<String, Criteria> criterias);
 }

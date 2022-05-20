@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 
+
+/**
+ * The Class Traceur.
+ */
 @Component
 public class Traceur {
 
@@ -21,6 +25,13 @@ public class Traceur {
 	@Getter
 	private static final int MAX_MSG = 50;
 
+	/**
+	 * Adds the message.
+	 *
+	 * @param level the level
+	 * @param resId the res id
+	 * @param message the message
+	 */
 	public synchronized void addMessage(Level level, Long resId, String message) {
 		if (COUNTER_MSG >= MAX_MSG) {
 			return;
@@ -29,6 +40,13 @@ public class Traceur {
 		msg.add(new Message(level, String.valueOf(resId), message));
 	}
 
+	/**
+	 * Adds the message.
+	 *
+	 * @param level the level
+	 * @param resId the res id
+	 * @param message the message
+	 */
 	public synchronized void addMessage(Level level, String resId, String message) {
 		if (COUNTER_MSG >= MAX_MSG) {
 			return;
@@ -37,6 +55,9 @@ public class Traceur {
 		msg.add(new Message(level, resId, message));
 	}
 
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		COUNTER_MSG = 0;
 		msg.clear();

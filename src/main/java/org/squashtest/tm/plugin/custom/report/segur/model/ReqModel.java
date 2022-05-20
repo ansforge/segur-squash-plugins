@@ -14,6 +14,10 @@ import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class ReqModel.
+ */
 @Getter
 @Setter
 public class ReqModel {
@@ -39,7 +43,16 @@ public class ReqModel {
 //	// mise à jour des champs issus des Cufs	
 //	private Cuf rawProfil;
 
-	public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
+	/**
+ * Instantiates a new req model.
+ *
+ * @param resId the res id
+ * @param reference the reference
+ * @param requirementStatus the requirement status
+ * @param category the category
+ * @param description the description
+ */
+public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
 		super();
 		this.resId = resId;
 		this.category = category;
@@ -48,6 +61,12 @@ public class ReqModel {
 		this.requirementStatus = requirementStatus;
 	}
 
+	/**
+	 * Update data.
+	 *
+	 * @param traceur the traceur
+	 * @return the excel row
+	 */
 	public ExcelRow updateData(Traceur traceur) {
 		this.traceur = traceur;
 
@@ -86,6 +105,12 @@ public class ReqModel {
 		return excelData;
 	}
 
+	/**
+	 * Find specific cuf.
+	 *
+	 * @param cufCode the cuf code
+	 * @return the cuf
+	 */
 	public Cuf findSpecificCuf(String cufCode) {
 		List<Cuf> found = cufs.stream().filter(currentCuf -> cufCode.equals(currentCuf.getCode()))
 				.collect(Collectors.toList());
@@ -95,6 +120,11 @@ public class ReqModel {
 		return found.get(0);
 	}
 
+	/**
+	 * Split section and set excel data.
+	 *
+	 * @param cufSection the cuf section
+	 */
 	public void splitSectionAndSetExcelData(String cufSection) {
 		int separator = cufSection.indexOf(Constantes.SECTION_SEPARATOR);
 		if (separator == -1) {
@@ -106,6 +136,11 @@ public class ReqModel {
 		}
 	}
 
+	/**
+	 * Calcul exigence conditionelle.
+	 *
+	 * @param labelProfil the label profil
+	 */
 	public void calculExigenceConditionelle(String labelProfil) {
 
 		if (labelProfil.isEmpty()) {
@@ -120,6 +155,11 @@ public class ReqModel {
 		}
 	}
 
+	/**
+	 * Calcul categorie nature.
+	 *
+	 * @param categorie the categorie
+	 */
 	public void calculCategorieNature(String categorie) {
 		Boolean update = false;
 		if (categorie != null) {

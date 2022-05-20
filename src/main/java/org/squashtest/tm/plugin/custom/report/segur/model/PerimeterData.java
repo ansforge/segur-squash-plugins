@@ -10,6 +10,10 @@ import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class PerimeterData.
+ */
 @Getter
 @Setter
 public class PerimeterData {
@@ -42,6 +46,12 @@ public class PerimeterData {
 		return !milestoneStatus.equalsIgnoreCase(Constantes.MILESTONE_LOCKED);
 	}
 
+	/**
+	 * Extracted data.
+	 *
+	 * @param milestoneName the milestone name
+	 * @param milestoneStatus the milestone status
+	 */
 	public void extractedData(String milestoneName, String milestoneStatus) {
 		this.milestoneName = milestoneName;
 		this.milestoneStatus = milestoneStatus;

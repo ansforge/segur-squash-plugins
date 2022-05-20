@@ -11,6 +11,10 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * The Class I18nHelper.
+ */
 @Component("custom.report.segur.i18nHelper")
 public class I18nHelper implements MessageSourceAware {
 
@@ -24,6 +28,12 @@ public class I18nHelper implements MessageSourceAware {
 		return current;
 	}
 
+	/**
+	 * Translate.
+	 *
+	 * @param string the string
+	 * @return the string
+	 */
 	public String translate(String string) {
 		if (StringUtils.isEmpty(string)) {
 			return StringUtils.EMPTY;

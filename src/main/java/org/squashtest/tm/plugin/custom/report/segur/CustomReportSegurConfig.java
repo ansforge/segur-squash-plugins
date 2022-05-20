@@ -21,9 +21,19 @@ import org.squashtest.tm.api.report.form.RadioButtonsGroup;
 import org.squashtest.tm.api.report.form.composite.MilestonePickerOption;
 import org.squashtest.tm.api.report.form.composite.ProjectPickerOption;
 
+
+/**
+ * The Class CustomReportSegurConfig.
+ */
 @Configuration
 public class CustomReportSegurConfig {
 
+	/**
+	 * Segur report plugin.
+	 *
+	 * @param segurReport the segur report
+	 * @return the report plugin
+	 */
 	@Bean
 	public ReportPlugin segurReportPlugin(SegurExcelReport segurReport) {
 		Report[] reports = { segurReport };
@@ -32,6 +42,12 @@ public class CustomReportSegurConfig {
 		return reportPlugin;
 	}
 
+	/**
+	 * Segur report.
+	 *
+	 * @param segurForm the segur form
+	 * @return the segur excel report
+	 */
 	@Bean
 	public SegurExcelReport segurReport(Form segurForm) {
 		SegurExcelReport segurReport = new SegurExcelReport();
@@ -43,6 +59,12 @@ public class CustomReportSegurConfig {
 		return segurReport;
 	}
 
+	/**
+	 * Segur form.
+	 *
+	 * @param segurRadioButton the segur radio button
+	 * @return the form
+	 */
 	@Bean
 	public Form segurForm(@Named("segurRadioButton") RadioButtonsGroup segurRadioButton) {
 		Form form = new Form();
@@ -52,6 +74,13 @@ public class CustomReportSegurConfig {
 		return form;
 	}
 
+	/**
+	 * Segur radio button.
+	 *
+	 * @param milestonePickerOption the milestone picker option
+	 * @param projectPickerOption the project picker option
+	 * @return the radio buttons group
+	 */
 	@Bean(name = "segurRadioButton")
 	public RadioButtonsGroup segurRadioButton(
 			@Named("milestonePickerOption") MilestonePickerOption milestonePickerOption,
@@ -68,6 +97,11 @@ public class CustomReportSegurConfig {
 
 	}
 
+	/**
+	 * Milestone picker option.
+	 *
+	 * @return the milestone picker option
+	 */
 	@Bean(name = "milestonePickerOption")
 	public MilestonePickerOption milestonePickerOption() {
 		MilestonePickerOption picker = new MilestonePickerOption();
@@ -78,6 +112,11 @@ public class CustomReportSegurConfig {
 		return picker;
 	}
 
+	/**
+	 * Project picker option.
+	 *
+	 * @return the project picker option
+	 */
 	@Bean(name = "projectPickerOption")
 	public ProjectPickerOption projectPickerOption() {
 		ProjectPickerOption picker = new ProjectPickerOption();

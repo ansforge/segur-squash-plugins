@@ -16,11 +16,21 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+
+/**
+ * The Class Parser.
+ */
 public class Parser {
 
 	private Parser() {
 	};
 
+	/**
+	 * Convert html bulleted list to string.
+	 *
+	 * @param ulHTMlString the ul HT ml string
+	 * @return the string
+	 */
 	// IN: html fragment between <ul> tag
 	public static String convertHtmlBulletedListToString(String ulHTMlString) {
 		Document doc = Jsoup.parseBodyFragment(ulHTMlString);
@@ -32,6 +42,12 @@ public class Parser {
 		return liste.stream().collect(Collectors.joining(""));
 	}
 
+	/**
+	 * Convert html ordered list to string.
+	 *
+	 * @param ulHTMlString the ul HT ml string
+	 * @return the string
+	 */
 	// IN: html fragment between <ol> tag
 	public static String convertHtmlOrderedListToString(String ulHTMlString) {
 		int prefix = 1;
@@ -49,6 +65,12 @@ public class Parser {
 		return listeResult.stream().collect(Collectors.joining(""));
 	}
 
+	/**
+	 * Convert HTM lto string.
+	 *
+	 * @param html the html
+	 * @return the string
+	 */
 	public static String convertHTMLtoString(String html) {
 		String tmp = "";
 		if (html == null || html.isEmpty()) {
@@ -81,6 +103,12 @@ public class Parser {
 		return out.toString();
 	}
 
+	/**
+	 * Html paragraphe to text.
+	 *
+	 * @param html the html
+	 * @return the string
+	 */
 	public static String htmlParagrapheToText(String html) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);

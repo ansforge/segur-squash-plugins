@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Level;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
@@ -32,6 +31,10 @@ import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsColle
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class DSRData.
+ */
 @Getter
 @Setter
 public class DSRData {
@@ -50,12 +53,23 @@ public class DSRData {
 
 	private Traceur traceur;
 
+	/**
+	 * Instantiates a new DSR data.
+	 *
+	 * @param traceur the traceur
+	 * @param reqCollector the req collector
+	 */
 	public DSRData(Traceur traceur, RequirementsCollector reqCollector) {
 		super();
 		this.traceur = traceur;
 		this.reqCollector = reqCollector;
 	}
 
+	/**
+	 * Load data.
+	 *
+	 * @param perimeter the perimeter
+	 */
 	public void loadData(PerimeterData perimeter) {
 
 		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(perimeter.getProjectId(),
@@ -78,6 +92,13 @@ public class DSRData {
 		populateStepsData(distinctCT);
 	}
 
+	/**
+	 * Complete perimeter data.
+	 *
+	 * @param selectedMilestonesId the selected milestones id
+	 * @param selectedProjectId the selected project id
+	 * @return the perimeter data
+	 */
 	public PerimeterData completePerimeterData(Long selectedMilestonesId, Long selectedProjectId) {
 		PerimeterData perimeterData = reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
 		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName() + " ; "

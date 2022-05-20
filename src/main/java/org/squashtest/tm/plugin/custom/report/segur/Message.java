@@ -6,6 +6,10 @@ package org.squashtest.tm.plugin.custom.report.segur;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class Message.
+ */
 @Getter
 @Setter
 public class Message {
@@ -16,6 +20,13 @@ public class Message {
 
 	String msg;
 
+	/**
+	 * Instantiates a new message.
+	 *
+	 * @param level the level
+	 * @param resId the res id
+	 * @param message the message
+	 */
 	public Message(Level level, String resId, String message) {
 		this.level = level;
 		this.resId = resId;

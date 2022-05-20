@@ -6,6 +6,9 @@ package org.squashtest.tm.plugin.custom.report.segur.model;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The Class Milestone.
+ */
 @Getter
 @Setter
 public class Milestone {

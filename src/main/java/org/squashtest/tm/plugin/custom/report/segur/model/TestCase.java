@@ -8,6 +8,10 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * The Class TestCase.
+ */
 @Getter
 @Setter
 public class TestCase {
@@ -32,6 +36,15 @@ public class TestCase {
 	// non renseigné publication
 	String pointsDeVerification;
 
+	/**
+	 * Instantiates a new test case.
+	 *
+	 * @param tcln_id the tcln id
+	 * @param reference the reference
+	 * @param prerequisite the prerequisite
+	 * @param description the description
+	 * @param tcStatus the tc status
+	 */
 	public TestCase(Long tcln_id, String reference, String prerequisite, String description, String tcStatus) {
 		this.tcln_id = tcln_id;
 		this.reference = reference;

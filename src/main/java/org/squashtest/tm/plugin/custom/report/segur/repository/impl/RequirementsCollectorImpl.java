@@ -45,6 +45,9 @@ import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
 
+/**
+ * The Class RequirementsCollectorImpl.
+ */
 @Repository
 public class RequirementsCollectorImpl implements RequirementsCollector {
 

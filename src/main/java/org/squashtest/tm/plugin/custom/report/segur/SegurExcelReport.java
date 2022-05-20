@@ -12,6 +12,9 @@ import org.squashtest.tm.api.report.BasicDirectDownloadableReport;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.plugin.custom.report.segur.service.ReportGeneratorService;
 
+/**
+ * The Class SegurExcelReport.
+ */
 public class SegurExcelReport extends BasicDirectDownloadableReport {
 
 	@Inject

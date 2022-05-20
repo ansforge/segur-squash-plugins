@@ -13,6 +13,10 @@ import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 
 
+
+/**
+ * The Class CufToExcelDataTest.
+ */
 public class CufToExcelDataTest {
 	
 	
@@ -23,6 +27,9 @@ public class CufToExcelDataTest {
 	static final String idSection = "MSS";
 	static final String section = "2changes_via_MS-Sant�";
 	
+	/**
+	 * Find specific cuf test.
+	 */
 	@Test
 	public void findSpecificCufTest() {
 		// JDD
@@ -41,6 +48,9 @@ public class CufToExcelDataTest {
 		assertEquals(selectedCuf.getCode(), Constantes.SECTION);
 	}
 	
+	/**
+	 * Split section test.
+	 */
 	@Test
 	public void splitSectionTest() {
 		ReqModel reqModel = new  ReqModel(null,null,null,null,null);
@@ -52,6 +62,9 @@ public class CufToExcelDataTest {
 //		System.out.println(reqModel.getExcelData().getSection_4());
 	}
 	
+	/**
+	 * Calcul exigence conditionelle test.
+	 */
 	@Test
 	public void calculExigenceConditionelleTest() {
 		ReqModel reqModel = new  ReqModel(null,null,null,null,null);
@@ -63,6 +76,9 @@ public class CufToExcelDataTest {
 		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.OUI);		
 	}
 	
+	/**
+	 * Calcul categorie test.
+	 */
 	@Test
 	public void calculCategorieTest() {
 		ReqModel reqModel = new ReqModel(null,null,null,null,null);
