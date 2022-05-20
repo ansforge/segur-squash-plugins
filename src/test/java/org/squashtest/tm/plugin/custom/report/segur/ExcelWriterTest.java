@@ -117,22 +117,6 @@ public class ExcelWriterTest {
 		
 	}
 
-	@BeforeEach
-	void cleanup() {
-		String dir = this.getClass().getResource(".").getPath();
-		// Lists all files in folder
-		File folder = new File(dir);
-		File fList[] = folder.listFiles();
-		// Searchs .lck
-		for (int i = 0; i < fList.length; i++) {
-			String pes = fList[i].getName();
-			if (pes.endsWith(".xslx")) {
-				// and deletes
-				fList[i].delete();
-			}
-		}
-	}
-
 	@Test
 	void generateExcelFileWithOneRequirementNoTestCase() throws Exception {
 		XSSFWorkbook workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);

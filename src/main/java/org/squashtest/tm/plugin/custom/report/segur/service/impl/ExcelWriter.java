@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -246,14 +247,15 @@ public class ExcelWriter {
 	 * Flush to temporary file.
 	 *
 	 * @param workbook the workbook
-	 * @param FileName the file name
+	 * @param filename the file name
 	 * @return the file
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public File flushToTemporaryFile(XSSFWorkbook workbook, String FileName) throws IOException {
-
-		File tempFile = File.createTempFile(FileName, "xlsx");
-		tempFile.deleteOnExit();
+	public File flushToTemporaryFile(XSSFWorkbook workbook, String filename) throws IOException {
+		String tmpdir = System.getProperty("java.io.tmpdir");
+		String absolutePath = tmpdir + File.separator +  filename;
+		File tempFile = new File(absolutePath);
+		tempFile.delete();
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
 		workbook.close();
