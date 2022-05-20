@@ -17,6 +17,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
+import org.squashtest.tm.plugin.custom.report.segur.repository.impl.RequirementsCollectorImpl;
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.DSRData;
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriter;
 
@@ -31,7 +32,7 @@ public class ExcelWriterTest {
 	@BeforeEach
 	void loadData() {
 		Traceur traceur = new Traceur();
-		data = new DSRData(traceur);
+		data = new DSRData(traceur, new RequirementsCollectorImpl());
 		excel = new ExcelWriter(new Traceur());
 		ExcelRow requirement1 = new ExcelRow();
 		requirement1.setResId(1L);
