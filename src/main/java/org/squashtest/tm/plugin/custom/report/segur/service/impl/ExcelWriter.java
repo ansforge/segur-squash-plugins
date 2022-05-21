@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,22 +32,23 @@ import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
-
 /**
  * The Class ExcelWriter.
  */
 @Component
 public class ExcelWriter {
 
+	private static final int MAX_STEPS = 10;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
-	
+
 	/** The Constant REM_SHEET_INDEX. */
 	// onglets
 	public static final int REM_SHEET_INDEX = 0;
-	
+
 	/** The Constant METIER_SHEET_INDEX. */
 	public static final int METIER_SHEET_INDEX = 1;
-	
+
 	/** The Constant ERROR_SHEET_NAME. */
 	// public static final int ERROR_SHEET_INDEX = 2;
 	public static final String ERROR_SHEET_NAME = "WARNING-ERROR";
@@ -56,74 +56,74 @@ public class ExcelWriter {
 	/** The Constant REM_FIRST_EMPTY_LINE. */
 	// onglet 0
 	public static final int REM_FIRST_EMPTY_LINE = 2; // 0-based index '2' <=> line 3
-	
+
 	/** The Constant REM_LINE_STYLE_TEMPLATE_INDEX. */
 	public static final int REM_LINE_STYLE_TEMPLATE_INDEX = 1;
-	
+
 	/** The Constant REM_COLUMN_CONDITIONNELLE. */
 	public static final int REM_COLUMN_CONDITIONNELLE = 0;
-	
+
 	/** The Constant REM_COLUMN_PROFIL. */
 	public static final int REM_COLUMN_PROFIL = 1;
-	
+
 	/** The Constant REM_COLUMN_ID_SECTION. */
 	public static final int REM_COLUMN_ID_SECTION = 2;
-	
+
 	/** The Constant REM_COLUMN_SECTION. */
 	public static final int REM_COLUMN_SECTION = 3;
-	
+
 	/** The Constant REM_COLUMN_BLOC. */
 	public static final int REM_COLUMN_BLOC = 4;
-	
+
 	/** The Constant REM_COLUMN_FONCTION. */
 	public static final int REM_COLUMN_FONCTION = 5;
-	
+
 	/** The Constant REM_COLUMN_NATURE. */
 	public static final int REM_COLUMN_NATURE = 6;
-	
+
 	/** The Constant REM_COLUMN_NUMERO_EXIGENCE. */
 	public static final int REM_COLUMN_NUMERO_EXIGENCE = 7;
-	
+
 	/** The Constant REM_COLUMN_ENONCE. */
 	public static final int REM_COLUMN_ENONCE = 8;
-	
+
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
 	public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
-	
+
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
 	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
 
 	/** The Constant MAX_STEP_NUMBER. */
 	public static final int MAX_STEP_NUMBER = 10;
-	
+
 	/** The Constant REM_COLUMN_FIRST_NUMERO_PREUVE. */
 	public static final int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
 	/** The Constant PREPUB_COLUMN_BON_POUR_PUBLICATION. */
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
 			+ 1;
-	
+
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
-	
+
 	/** The Constant PREPUB_COLUMN_REFERENCE_CAS_DE_TEST. */
 	public static final int PREPUB_COLUMN_REFERENCE_CAS_DE_TEST = PREPUB_COLUMN_REFERENCE_EXIGENCE + 1;
-	
+
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE = PREPUB_COLUMN_REFERENCE_CAS_DE_TEST + 1;
-	
+
 	/** The Constant PREPUB_COLUMN_POINTS_DE_VERIF. */
 	public static final int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
 
 //	private List<Message> msg = new ArrayList<Message>();
 //	private static int COUNTER_MSG = 0;
-/** The Constant ERROR_COLUMN_LEVEL. */
+	/** The Constant ERROR_COLUMN_LEVEL. */
 //	private static final int MAX_MSG = 30;
 	public static final int ERROR_COLUMN_LEVEL = 0;
-	
+
 	/** The Constant ERROR_COLUMN_RESID. */
 	public static final int ERROR_COLUMN_RESID = 1;
-	
+
 	/** The Constant ERROR_COLUMN_MSG. */
 	public static final int ERROR_COLUMN_MSG = 2;
 
@@ -163,8 +163,8 @@ public class ExcelWriter {
 	 * Put datas in workbook.
 	 *
 	 * @param boolPrebub the bool prebub
-	 * @param workbook the workbook
-	 * @param data the data
+	 * @param workbook   the workbook
+	 * @param data       the data
 	 */
 	public void putDatasInWorkbook(boolean boolPrebub, XSSFWorkbook workbook, DSRData data) {
 
@@ -233,7 +233,6 @@ public class ExcelWriter {
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
 		removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
-
 		writeErrorSheet(workbook);
 
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
@@ -253,7 +252,7 @@ public class ExcelWriter {
 	 */
 	public File flushToTemporaryFile(XSSFWorkbook workbook, String filename) throws IOException {
 		String tmpdir = System.getProperty("java.io.tmpdir");
-		String absolutePath = tmpdir + File.separator +  filename;
+		String absolutePath = tmpdir + File.separator + filename;
 		File tempFile = new File(absolutePath);
 		tempFile.delete();
 		FileOutputStream out = new FileOutputStream(tempFile);
@@ -330,28 +329,32 @@ public class ExcelWriter {
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
+		List<Step> testSteps = new ArrayList<>();
 		if (testcase.getOrderedStepIds() != null) {
-			List<Step> testSteps = new ArrayList<>();
 			for (Long id : testcase.getOrderedStepIds()) {
 				testSteps.add(steps.get(id));
 			}
-			Collections.sort(testSteps);
-			for (Step step : testSteps) {
-
-				Cell c12plus = row.createCell(currentExcelColumn);
-				c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
-				c12plus.setCellValue(extractNumberFromReference(step.getReference()));
-				currentExcelColumn++;
-
-				Cell resultCell = row.createCell(currentExcelColumn);
-				CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
-				style.setWrapText(true);
-				resultCell.setCellStyle(style);
-				resultCell.setCellValue(Parser.convertHTMLtoString(step.getExpectedResult()));
-				currentExcelColumn++;
+		}
+		Collections.sort(testSteps);
+		if (testSteps.size() < MAX_STEPS) {
+			for (int i = testSteps.size(); i < MAX_STEPS; i++) {
+				testSteps.add(new Step(Long.valueOf(i), "", i));
 			}
 		}
+		for (Step step : testSteps) {
 
+			Cell c12plus = row.createCell(currentExcelColumn);
+			c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
+			c12plus.setCellValue(extractNumberFromReference(step.getReference()));
+			currentExcelColumn++;
+
+			Cell resultCell = row.createCell(currentExcelColumn);
+			CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
+			style.setWrapText(true);
+			resultCell.setCellStyle(style);
+			resultCell.setCellValue(Parser.convertHTMLtoString(step.getExpectedResult()));
+			currentExcelColumn++;
+		}
 	}
 
 	private void writeCaseTestPartCoeurDeMetier(TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps,
