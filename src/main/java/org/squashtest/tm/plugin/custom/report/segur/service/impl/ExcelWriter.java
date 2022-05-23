@@ -14,9 +14,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -37,6 +44,8 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
  */
 @Component
 public class ExcelWriter {
+
+	private static final String REQ_CONTEXT_PATH = "https://squash-segur.henix.com/squash/requirement-workspace/requirement/%d/content";
 
 	private static final int MAX_STEPS = 10;
 
@@ -232,7 +241,11 @@ public class ExcelWriter {
 
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
-		removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
+		//removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
+		// Bug car les hyperliens ne suivent pas les lignes (on masque la ligne)
+		sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX).setZeroHeight(true);
+		sheet.removeRow(sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX));
+
 		writeErrorSheet(workbook);
 
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
@@ -266,41 +279,70 @@ public class ExcelWriter {
 		// ecriture des données
 
 		Row row = sheet.createRow(lineIndex);
-
+		CreationHelper helper = sheet.getWorkbook().getCreationHelper();
 		Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
-		c0.setCellStyle(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
+		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
+		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
+		c0.setCellStyle(c0Style);
 		c0.setCellValue(data.getBoolExigenceConditionnelle_1());
 
 		Cell c1 = row.createCell(REM_COLUMN_PROFIL);
-		c1.setCellStyle(style2apply.getCell(REM_COLUMN_PROFIL).getCellStyle());
+		CellStyle c1Style = sheet.getWorkbook().createCellStyle();
+		c1Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PROFIL).getCellStyle());
+		c1.setCellStyle(c1Style);
 		c1.setCellValue(data.getProfil_2());
 
 		Cell c2 = row.createCell(REM_COLUMN_ID_SECTION);
-		c2.setCellStyle(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
+		CellStyle c2Style = sheet.getWorkbook().createCellStyle();
+		c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
+		c2.setCellStyle(c2Style);
 		c2.setCellValue(data.getId_section_3());
 
 		Cell c4 = row.createCell(REM_COLUMN_SECTION);
-		c4.setCellStyle(style2apply.getCell(REM_COLUMN_SECTION).getCellStyle());
+		CellStyle c4Style = sheet.getWorkbook().createCellStyle();
+		c4Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SECTION).getCellStyle());
+		c4.setCellStyle(c4Style);
 		c4.setCellValue(data.getSection_4());
 
 		Cell c5 = row.createCell(REM_COLUMN_BLOC);
-		c5.setCellStyle(style2apply.getCell(REM_COLUMN_BLOC).getCellStyle());
+		CellStyle c5Style = sheet.getWorkbook().createCellStyle();
+		c5Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_BLOC).getCellStyle());
+		c5.setCellStyle(c5Style);
 		c5.setCellValue(data.getBloc_5());
 
 		Cell c6 = row.createCell(REM_COLUMN_FONCTION);
-		c6.setCellStyle(style2apply.getCell(REM_COLUMN_FONCTION).getCellStyle());
+		CellStyle c6Style = sheet.getWorkbook().createCellStyle();
+		c6Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_FONCTION).getCellStyle());
+		c6.setCellStyle(c6Style);
 		c6.setCellValue(data.getFonction_6());
 
 		Cell c7 = row.createCell(REM_COLUMN_NATURE);
-		c7.setCellStyle(style2apply.getCell(REM_COLUMN_NATURE).getCellStyle());
+		CellStyle c7Style = sheet.getWorkbook().createCellStyle();
+		c7Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NATURE).getCellStyle());
+		c7.setCellStyle(c7Style);
 		c7.setCellValue(data.getNatureExigence_7());
 
 		Cell c8 = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
-		c8.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
+		CellStyle c8Style = sheet.getWorkbook().createCellStyle();
+		c8Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
+		XSSFFont linkFont = sheet.getWorkbook().createFont();
+		linkFont.setFamily(FontFamily.MODERN);
+		linkFont.setFontHeight(12);
+		linkFont.setFontName("ARIAL");
+		linkFont.setUnderline(XSSFFont.U_SINGLE);
+        linkFont.setColor(HSSFColor.BLUE.index);
+        c8Style.setFont(linkFont);
+        c8.setCellStyle(c8Style);
 		c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
+		
+		XSSFHyperlink link = (XSSFHyperlink)helper.createHyperlink(Hyperlink.LINK_URL);
+		link.setAddress(String.format(REQ_CONTEXT_PATH, data.getReqId()));
+		c8.setHyperlink(link);
 
 		Cell c9 = row.createCell(REM_COLUMN_ENONCE);
-		c9.setCellStyle(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
+		CellStyle c9Style = sheet.getWorkbook().createCellStyle();
+		c9Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
+		c9.setCellStyle(c9Style);
 		CellStyle style = c9.getCellStyle();
 		style.setWrapText(true);
 		c9.setCellStyle(style);
@@ -311,14 +353,17 @@ public class ExcelWriter {
 
 	private void writeCaseTestPart(TestCase testcase, Map<Long, Step> steps, Row row, Row style2apply) {
 		// ecriture des données
-
+		CellStyle c10Style = row.getSheet().getWorkbook().createCellStyle();
+		c10Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
-		c10.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
+		c10.setCellStyle(c10Style);
 		c10.setCellValue(extractNumberFromReference(testcase.getReference()));
 
 		// cas des CTs non coeur de métier
 		Cell c11 = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
-		c11.setCellStyle(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
+		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
+		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
+		c11.setCellStyle(c11Style);
 		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
 			c11.setCellValue("Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
@@ -344,14 +389,17 @@ public class ExcelWriter {
 		for (Step step : testSteps) {
 
 			Cell c12plus = row.createCell(currentExcelColumn);
-			c12plus.setCellStyle(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
+			CellStyle c12Style = row.getSheet().getWorkbook().createCellStyle();
+			c12Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
+			c12plus.setCellStyle(c12Style);
 			c12plus.setCellValue(extractNumberFromReference(step.getReference()));
 			currentExcelColumn++;
 
 			Cell resultCell = row.createCell(currentExcelColumn);
-			CellStyle style = style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle();
-			style.setWrapText(true);
-			resultCell.setCellStyle(style);
+			CellStyle c13Style = row.getSheet().getWorkbook().createCellStyle();
+			c13Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE + 1).getCellStyle());
+			c13Style.setWrapText(true);
+			resultCell.setCellStyle(c13Style);
 			resultCell.setCellValue(Parser.convertHTMLtoString(step.getExpectedResult()));
 			currentExcelColumn++;
 		}
@@ -359,13 +407,17 @@ public class ExcelWriter {
 
 	private void writeCaseTestPartCoeurDeMetier(TestCase testcase, List<Long> bindedStepIds, Map<Long, Step> steps,
 			Row row, Row style2apply) {
+		CellStyle c10Style = row.getSheet().getWorkbook().createCellStyle();
+		c10Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
-		c10.setCellStyle(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
+		c10.setCellStyle(c10Style);
 		c10.setCellValue(testcase.getReference());
 
 		// cas des CTs coeur de métier
 		Cell c11 = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);
-		c11.setCellStyle(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
+		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
+		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
+		c11.setCellStyle(c11Style);
 		c11.setCellValue(" Cas de Test Coeur de métier ... ");
 		// TODO cf. SFD
 	}
@@ -439,6 +491,7 @@ public class ExcelWriter {
 		sheet.lockFormatColumns(false);
 		sheet.lockFormatRows(false);
 		sheet.lockAutoFilter(false);
+		sheet.lockInsertHyperlinks(false);
 		String password = generateRandomPassword();
 		LOGGER.info("Unlock Password : {}", password);
 		sheet.protectSheet(password);

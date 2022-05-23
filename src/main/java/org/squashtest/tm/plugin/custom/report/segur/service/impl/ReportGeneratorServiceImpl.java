@@ -56,7 +56,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public File generateReport(Map<String, Criteria> criterias) {
 		Traceur traceur = new Traceur();
 
-		ExcelWriter excel = new ExcelWriter(traceur);
+		ExcelWriter writer = new ExcelWriter(traceur);
 
 		LOGGER.info(" SquashTm-segur plugin report ");
 		DSRData data = new DSRData(traceur, reqCollector);
@@ -74,20 +74,20 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		// chargement du template Excel:
 		XSSFWorkbook workbook;
 		if (perimeterData.isPrePublication()) {
-			workbook = excel.loadWorkbookTemplate(TEMPLATE_PREPUB_NAME);
+			workbook = writer.loadWorkbookTemplate(TEMPLATE_PREPUB_NAME);
 		} else {
-			workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
+			workbook = writer.loadWorkbookTemplate(TEMPLATE_NAME);
 		}
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		excel.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
+		writer.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
 
 		String fileName = createOutputFileName(perimeterData.isPrePublication(),
 				getProjectTrigram(perimeterData.getProjectName()), perimeterData.getMilestoneName());
 		File report = null;
 		try {
-			report = excel.flushToTemporaryFile(workbook, fileName);
+			report = writer.flushToTemporaryFile(workbook, fileName);
 		} catch (IOException e) {
 			LOGGER.error("Error when writing temp file", e);
 		}

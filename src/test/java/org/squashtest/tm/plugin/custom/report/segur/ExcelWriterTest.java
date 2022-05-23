@@ -42,6 +42,7 @@ public class ExcelWriterTest {
 		excel = new ExcelWriter(new Traceur());
 		ExcelRow requirement1 = new ExcelRow();
 		requirement1.setResId(1L);
+		requirement1.setReqId(1L);
 		requirement1.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement1.setProfil_2("Général");
 		requirement1.setId_section_3("INS");
@@ -49,7 +50,7 @@ public class ExcelWriterTest {
 		requirement1.setBloc_5("null");
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement1.setNumeroExigence_8("SC.INS.01.01");
+		requirement1.setNumeroExigence_8("SC.INS.01.02");
 		requirement1.setEnonceExigence_9("texte de l'éxigence non mis en forme");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference(null);
@@ -57,6 +58,7 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setResId(2L);
+		requirement2.setReqId(2L);
 		requirement2.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement2.setProfil_2("Général");
 		requirement2.setId_section_3("INS");
@@ -64,7 +66,7 @@ public class ExcelWriterTest {
 		requirement2.setBloc_5("Alimentation du DMP via une PFI");
 		requirement2.setFonction_6("Alimentation manuelle");
 		requirement2.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement2.setNumeroExigence_8("200");
+		requirement2.setNumeroExigence_8("SC.INS.01.01");
 		requirement2.setEnonceExigence_9(Parser.convertHTMLtoString("<p>\r\n"
 				+ "        Lorsqu&#39;une BAL est bloqu&eacute;e par un administrateur global, des traces fonctionnelles et applicatives sont constitu&eacute;es et doivent au moins contenir les informations suivantes :</p>\r\n"
 				+ "<ul>\r\n"
