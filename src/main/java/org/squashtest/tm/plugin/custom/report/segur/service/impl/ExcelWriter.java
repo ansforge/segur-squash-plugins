@@ -19,9 +19,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -45,7 +45,11 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 @Component
 public class ExcelWriter {
 
-	private static final String REQ_CONTEXT_PATH = "https://squash-segur.henix.com/squash/requirement-workspace/requirement/%d/content";
+	private static final String REQ_CONTEXT_PATH = "%s/squash/requirement-workspace/requirement/%d/content";
+	
+	private static final String TESTCASE_CONTEXT_PATH = "%s/squash/test-case-workspace/test-case/%d/content";
+	
+	private String squashBaseUrl;
 
 	private static final int MAX_STEPS = 10;
 
@@ -124,10 +128,8 @@ public class ExcelWriter {
 	/** The Constant PREPUB_COLUMN_POINTS_DE_VERIF. */
 	public static final int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
 
-//	private List<Message> msg = new ArrayList<Message>();
-//	private static int COUNTER_MSG = 0;
 	/** The Constant ERROR_COLUMN_LEVEL. */
-//	private static final int MAX_MSG = 30;
+
 	public static final int ERROR_COLUMN_LEVEL = 0;
 
 	/** The Constant ERROR_COLUMN_RESID. */
@@ -176,7 +178,7 @@ public class ExcelWriter {
 	 * @param data       the data
 	 */
 	public void putDatasInWorkbook(boolean boolPrebub, XSSFWorkbook workbook, DSRData data) {
-
+		squashBaseUrl = data.getPerimeter().getSquashBaseUrl();
 		// Get first sheet
 		XSSFSheet sheet = workbook.getSheet("Exigences");
 		// Récupération de la ligne 2 pour utilisation des styles
@@ -280,6 +282,7 @@ public class ExcelWriter {
 
 		Row row = sheet.createRow(lineIndex);
 		CreationHelper helper = sheet.getWorkbook().getCreationHelper();
+		
 		Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
 		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
 		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
@@ -336,7 +339,7 @@ public class ExcelWriter {
 		c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
 		
 		XSSFHyperlink link = (XSSFHyperlink)helper.createHyperlink(Hyperlink.LINK_URL);
-		link.setAddress(String.format(REQ_CONTEXT_PATH, data.getReqId()));
+		link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl ,data.getReqId()));
 		c8.setHyperlink(link);
 
 		Cell c9 = row.createCell(REM_COLUMN_ENONCE);
@@ -353,11 +356,22 @@ public class ExcelWriter {
 
 	private void writeCaseTestPart(TestCase testcase, Map<Long, Step> steps, Row row, Row style2apply) {
 		// ecriture des données
+		CreationHelper helper = row.getSheet().getWorkbook().getCreationHelper();
 		CellStyle c10Style = row.getSheet().getWorkbook().createCellStyle();
 		c10Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_SCENARIO).getCellStyle());
 		Cell c10 = row.createCell(REM_COLUMN_NUMERO_SCENARIO);
+		Font linkFont = row.getSheet().getWorkbook().createFont();
+		short fontHeight = 200;
+		linkFont.setFontHeight(fontHeight);
+		linkFont.setFontName("ARIAL");
+		linkFont.setUnderline(XSSFFont.U_SINGLE);
+        linkFont.setColor(HSSFColor.BLUE.index);
+        c10Style.setFont(linkFont);
 		c10.setCellStyle(c10Style);
 		c10.setCellValue(extractNumberFromReference(testcase.getReference()));
+		XSSFHyperlink link = (XSSFHyperlink)helper.createHyperlink(Hyperlink.LINK_URL);
+		link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl ,testcase.getTcln_id()));
+		c10.setHyperlink(link);
 
 		// cas des CTs non coeur de métier
 		Cell c11 = row.createCell(REM_COLUMN_SCENARIO_CONFORMITE);

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
+import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
@@ -38,7 +39,15 @@ public class ExcelWriterTest {
 	@BeforeEach
 	void loadData() {
 		Traceur traceur = new Traceur();
-		data = new DSRData(traceur, new RequirementsCollectorImpl());
+		PerimeterData perimeterData = new PerimeterData();
+		perimeterData.setMilestoneId(String.valueOf(1L));
+		perimeterData.setProjectId(String.valueOf(1L));
+
+		perimeterData.setProjectName("DSR_1");
+		perimeterData.setMilestoneName("MILESTONE");
+		perimeterData.setSquashBaseUrl("https://squash-segur.henix.com");
+
+		data = new DSRData(traceur, new RequirementsCollectorImpl(), perimeterData);
 		excel = new ExcelWriter(new Traceur());
 		ExcelRow requirement1 = new ExcelRow();
 		requirement1.setResId(1L);
@@ -126,7 +135,7 @@ public class ExcelWriterTest {
 		excel.putDatasInWorkbook(false, workbook, data);
 		String filename = this.getClass().getResource(".").getPath()
 				+ "generateExcelFileWithOneRequirementNoTestCase.xlsx";
-		LOGGER.error(filename);
+		LOGGER.info(filename);
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);

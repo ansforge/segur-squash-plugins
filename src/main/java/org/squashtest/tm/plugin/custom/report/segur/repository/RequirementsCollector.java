@@ -37,11 +37,20 @@ public interface RequirementsCollector {
 	public String findProjectNameByProjectId(Long projectId);
 
 	/**
+	 * Find squah base url by project id.
+	 *
+	 * @param projectId the project id
+	 * @return the string
+	 */
+	public String findSquashBaseUrlByProjectId(Long projectId);
+	
+	/**
 	 * Find CU fs by res id.
 	 *
 	 * @param resId the res id
 	 * @return the list
 	 */
+	
 	public List<Cuf> findCUFsByResId(Long resId);
 
 	// lecture de CUF de type 'CF' (valeur dans custom_field_value.value)

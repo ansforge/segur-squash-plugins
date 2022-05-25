@@ -24,6 +24,7 @@ public class PerimeterData {
 	// project
 	private String projectId;
 	private String projectName;
+	private String squashBaseUrl;
 
 	private String milestoneId;
 	private String milestoneName;
