@@ -52,6 +52,8 @@ public class DSRData {
 	private Map<Long, Step> steps = new HashMap<>();
 
 	private Traceur traceur;
+	
+	private PerimeterData perimeter;
 
 	/**
 	 * Instantiates a new DSR data.
@@ -59,10 +61,11 @@ public class DSRData {
 	 * @param traceur the traceur
 	 * @param reqCollector the req collector
 	 */
-	public DSRData(Traceur traceur, RequirementsCollector reqCollector) {
+	public DSRData(Traceur traceur, RequirementsCollector reqCollector, PerimeterData perimeter) {
 		super();
 		this.traceur = traceur;
 		this.reqCollector = reqCollector;
+		this.perimeter = perimeter;
 	}
 
 	/**
@@ -70,7 +73,7 @@ public class DSRData {
 	 *
 	 * @param perimeter the perimeter
 	 */
-	public void loadData(PerimeterData perimeter) {
+	public void loadData() {
 
 		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(perimeter.getProjectId(),
 				perimeter.getMilestoneId());
@@ -92,23 +95,6 @@ public class DSRData {
 		populateStepsData(distinctCT);
 	}
 
-	/**
-	 * Complete perimeter data.
-	 *
-	 * @param selectedMilestonesId the selected milestones id
-	 * @param selectedProjectId the selected project id
-	 * @return the perimeter data
-	 */
-	public PerimeterData completePerimeterData(Long selectedMilestonesId, Long selectedProjectId) {
-		PerimeterData perimeterData = reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
-		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName() + " ; "
-				+ perimeterData.getMilestoneStatus());
-		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
-		perimeterData.setProjectId(String.valueOf(selectedProjectId));
-
-		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
-		return perimeterData;
-	}
 
 	private Set<Long> populateRequirementData(Map<Long, Long> linkedReqs, List<LinkedReq> linkedOrNotReqs) {
 

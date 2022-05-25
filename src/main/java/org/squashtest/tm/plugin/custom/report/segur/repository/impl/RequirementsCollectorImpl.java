@@ -4,6 +4,7 @@
 package org.squashtest.tm.plugin.custom.report.segur.repository.impl;
 
 import static org.jooq.impl.DSL.nvl2;
+import static org.jooq.impl.DSL.upper;
 import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
@@ -66,6 +67,16 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				.fetchOneInto(String.class);
 	}
 
+
+	@Override
+	public String findSquashBaseUrlByProjectId(Long projectId) {
+		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.VALUE, "https://saas-ans02.henix.com" )).from(CUSTOM_FIELD_VALUE)
+				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD_VALUE.CF_ID.eq(CUSTOM_FIELD.CF_ID))
+				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(projectId))
+				.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq("PROJECT"))
+				.and(upper(CUSTOM_FIELD.NAME).eq("SQUASH_BASE_URL")).fetchOneInto(String.class);
+	}
+	
 	@Override
 	public List<Cuf> findCUFsByResId(Long resId) {
 //		String query = "select " + "cuf.code, cufvo.label" + " from custom_field_value cufv "
@@ -132,7 +143,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		where rv.RES_ID in ('11008', '11010', '11011', '11012', '11013', '11016', '11017', '11018', '10975', '10988', '10977', '10976', '10978', '10983')
 
 		return dsl
-				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REFERENCE,
+				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REQUIREMENT_ID, REQUIREMENT_VERSION.REFERENCE,
 						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
 						RESOURCE.DESCRIPTION)
 				.from(REQUIREMENT_VERSION).innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
@@ -283,4 +294,5 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 				.fetchInto(Long.class);
 
 	}
+
 }

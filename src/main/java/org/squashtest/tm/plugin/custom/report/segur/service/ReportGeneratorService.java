@@ -18,7 +18,7 @@ public interface ReportGeneratorService {
 	 * Generate report.
 	 *
 	 * @param criterias the criterias
-	 * @return the file
+	 * @return the report file
 	 */
 	File generateReport(Map<String, Criteria> criterias);
 }

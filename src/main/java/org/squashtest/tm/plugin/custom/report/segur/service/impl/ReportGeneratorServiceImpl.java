@@ -56,38 +56,37 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public File generateReport(Map<String, Criteria> criterias) {
 		Traceur traceur = new Traceur();
 
-		ExcelWriter excel = new ExcelWriter(traceur);
+		ExcelWriter writer = new ExcelWriter(traceur);
 
 		LOGGER.info(" SquashTm-segur plugin report ");
-		DSRData data = new DSRData(traceur, reqCollector);
 		// lecture des critères
-
 		Long selectedProjectId = getProjectId(criterias);
 		Long selectedMilestonesId = getMilestone(criterias);
 		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
 
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		// l'objet perimeterData est construit sur lecture du Milestone (name, status)
-		PerimeterData perimeterData = data.completePerimeterData(selectedMilestonesId, selectedProjectId);
+		PerimeterData perimeterData = getPerimeterData(selectedMilestonesId, selectedProjectId);
+		DSRData data = new DSRData(traceur, reqCollector, perimeterData);
 		// Chargement des données
-		data.loadData(perimeterData);
+		data.loadData();
 		// chargement du template Excel:
 		XSSFWorkbook workbook;
 		if (perimeterData.isPrePublication()) {
-			workbook = excel.loadWorkbookTemplate(TEMPLATE_PREPUB_NAME);
+			workbook = writer.loadWorkbookTemplate(TEMPLATE_PREPUB_NAME);
 		} else {
-			workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
+			workbook = writer.loadWorkbookTemplate(TEMPLATE_NAME);
 		}
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		excel.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
+		writer.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
 
 		String fileName = createOutputFileName(perimeterData.isPrePublication(),
 				getProjectTrigram(perimeterData.getProjectName()), perimeterData.getMilestoneName());
 		File report = null;
 		try {
-			report = excel.flushToTemporaryFile(workbook, fileName);
+			report = writer.flushToTemporaryFile(workbook, fileName);
 		} catch (IOException e) {
 			LOGGER.error("Error when writing temp file", e);
 		}
@@ -96,6 +95,24 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 // ***************************************************************************************************	
 
+	/**
+	 * Complete perimeter data.
+	 *
+	 * @param selectedMilestonesId the selected milestones id
+	 * @param selectedProjectId the selected project id
+	 * @return the perimeter data
+	 */
+	private PerimeterData getPerimeterData(Long selectedMilestonesId, Long selectedProjectId) {
+		PerimeterData perimeterData = reqCollector.findMilestoneByMilestoneId(selectedMilestonesId);
+		LOGGER.info(" lecture du nom et du statut du jalon en base: " + perimeterData.getMilestoneName() + " ; "
+				+ perimeterData.getMilestoneStatus());
+		perimeterData.setMilestoneId(String.valueOf(selectedMilestonesId));
+		perimeterData.setProjectId(String.valueOf(selectedProjectId));
+
+		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
+		perimeterData.setSquashBaseUrl(reqCollector.findSquashBaseUrlByProjectId(selectedProjectId));
+		return perimeterData;
+	}
 	private String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
 
 		// publication: REM_[trigramme projet]_version.xls => REM_HOP-RI_V1.3.xls

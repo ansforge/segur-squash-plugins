@@ -14,6 +14,18 @@ import lombok.Setter;
 @Setter
 public class LinkedReq {
 
+	
+
+	/**
+	 * exigence de l'arbre
+	 */
+	private Long resId;
+	
+	/**
+	 * exigence (socle) liée
+	 */
+	private Long socleResId;
+
 	/**
 	 * Instantiates a new linked req.
 	 *
@@ -26,10 +38,4 @@ public class LinkedReq {
 		this.socleResId = socleResId;
 	}
 
-	// exigencde de l'arbre
-	Long resId;
-	// exigence (socle) liée
-	Long socleResId;
-	// référence de l'exigence socle liée
-//	String relatedReference;
 }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
+import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
@@ -31,6 +32,7 @@ public class ExcelWriterTest {
 	
 	/** The Constant TEMPLATE_NAME. */
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
 	private ExcelWriter excel;
 
 	private DSRData data;
@@ -38,10 +40,19 @@ public class ExcelWriterTest {
 	@BeforeEach
 	void loadData() {
 		Traceur traceur = new Traceur();
-		data = new DSRData(traceur, new RequirementsCollectorImpl());
+		PerimeterData perimeterData = new PerimeterData();
+		perimeterData.setMilestoneId(String.valueOf(1L));
+		perimeterData.setProjectId(String.valueOf(1L));
+
+		perimeterData.setProjectName("DSR_1");
+		perimeterData.setMilestoneName("MILESTONE");
+		perimeterData.setSquashBaseUrl("https://squash-segur.henix.com");
+
+		data = new DSRData(traceur, new RequirementsCollectorImpl(), perimeterData);
 		excel = new ExcelWriter(new Traceur());
 		ExcelRow requirement1 = new ExcelRow();
 		requirement1.setResId(1L);
+		requirement1.setReqId(1L);
 		requirement1.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement1.setProfil_2("Général");
 		requirement1.setId_section_3("INS");
@@ -49,14 +60,15 @@ public class ExcelWriterTest {
 		requirement1.setBloc_5("null");
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement1.setNumeroExigence_8("SC.INS.01.01");
-		requirement1.setEnonceExigence_9("texte de l'éxigence non mis en forme");
+		requirement1.setNumeroExigence_8("SC.INS.01.02");
+		requirement1.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference(null);
 		requirement1.setReferenceSocle(null);
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setResId(2L);
+		requirement2.setReqId(2L);
 		requirement2.setBoolExigenceConditionnelle_1(Constantes.NON);
 		requirement2.setProfil_2("Général");
 		requirement2.setId_section_3("INS");
@@ -64,7 +76,7 @@ public class ExcelWriterTest {
 		requirement2.setBloc_5("Alimentation du DMP via une PFI");
 		requirement2.setFonction_6("Alimentation manuelle");
 		requirement2.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement2.setNumeroExigence_8("200");
+		requirement2.setNumeroExigence_8("SC.INS.01.01");
 		requirement2.setEnonceExigence_9(Parser.convertHTMLtoString("<p>\r\n"
 				+ "        Lorsqu&#39;une BAL est bloqu&eacute;e par un administrateur global, des traces fonctionnelles et applicatives sont constitu&eacute;es et doivent au moins contenir les informations suivantes :</p>\r\n"
 				+ "<ul>\r\n"
@@ -90,7 +102,7 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement2);
 		
 		//TestCases
-		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "description du cas de test<BR/> multiligne", Constantes.STATUS_APPROVED);
+		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "description du <br> cas </br> de </br > test<BR/> multiligne", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
 		//Steps
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
@@ -124,7 +136,7 @@ public class ExcelWriterTest {
 		excel.putDatasInWorkbook(false, workbook, data);
 		String filename = this.getClass().getResource(".").getPath()
 				+ "generateExcelFileWithOneRequirementNoTestCase.xlsx";
-		LOGGER.error(filename);
+		LOGGER.info(filename);
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
@@ -132,4 +144,19 @@ public class ExcelWriterTest {
 		out.close();
 	}
 
+	@Test
+	void generateExcelFilePrepublication() throws Exception {
+		data.getPerimeter().setMilestoneStatus("TEST");
+		XSSFWorkbook workbook = excel.loadWorkbookTemplate(PREPUB_TEMPLATE_NAME);
+		// ecriture du workbook
+		excel.putDatasInWorkbook(true, workbook, data);
+		String filename = this.getClass().getResource(".").getPath()
+				+ "generateExcelFilePrepublication.xlsx";
+		LOGGER.info(filename);
+		File tempFile = new File(filename);
+		FileOutputStream out = new FileOutputStream(tempFile);
+		workbook.write(out);
+		workbook.close();
+		out.close();
+	}
 }

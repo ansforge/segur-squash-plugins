@@ -23,6 +23,7 @@ import lombok.Setter;
 public class ReqModel {
 
 	private Long resId;
+	private Long reqId;
 	private Long projectId;
 	private String category;
 	private String description;
@@ -52,9 +53,10 @@ public class ReqModel {
  * @param category the category
  * @param description the description
  */
-public ReqModel(Long resId, String reference, String requirementStatus, String category, String description) {
+public ReqModel(Long resId, Long reqId, String reference, String requirementStatus, String category, String description) {
 		super();
 		this.resId = resId;
+		this.reqId = reqId;
 		this.category = category;
 		this.description = description;
 		this.reference = reference;
@@ -72,6 +74,8 @@ public ReqModel(Long resId, String reference, String requirementStatus, String c
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
 		excelData.setResId(resId);
+		
+		excelData.setReqId(reqId);
 
 		// les cufs ont �t� lus en BDD, on met � jour "excelData"
 
@@ -96,7 +100,7 @@ public ReqModel(Long resId, String reference, String requirementStatus, String c
 
 		excelData.setNumeroExigence_8(reference);
 
-		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description));
+		excelData.setEnonceExigence_9(description);
 
 		// colonnes prepublications:
 		excelData.setReqStatus(requirementStatus);

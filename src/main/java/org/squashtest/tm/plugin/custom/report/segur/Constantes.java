@@ -88,7 +88,7 @@ public class Constantes {
 	// System.getProperty("line.separator");
 
 	/** The Constant PREFIX_ELEMENT_LSITE_A_PUCES. */
-	public final static String PREFIX_ELEMENT_LSITE_A_PUCES = "\t - ";
+	public final static String PREFIX_ELEMENT_LISTE_A_PUCES = "- ";
 
 	/** The Constant PREFIX_PROJET_SOCLE. */
 	public final static String PREFIX_PROJET_SOCLE = "SC";

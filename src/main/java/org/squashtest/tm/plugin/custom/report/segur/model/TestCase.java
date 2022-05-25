@@ -16,7 +16,6 @@ import lombok.Setter;
 @Setter
 public class TestCase {
 
-	// à supprimer ?
 	Long tcln_id;
 
 	String reference;
