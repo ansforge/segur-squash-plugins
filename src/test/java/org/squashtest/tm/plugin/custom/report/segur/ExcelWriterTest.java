@@ -32,6 +32,7 @@ public class ExcelWriterTest {
 	
 	/** The Constant TEMPLATE_NAME. */
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
 	private ExcelWriter excel;
 
 	private DSRData data;
@@ -143,4 +144,19 @@ public class ExcelWriterTest {
 		out.close();
 	}
 
+	@Test
+	void generateExcelFilePrepublication() throws Exception {
+		data.getPerimeter().setMilestoneStatus("TEST");
+		XSSFWorkbook workbook = excel.loadWorkbookTemplate(PREPUB_TEMPLATE_NAME);
+		// ecriture du workbook
+		excel.putDatasInWorkbook(true, workbook, data);
+		String filename = this.getClass().getResource(".").getPath()
+				+ "generateExcelFilePrepublication.xlsx";
+		LOGGER.info(filename);
+		File tempFile = new File(filename);
+		FileOutputStream out = new FileOutputStream(tempFile);
+		workbook.write(out);
+		workbook.close();
+		out.close();
+	}
 }
