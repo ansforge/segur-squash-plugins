@@ -100,7 +100,7 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 
 		excelData.setNumeroExigence_8(reference);
 
-		excelData.setEnonceExigence_9(Parser.convertHTMLtoString(description));
+		excelData.setEnonceExigence_9(description);
 
 		// colonnes prepublications:
 		excelData.setReqStatus(requirementStatus);

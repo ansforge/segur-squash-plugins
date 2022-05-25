@@ -60,7 +60,7 @@ public class ExcelWriterTest {
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
 		requirement1.setNumeroExigence_8("SC.INS.01.02");
-		requirement1.setEnonceExigence_9("texte de l'éxigence non mis en forme");
+		requirement1.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference(null);
 		requirement1.setReferenceSocle(null);
@@ -101,7 +101,7 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement2);
 		
 		//TestCases
-		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "description du cas de test<BR/> multiligne", Constantes.STATUS_APPROVED);
+		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "description du <br> cas </br> de </br > test<BR/> multiligne", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
 		//Steps
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);

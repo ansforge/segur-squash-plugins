@@ -349,7 +349,7 @@ public class ExcelWriter {
 		CellStyle style = c9.getCellStyle();
 		style.setWrapText(true);
 		c9.setCellStyle(style);
-		c9.setCellValue(data.getEnonceExigence_9());
+		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
 		return row;
 
 	}
@@ -379,10 +379,10 @@ public class ExcelWriter {
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
 		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
-			c11.setCellValue("Description: \n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Description : \n" + Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
-			c11.setCellValue("Prérequis:\n " + Parser.convertHTMLtoString(testcase.getPrerequisite())
-					+ "\n\nDescription:\n  " + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Prérequis :\n" + Parser.convertHTMLtoString(testcase.getPrerequisite())
+					+ "\n\nDescription :\n" + Parser.convertHTMLtoString(testcase.getDescription()));
 		}
 
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
