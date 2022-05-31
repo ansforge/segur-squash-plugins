@@ -27,6 +27,7 @@ import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_CONFIG;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.jooq.domain.tables.CoreConfig;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
@@ -69,12 +71,10 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 
 	@Override
-	public String findSquashBaseUrlByProjectId(Long projectId) {
-		return dsl.select(nvl2(CUSTOM_FIELD_VALUE.VALUE, CUSTOM_FIELD_VALUE.VALUE, "https://saas-ans02.henix.com" )).from(CUSTOM_FIELD_VALUE)
-				.innerJoin(CUSTOM_FIELD).on(CUSTOM_FIELD_VALUE.CF_ID.eq(CUSTOM_FIELD.CF_ID))
-				.where(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(projectId))
-				.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq("PROJECT"))
-				.and(upper(CUSTOM_FIELD.NAME).eq("SQUASH_BASE_URL")).fetchOneInto(String.class);
+	public String findSquashBaseUrl() {
+		return dsl.select(nvl2(CORE_CONFIG.VALUE, CORE_CONFIG.VALUE, "https://saas-ans02.henix.com/squash" ))
+				.from(CORE_CONFIG)
+				.where(CORE_CONFIG.STR_KEY.eq("squashtest.tm.callbackurl")).fetchOneInto(String.class);
 	}
 	
 	@Override

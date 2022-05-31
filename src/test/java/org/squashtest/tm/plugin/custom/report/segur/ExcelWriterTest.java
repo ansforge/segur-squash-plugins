@@ -102,7 +102,17 @@ public class ExcelWriterTest {
 		data.getRequirements().add(requirement2);
 		
 		//TestCases
-		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "description du <br> cas </br> de </br > test<BR/> multiligne", Constantes.STATUS_APPROVED);
+		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "<p>paragraphe</p>\r\n"
+				+ "\r\n"
+				+ "<p>ligne 1<br />\r\n"
+				+ "ligne 2<br />\r\n"
+				+ "ligne 3</p>\r\n"
+				+ "\r\n"
+				+ "<p>paragraphe 1</p>\r\n"
+				+ "\r\n"
+				+ "<p>paragraphe 2</p>\r\n"
+				+ "\r\n"
+				+ "<p> </p>", Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
 		//Steps
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
@@ -133,7 +143,8 @@ public class ExcelWriterTest {
 	void generateExcelFileWithOneRequirementNoTestCase() throws Exception {
 		XSSFWorkbook workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
 		// ecriture du workbook
-		excel.putDatasInWorkbook(false, workbook, data);
+		data.getPerimeter().setMilestoneStatus(Constantes.MILESTONE_LOCKED);
+		excel.putDatasInWorkbook(workbook, data);
 		String filename = this.getClass().getResource(".").getPath()
 				+ "generateExcelFileWithOneRequirementNoTestCase.xlsx";
 		LOGGER.info(filename);
@@ -149,7 +160,8 @@ public class ExcelWriterTest {
 		data.getPerimeter().setMilestoneStatus("TEST");
 		XSSFWorkbook workbook = excel.loadWorkbookTemplate(PREPUB_TEMPLATE_NAME);
 		// ecriture du workbook
-		excel.putDatasInWorkbook(true, workbook, data);
+		data.getPerimeter().setMilestoneStatus("UNLOCKED");
+		excel.putDatasInWorkbook(workbook, data);
 		String filename = this.getClass().getResource(".").getPath()
 				+ "generateExcelFilePrepublication.xlsx";
 		LOGGER.info(filename);

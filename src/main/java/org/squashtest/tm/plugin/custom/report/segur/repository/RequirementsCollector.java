@@ -42,7 +42,7 @@ public interface RequirementsCollector {
 	 * @param projectId the project id
 	 * @return the string
 	 */
-	public String findSquashBaseUrlByProjectId(Long projectId);
+	public String findSquashBaseUrl();
 	
 	/**
 	 * Find CU fs by res id.

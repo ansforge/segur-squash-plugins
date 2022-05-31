@@ -80,7 +80,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		LOGGER.info(" Récupération du template Excel");
 
 		// ecriture du workbook
-		writer.putDatasInWorkbook(perimeterData.isPrePublication(), workbook, data);
+		writer.putDatasInWorkbook(workbook, data);
 
 		String fileName = createOutputFileName(perimeterData.isPrePublication(),
 				getProjectTrigram(perimeterData.getProjectName()), perimeterData.getMilestoneName());
@@ -110,7 +110,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		perimeterData.setProjectId(String.valueOf(selectedProjectId));
 
 		perimeterData.setProjectName(reqCollector.findProjectNameByProjectId(selectedProjectId));
-		perimeterData.setSquashBaseUrl(reqCollector.findSquashBaseUrlByProjectId(selectedProjectId));
+		perimeterData.setSquashBaseUrl(reqCollector.findSquashBaseUrl());
 		return perimeterData;
 	}
 	private String createOutputFileName(boolean prepub, String trigrammeProjet, String versionOuJalon) {
