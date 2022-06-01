@@ -3,17 +3,11 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.nodes.Node;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 /**
@@ -23,48 +17,8 @@ public class Parser {
 
 	private Parser() {
 	};
-
 	/**
-	 * Convert html bulleted list to string.
-	 *
-	 * @param ulHTMlString the ul HT ml string
-	 * @return the string
-	 */
-	// IN: html fragment between <ul> tag
-	public static String convertHtmlBulletedListToString(String ulHTMlString) {
-		Document doc = Jsoup.parseBodyFragment(ulHTMlString);
-		doc.outputSettings().escapeMode(EscapeMode.xhtml);
-		Elements lis = doc.select("li");
-		List<String> liste = new ArrayList<String>();
-		lis.stream().forEach(li -> liste.add(Constantes.PREFIX_ELEMENT_LISTE_A_PUCES + li.text() + Constantes.CRLF));
-		return liste.stream().collect(Collectors.joining(""));
-	}
-
-	/**
-	 * Convert html ordered list to string.
-	 *
-	 * @param ulHTMlString the ul HT ml string
-	 * @return the string
-	 */
-	// IN: html fragment between <ol> tag
-	public static String convertHtmlOrderedListToString(String ulHTMlString) {
-		int prefix = 1;
-		String pt = ". ";
-		Document doc = Jsoup.parseBodyFragment(ulHTMlString);
-		doc.outputSettings().escapeMode(EscapeMode.xhtml);
-		Elements lis = doc.select("li");
-		List<String> liste = new ArrayList<String>();
-		List<String> listeResult = new ArrayList<String>();
-		lis.stream().forEach(li -> liste.add(li.text() + Constantes.CRLF));
-		for (String ligne : liste) {
-			listeResult.add(Constantes.PREFIX_ELEMENT_LISTE_A_PUCES + prefix + pt + ligne);
-			prefix++;
-		}
-		return listeResult.stream().collect(Collectors.joining(""));
-	}
-
-	/**
-	 * Convert HTM lto string.
+	 * Convert HTML to string.
 	 *
 	 * @param html the html
 	 * @return the string
@@ -74,48 +28,33 @@ public class Parser {
 		if (html == null || html.isEmpty()) {
 			return tmp;
 		}
-		;
-		Document doc = Jsoup.parseBodyFragment(html);
-		doc.outputSettings().escapeMode(EscapeMode.xhtml);
-		StringBuilder out = new StringBuilder();
-
-		for (Node node : doc.body().childNodes()) {
-			tmp = node.toString();
-			tmp = tmp.replaceAll("</?(?i)br\s*/?>", Constantes.CRLF);
-			switch (node.nodeName()) {
-			case "p":
-				out.append(Parser.htmlParagrapheToText(tmp));
-				break;
-			case "ul":
-				out.append(Parser.convertHtmlBulletedListToString(tmp));
-				break;
-			case "ol":
-				out.append(Parser.convertHtmlOrderedListToString(tmp));
-				break;
-			default:
-				// si on ne sait pas => ne rien faire ...
-				out.append(tmp);
-				break;
+		Document doc = Jsoup.parse(html);
+		Document.OutputSettings outputSettings = new Document.OutputSettings();
+		outputSettings.escapeMode(EscapeMode.xhtml);
+		outputSettings.prettyPrint(false);
+		doc.outputSettings(outputSettings);
+		// traitement des listes ordonnées
+		Elements ol = doc.select("ol");
+		for (Element orderedLists : ol) {
+			Elements items = orderedLists.children();
+			int number = 1;
+			for (Element item : items) {
+				item.before("\\n" + Constantes.PREFIX_ELEMENT_LISTE_A_PUCES + number + ".");
+				number++;
 			}
 		}
-		return out.toString().replaceAll("&apos;", "'");
-
+		// traitement des listes simples
+		Elements ul = doc.select("ul");
+		for (Element orderedLists : ul) {
+			Elements items = orderedLists.children();
+			for (Element item : items) {
+				item.before("\\n" + Constantes.PREFIX_ELEMENT_LISTE_A_PUCES);
+			}
+		}
+		// traitement des paragraphes et retours à la ligne
+		doc.select("br").before("\\n");
+		doc.select("p").before("\\n");
+		String str = doc.html().replaceAll("\\\\n", "\n");
+		return Jsoup.clean(str, "", Whitelist.simpleText(), outputSettings).replaceAll("&apos;", "'");
 	}
-
-	/**
-	 * Html paragraphe to text.
-	 *
-	 * @param html the html
-	 * @return the string
-	 */
-	public static String htmlParagrapheToText(String html) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		Jsoup.parse(html).body().select("p").stream().map(Element::text).forEach(p -> {
-			pw.println(p);
-			pw.println();
-		});
-		return sw.toString();
-	}
-
 }

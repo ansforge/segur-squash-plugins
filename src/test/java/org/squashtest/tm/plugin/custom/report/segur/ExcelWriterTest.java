@@ -3,6 +3,8 @@
  */
 package org.squashtest.tm.plugin.custom.report.segur;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -22,14 +24,13 @@ import org.squashtest.tm.plugin.custom.report.segur.repository.impl.Requirements
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.DSRData;
 import org.squashtest.tm.plugin.custom.report.segur.service.impl.ExcelWriter;
 
-
 /**
  * The Class ExcelWriterTest.
  */
 public class ExcelWriterTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterTest.class);
-	
+
 	/** The Constant TEMPLATE_NAME. */
 	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
 	public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
@@ -61,7 +62,8 @@ public class ExcelWriterTest {
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
 		requirement1.setNumeroExigence_8("SC.INS.01.02");
-		requirement1.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
+		requirement1
+				.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference(null);
 		requirement1.setReferenceSocle(null);
@@ -79,45 +81,41 @@ public class ExcelWriterTest {
 		requirement2.setNumeroExigence_8("SC.INS.01.01");
 		requirement2.setEnonceExigence_9(Parser.convertHTMLtoString("<p>\r\n"
 				+ "        Lorsqu&#39;une BAL est bloqu&eacute;e par un administrateur global, des traces fonctionnelles et applicatives sont constitu&eacute;es et doivent au moins contenir les informations suivantes :</p>\r\n"
-				+ "<ul>\r\n"
-				+ "        <li>\r\n"
-				+ "                type d&#39;action ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</li>\r\n"
-				+ "        <li>\r\n"
-				+ "                identit&eacute; de son auteur ;</li>\r\n"
-				+ "        <li>\r\n"
-				+ "                dates et heures ;</li>\r\n"
-				+ "        <li>\r\n"
-				+ "                moyens techniques utilis&eacute;s (LPS, WPS, etc..) ;</li>\r\n"
-				+ "        <li>\r\n"
-				+ "                adresse r&eacute;seau</li>\r\n"
-				+ "        <li>\r\n"
-				+ "                ...</li>\r\n"
-				+ "</ul>\r\n"
-				+ "<p>\r\n"
-				+ "        &nbsp;</p>\r\n"
-				+ ""));
+				+ "<ul>\r\n" + "        <li>"
+				+ "                type d&#39;action ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</li>"
+				+ "        <li>" + "                identit&eacute; de son auteur ;</li>" + "        <li>"
+				+ "                dates et heures ;</li>" + "        <li>"
+				+ "                moyens techniques utilis&eacute;s (LPS, WPS, etc..) ;</li>" + "        <li>"
+				+ "                adresse r&eacute;seau</li>" + "        <li>" + "                ...</li>"
+				+ "</ul>" + "<p>" + "        &nbsp;</p>\r\n"));
 		requirement2.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement2.setReference(null);
 		requirement2.setReferenceSocle(null);
 		data.getRequirements().add(requirement2);
-		
-		//TestCases
-		TestCase test1 = new TestCase(1L, "SC.INS.01.01", "mon pré-requis", "<p>paragraphe</p>\r\n"
-				+ "\r\n"
-				+ "<p>ligne 1<br />\r\n"
-				+ "ligne 2<br />\r\n"
-				+ "ligne 3</p>\r\n"
-				+ "\r\n"
-				+ "<p>paragraphe 1</p>\r\n"
-				+ "\r\n"
-				+ "<p>paragraphe 2</p>\r\n"
-				+ "\r\n"
-				+ "<p> </p>", Constantes.STATUS_APPROVED);
+
+		// TestCases
+		TestCase test1 = new TestCase(1L, "SC.INS.01.01",
+				"mon pré-requis" 
+						+ "<ol>" 
+						+ "<li>element ordonné 1</li>" 
+						+ "<li>element ordonné 2</li>" 
+						+ "</ol>"
+						+ "<ol>" 
+						+ "<li>element 1 ordonné liste 2</li>" 
+						+ "<li>element 2 ordonné liste 2</li>" 
+						+ "</ol>",
+				"<p>paragraphe</p>\r\n" 
+						+ "\r\n" 
+						+ "<p>ligne 1<br />\r\n" + "ligne 2<br />\r\n" + "ligne 3</p>\r\n"
+						+ "\r\n" + "<p>paragraphe 1</p>\r\n" + "\r\n" + "<p>paragraphe 2</p>\r\n" + "\r\n" + "<p> </p>",
+				Constantes.STATUS_APPROVED);
 		data.getTestCases().put(1L, test1);
-		//Steps
-		Step s1t1 = new Step(1L, Parser.convertHTMLtoString("résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
+		// Steps
+		Step s1t1 = new Step(1L, Parser.convertHTMLtoString(
+				"résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
 		s1t1.setReference("SC.INS.01.10");
-		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("<p>résultat attendu avec paragraphe (order 2)<BR/></p>"), 1);
+		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("<p>résultat attendu avec paragraphe (order 2)<BR/></p>"),
+				1);
 		s2t1.setReference("SC.INS.01.01");
 		List<Long> orderedStepIds = new ArrayList<>();
 		orderedStepIds.add(s1t1.getTestSTepId());
@@ -125,7 +123,9 @@ public class ExcelWriterTest {
 		test1.setOrderedStepIds(orderedStepIds);
 		data.getSteps().put(1L, s1t1);
 		data.getSteps().put(2L, s2t1);
-		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null, "description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe", Constantes.STATUS_APPROVED);
+		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null,
+				"description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe",
+				Constantes.STATUS_APPROVED);
 		data.getTestCases().put(2L, test2);
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
@@ -136,7 +136,7 @@ public class ExcelWriterTest {
 		r2t2.setTclnId(2L);
 		data.getBindings().add(r1t1);
 		data.getBindings().add(r2t2);
-		
+
 	}
 
 	@Test
@@ -151,6 +151,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
+		assertEquals(222,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
 		workbook.close();
 		out.close();
 	}
@@ -162,12 +163,13 @@ public class ExcelWriterTest {
 		// ecriture du workbook
 		data.getPerimeter().setMilestoneStatus("UNLOCKED");
 		excel.putDatasInWorkbook(workbook, data);
-		String filename = this.getClass().getResource(".").getPath()
-				+ "generateExcelFilePrepublication.xlsx";
+		String filename = this.getClass().getResource(".").getPath() + "generateExcelFilePrepublication.xlsx";
 		LOGGER.info(filename);
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
+		assertEquals(476,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+
 		workbook.close();
 		out.close();
 	}

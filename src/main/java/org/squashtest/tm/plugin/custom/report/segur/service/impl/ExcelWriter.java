@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -383,12 +382,11 @@ public class ExcelWriter {
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
 		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
-			c11.setCellValue("Description : " + Constantes.CRLF + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Description : " + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
-			c11.setCellValue("Prérequis :" + Constantes.CRLF + Parser.convertHTMLtoString(testcase.getPrerequisite())
-					+ "\n\nDescription :" + Constantes.CRLF + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Prérequis :" + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getPrerequisite())
+					+ "\n\nDescription :" + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
 		}
-
 		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
@@ -526,7 +524,7 @@ public class ExcelWriter {
 	 * @param sheet    a Excel sheet
 	 * @param rowIndex a 0 based index of removing row
 	 */
-	private void removeRow(XSSFSheet sheet, int rowIndex) {
+	public void removeRow(XSSFSheet sheet, int rowIndex) {
 		int lastRowNum = sheet.getLastRowNum();
 		if (rowIndex >= 0 && rowIndex < lastRowNum) {
 			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);

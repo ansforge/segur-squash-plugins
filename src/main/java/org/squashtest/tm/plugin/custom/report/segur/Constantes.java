@@ -83,9 +83,7 @@ public class Constantes {
 	public final static String CATEGORIE_PRECONISATION = "PRECONISATION";
 
 	/** The Constant CRLF. */
-	public final static String CRLF = "\r\n";
-	// public static String CR_CURRENT_SYSTEM =
-	// System.getProperty("line.separator");
+	public final static String LINE_SEPARATOR = "\n";
 
 	/** The Constant PREFIX_ELEMENT_LSITE_A_PUCES. */
 	public final static String PREFIX_ELEMENT_LISTE_A_PUCES = "- ";

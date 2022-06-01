@@ -4,8 +4,8 @@
 package org.squashtest.tm.plugin.custom.report.segur.repository.impl;
 
 import static org.jooq.impl.DSL.nvl2;
-import static org.jooq.impl.DSL.upper;
 import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_CONFIG;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
@@ -27,7 +27,6 @@ import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_CONFIG;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import javax.inject.Inject;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.jooq.domain.tables.CoreConfig;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
