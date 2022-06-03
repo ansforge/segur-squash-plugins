@@ -60,5 +60,5 @@ public class ExcelRow {
 	private String reqStatus;
 	private String reference;
 	private String referenceSocle;
-	// private Long socleResId;
+	private Long socleResId;
 }

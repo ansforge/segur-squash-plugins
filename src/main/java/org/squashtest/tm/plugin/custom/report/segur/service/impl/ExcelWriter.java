@@ -45,7 +45,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 public class ExcelWriter {
 
 	private static final String REQ_CONTEXT_PATH = "%s/requirement-workspace/requirement/%d/content";
-	
+
 	private static final String TESTCASE_CONTEXT_PATH = "%s/test-case-workspace/test-case/%d/content";
 
 	private static final int MAX_STEPS = 10;
@@ -136,7 +136,7 @@ public class ExcelWriter {
 	public static final int ERROR_COLUMN_MSG = 2;
 
 	private Traceur traceur;
-	
+
 	private String squashBaseUrl;
 
 	/**
@@ -176,7 +176,7 @@ public class ExcelWriter {
 	 * @param workbook   the workbook
 	 * @param data       the data
 	 */
-	public void putDatasInWorkbook( XSSFWorkbook workbook, DSRData data) {
+	public void putDatasInWorkbook(XSSFWorkbook workbook, DSRData data) {
 		squashBaseUrl = data.getPerimeter().getSquashBaseUrl();
 		// Get first sheet
 		XSSFSheet sheet = workbook.getSheet("Exigences");
@@ -184,13 +184,13 @@ public class ExcelWriter {
 		Row style2apply = sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX);
 		// ecriture des données
 		int lineNumber = REM_FIRST_EMPTY_LINE;
-		//Style links
+		// Style links
 		short height = 200;
 		Font linkFont = workbook.createFont();
 		linkFont.setFontHeight(height);
 		linkFont.setFontName("ARIAL");
 		linkFont.setUnderline(XSSFFont.U_SINGLE);
-        linkFont.setColor(HSSFColor.BLUE.index);
+		linkFont.setColor(HSSFColor.BLUE.index);
 		// boucle sur les exigences
 		for (ExcelRow req : data.getRequirements()) {
 
@@ -206,11 +206,11 @@ public class ExcelWriter {
 					Cell c33 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					CellStyle c33Style = currentRow.getSheet().getWorkbook().createCellStyle();
 					c33Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
-			        c33Style.setFont(linkFont);
-			        c33.setCellStyle(c33Style);
-			        c33.setCellValue(req.getReference());
-					XSSFHyperlink link = (XSSFHyperlink)helper.createHyperlink(Hyperlink.LINK_URL);
-					link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl ,req.getReqId()));
+					c33Style.setFont(linkFont);
+					c33.setCellStyle(c33Style);
+					c33.setCellValue(req.getReference());
+					XSSFHyperlink link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
 					c33.setHyperlink(link);
 
 					currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).setCellValue(req.getReferenceSocle());
@@ -248,18 +248,18 @@ public class ExcelWriter {
 					Cell c33 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					c33.setCellStyle(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
 					c33.setCellValue(req.getReference());
-					
+
 					CreationHelper helper = rowWithTC.getSheet().getWorkbook().getCreationHelper();
 					CellStyle c34Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
 					c34Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST).getCellStyle());
 					Cell c34 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
-			        c34Style.setFont(linkFont);
+					c34Style.setFont(linkFont);
 					c34.setCellStyle(c34Style);
 					c34.setCellValue(testCase.getReference());
-					XSSFHyperlink link = (XSSFHyperlink)helper.createHyperlink(Hyperlink.LINK_URL);
-					link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl ,testCase.getTcln_id()));
+					XSSFHyperlink link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl, testCase.getTcln_id()));
 					c34.setHyperlink(link);
-					
+
 					rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).setCellValue(req.getReferenceSocle());
 					rowWithTC.createCell(PREPUB_COLUMN_POINTS_DE_VERIF)
 							.setCellValue(testCase.getPointsDeVerification());
@@ -269,8 +269,8 @@ public class ExcelWriter {
 
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
-		//removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
-		// Bug car les hyperliens ne suivent pas les lignes (on masque la ligne)
+			// removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
+			// Bug car les hyperliens ne suivent pas les lignes (on masque la ligne)
 		sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX).setZeroHeight(true);
 		sheet.removeRow(sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX));
 
@@ -307,7 +307,7 @@ public class ExcelWriter {
 		// ecriture des données
 
 		Row row = sheet.createRow(lineIndex);
-		
+
 		Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
 		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
 		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
@@ -353,16 +353,14 @@ public class ExcelWriter {
 		Cell c8 = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
 		CellStyle c8Style = sheet.getWorkbook().createCellStyle();
 		c8Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
-        c8.setCellStyle(c8Style);
+		c8.setCellStyle(c8Style);
 		c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
 
 		Cell c9 = row.createCell(REM_COLUMN_ENONCE);
 		CellStyle c9Style = sheet.getWorkbook().createCellStyle();
 		c9Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
 		c9.setCellStyle(c9Style);
-		CellStyle style = c9.getCellStyle();
-		style.setWrapText(true);
-		c9.setCellStyle(style);
+		c9Style.setWrapText(true);
 		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
 		return row;
 
@@ -382,12 +380,13 @@ public class ExcelWriter {
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
 		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
-			c11.setCellValue("Description : " + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Description : " + Constantes.LINE_SEPARATOR
+					+ Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
-			c11.setCellValue("Prérequis :" + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getPrerequisite())
-					+ "\n\nDescription :" + Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
+			c11.setCellValue("Prérequis :" + Constantes.LINE_SEPARATOR
+					+ Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n\nDescription :"
+					+ Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
 		}
-		// TODO => erreur si la liste à plus de 10 steps et limiter bindingSteps à 10
 		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
 		List<Step> testSteps = new ArrayList<>();
@@ -403,7 +402,11 @@ public class ExcelWriter {
 			}
 		}
 		for (Step step : testSteps) {
-
+			if (currentExcelColumn > REM_COLUMN_FIRST_NUMERO_PREUVE + MAX_STEPS) {
+				traceur.addMessage(Level.WARNING, testcase.getTcln_id(),
+						String.format("Le test contient plus de %s preuves", MAX_STEPS));
+				break;
+			}
 			Cell c12plus = row.createCell(currentExcelColumn);
 			CellStyle c12Style = row.getSheet().getWorkbook().createCellStyle();
 			c12Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_FIRST_NUMERO_PREUVE).getCellStyle());
@@ -434,8 +437,8 @@ public class ExcelWriter {
 		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
-		c11.setCellValue(" Cas de Test Coeur de métier ... ");
-		// TODO cf. SFD
+		c11.setCellValue(String.format("Cf. Scénarios Coeur de métier\n%s\n[%d] preuve(s)", testcase.getDescription(),
+				testcase.getOrderedStepIds().size()));
 	}
 
 	private void writeErrorSheet(XSSFWorkbook workbook) {

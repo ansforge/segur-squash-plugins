@@ -263,6 +263,7 @@ public class DSRData {
 		ExcelRow update = new ExcelRow();
 		// champs à ne pas merger
 		update.setReferenceSocle(socle.getReference());
+		update.setSocleResId(socle.getResId());
 		update.setReqStatus(projet.getReqStatus());
 		update.setReference(projet.getReference());
 		update.setResId(projet.getResId());

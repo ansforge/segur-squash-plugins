@@ -70,7 +70,7 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	@Override
 	public String findSquashBaseUrl() {
-		return dsl.select(nvl2(CORE_CONFIG.VALUE, CORE_CONFIG.VALUE, "https://saas-ans02.henix.com/squash" ))
+		return dsl.select(nvl2(CORE_CONFIG.VALUE, CORE_CONFIG.VALUE, "https://saas-ans02.henix.com/" ))
 				.from(CORE_CONFIG)
 				.where(CORE_CONFIG.STR_KEY.eq("squashtest.tm.callbackurl")).fetchOneInto(String.class);
 	}

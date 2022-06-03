@@ -127,6 +127,14 @@ public class ExcelWriterTest {
 				"description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe",
 				Constantes.STATUS_APPROVED);
 		data.getTestCases().put(2L, test2);
+		TestCase test3 = new TestCase(3L, "SC.INS.03.01", null,
+				"libellé du cas de test",
+				Constantes.STATUS_APPROVED);
+		test3.setIsCoeurDeMetier(true);
+		List<Long> orderedStepIdsScenarioMetier = new ArrayList<>();
+		orderedStepIdsScenarioMetier.add(1L);
+		test3.setOrderedStepIds(orderedStepIdsScenarioMetier);
+		data.getTestCases().put(3L, test3);
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
 		r1t1.setResId(1L);
@@ -134,8 +142,12 @@ public class ExcelWriterTest {
 		ReqStepBinding r2t2 = new ReqStepBinding();
 		r2t2.setResId(2L);
 		r2t2.setTclnId(2L);
+		ReqStepBinding r3t3 = new ReqStepBinding();
+		r3t3.setResId(2L);
+		r3t3.setTclnId(3L);
 		data.getBindings().add(r1t1);
 		data.getBindings().add(r2t2);
+		data.getBindings().add(r3t3);
 
 	}
 
