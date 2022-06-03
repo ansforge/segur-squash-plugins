@@ -205,15 +205,22 @@ public class ExcelWriter {
 					CreationHelper helper = currentRow.getSheet().getWorkbook().getCreationHelper();
 					Cell c33 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					CellStyle c33Style = currentRow.getSheet().getWorkbook().createCellStyle();
-					c33Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
+					c33Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
 					c33Style.setFont(linkFont);
 					c33.setCellStyle(c33Style);
 					c33.setCellValue(req.getReference());
-					XSSFHyperlink link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
-					link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
-					c33.setHyperlink(link);
+					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
+					c33.setHyperlink(c33link);
 
-					currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).setCellValue(req.getReferenceSocle());
+					Cell c34 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+					CellStyle c34Style = currentRow.getSheet().getWorkbook().createCellStyle();
+					c34Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).getCellStyle());
+					c34Style.setFont(linkFont);
+					c34.setCellStyle(c34Style);
+					c34.setCellValue(req.getReferenceSocle());
+					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c34.setHyperlink(c34link);
 				}
 				lineNumber++;
 			}
