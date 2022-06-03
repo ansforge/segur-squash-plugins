@@ -159,13 +159,9 @@ public class DSRData {
 		LOGGER.info(" Nombre de cas de test coeurMetierIds trouvés sur le projet: "
 				+ perimeterData.getIdsCasDeTestCoeurDeMetier().size());
 		// Mise à jour de la propriété isCOeurDeMetier dans TestCase
-		TestCase tmp = null;
-
 		for (Long coeurDeMetierId : perimeterData.getIdsCasDeTestCoeurDeMetier()) {
 			if (testCases.containsKey(coeurDeMetierId)) {
-				tmp = testCases.get(coeurDeMetierId);
-				tmp.setIsCoeurDeMetier(true);
-				testCases.put(coeurDeMetierId, tmp);
+				testCases.get(coeurDeMetierId).setIsCoeurDeMetier(true);
 			}
 		}
 	}

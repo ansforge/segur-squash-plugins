@@ -185,6 +185,7 @@ public class ExcelWriter {
 		// ecriture des données
 		int lineNumber = REM_FIRST_EMPTY_LINE;
 		// Style links
+		CreationHelper helper = workbook.getCreationHelper();
 		short height = 200;
 		Font linkFont = workbook.createFont();
 		linkFont.setFontHeight(height);
@@ -202,7 +203,6 @@ public class ExcelWriter {
 				Row currentRow = writeRequirementRow(req, sheet, lineNumber, style2apply);
 				// si prépublication => MAJ des données sur l'exigence
 				if (data.getPerimeter().isPrePublication()) {
-					CreationHelper helper = currentRow.getSheet().getWorkbook().getCreationHelper();
 					Cell c33 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
 					CellStyle c33Style = currentRow.getSheet().getWorkbook().createCellStyle();
 					c33Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
@@ -220,6 +220,7 @@ public class ExcelWriter {
 					c34.setCellStyle(c34Style);
 					c34.setCellValue(req.getReferenceSocle());
 					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c34link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
 					c34.setHyperlink(c34link);
 				}
 				lineNumber++;
@@ -252,24 +253,44 @@ public class ExcelWriter {
 					} else {
 						c32.setCellValue(" ");
 					}
-					Cell c33 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
-					c33.setCellStyle(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
-					c33.setCellValue(req.getReference());
 
-					CreationHelper helper = rowWithTC.getSheet().getWorkbook().getCreationHelper();
+					Cell c33 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
+					CellStyle c33Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
+					c33Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
+					c33Style.setFont(linkFont);
+					c33.setCellStyle(c33Style);
+					c33.setCellValue(req.getReference());
+					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
+					c33.setHyperlink(c33link);
+
 					CellStyle c34Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
 					c34Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST).getCellStyle());
 					Cell c34 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_CAS_DE_TEST);
 					c34Style.setFont(linkFont);
 					c34.setCellStyle(c34Style);
 					c34.setCellValue(testCase.getReference());
-					XSSFHyperlink link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
-					link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl, testCase.getTcln_id()));
-					c34.setHyperlink(link);
+					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c34link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl, testCase.getTcln_id()));
+					c34.setHyperlink(c34link);
 
-					rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).setCellValue(req.getReferenceSocle());
-					rowWithTC.createCell(PREPUB_COLUMN_POINTS_DE_VERIF)
-							.setCellValue(testCase.getPointsDeVerification());
+					Cell c35 = rowWithTC.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
+					CellStyle c35Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
+					c35Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).getCellStyle());
+					c35Style.setFont(linkFont);
+					c35.setCellStyle(c35Style);
+					c35.setCellValue(req.getReferenceSocle());
+					XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					c35link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
+					c35.setHyperlink(c35link);
+	
+					Cell c36 = rowWithTC.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
+					CellStyle c36Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
+					c36Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_POINTS_DE_VERIF).getCellStyle());
+					c36Style.setFont(linkFont);
+					c36.setCellStyle(c36Style);
+					c36.setCellValue(testCase.getPointsDeVerification());
+					
 				}
 				lineNumber++;
 			}
@@ -278,9 +299,9 @@ public class ExcelWriter {
 			// Suppression de la ligne 1 (template de style)
 			// removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
 			// Bug car les hyperliens ne suivent pas les lignes (on masque la ligne)
+
 		sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX).setZeroHeight(true);
 		sheet.removeRow(sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX));
-
 		writeErrorSheet(workbook);
 
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
@@ -409,7 +430,7 @@ public class ExcelWriter {
 			}
 		}
 		for (Step step : testSteps) {
-			if (currentExcelColumn > REM_COLUMN_FIRST_NUMERO_PREUVE + MAX_STEPS) {
+			if (currentExcelColumn > REM_COLUMN_FIRST_NUMERO_PREUVE + MAX_STEPS * 2) {
 				traceur.addMessage(Level.WARNING, testcase.getTcln_id(),
 						String.format("Le test contient plus de %s preuves", MAX_STEPS));
 				break;
