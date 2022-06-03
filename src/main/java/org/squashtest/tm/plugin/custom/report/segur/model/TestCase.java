@@ -34,6 +34,8 @@ public class TestCase {
 	// concatenation des CUfs pts de verif des step
 	// non renseigné publication
 	String pointsDeVerification;
+	
+	String  parentName;
 
 	/**
 	 * Instantiates a new test case.
@@ -44,11 +46,12 @@ public class TestCase {
 	 * @param description the description
 	 * @param tcStatus the tc status
 	 */
-	public TestCase(Long tcln_id, String reference, String prerequisite, String description, String tcStatus) {
+	public TestCase(Long tcln_id, String reference, String prerequisite, String description, String tcStatus, String parentName) {
 		this.tcln_id = tcln_id;
 		this.reference = reference;
 		this.prerequisite = prerequisite;
 		this.description = description;
 		this.tcStatus = tcStatus;
+		this.parentName = parentName;
 	}
 }

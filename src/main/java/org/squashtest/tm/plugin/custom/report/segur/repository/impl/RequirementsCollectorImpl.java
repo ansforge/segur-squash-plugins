@@ -22,6 +22,7 @@ import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_LINK;
 import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
 import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.model.Cuf;
 import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
@@ -226,11 +228,19 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //		where tc.tcln_id = '8859';
 
 //le nombre de pas de test liés à une exigence se calcule à partir de => List<ReqStepCaseBinding> liste = reqCollector.findTestRequirementBinding(reqKetSet);		
+		TestCaseLibraryNode testCaseNode = TEST_CASE_LIBRARY_NODE.as("testCaseNode");
+		TestCaseLibraryNode parentFolderNode = TEST_CASE_LIBRARY_NODE.as("parentFolderNode");
 		return dsl
 				.select(TEST_CASE.TCLN_ID, TEST_CASE.REFERENCE, TEST_CASE.PREREQUISITE,
-						TEST_CASE_LIBRARY_NODE.DESCRIPTION, TEST_CASE.TC_STATUS)
-				.from(TEST_CASE).innerJoin(TEST_CASE_LIBRARY_NODE)
-				.on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID)).where(TEST_CASE.TCLN_ID.in(tc_ids)).fetch()
+						testCaseNode.DESCRIPTION, TEST_CASE.TC_STATUS, parentFolderNode.NAME)
+				.from(TEST_CASE)
+				.innerJoin(testCaseNode)
+				.on(testCaseNode.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+				.innerJoin(TCLN_RELATIONSHIP)
+				.on(TEST_CASE.TCLN_ID.eq(TCLN_RELATIONSHIP.DESCENDANT_ID))
+				.join(parentFolderNode).on(parentFolderNode.TCLN_ID.eq(TCLN_RELATIONSHIP.ANCESTOR_ID))
+				.where(TEST_CASE.TCLN_ID.in(tc_ids))
+				.fetch()
 				.intoMap(TEST_CASE.TCLN_ID, TestCase.class);
 	}
 

@@ -108,7 +108,7 @@ public class ExcelWriterTest {
 						+ "\r\n" 
 						+ "<p>ligne 1<br />\r\n" + "ligne 2<br />\r\n" + "ligne 3</p>\r\n"
 						+ "\r\n" + "<p>paragraphe 1</p>\r\n" + "\r\n" + "<p>paragraphe 2</p>\r\n" + "\r\n" + "<p> </p>",
-				Constantes.STATUS_APPROVED);
+				Constantes.STATUS_APPROVED, "Dossier Parent");
 		data.getTestCases().put(1L, test1);
 		// Steps
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString(
@@ -125,11 +125,11 @@ public class ExcelWriterTest {
 		data.getSteps().put(2L, s2t1);
 		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null,
 				"description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe",
-				Constantes.STATUS_APPROVED);
+				Constantes.STATUS_APPROVED, "002 Dossier parent");
 		data.getTestCases().put(2L, test2);
 		TestCase test3 = new TestCase(3L, "SC.INS.03.01", null,
 				"libellé du cas de test",
-				Constantes.STATUS_APPROVED);
+				Constantes.STATUS_APPROVED, "001 Dossier parent");
 		test3.setIsCoeurDeMetier(true);
 		List<Long> orderedStepIdsScenarioMetier = new ArrayList<>();
 		orderedStepIdsScenarioMetier.add(1L);
