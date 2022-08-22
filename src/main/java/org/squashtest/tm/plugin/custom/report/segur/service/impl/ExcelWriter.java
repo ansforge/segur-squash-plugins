@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -200,35 +202,21 @@ public class ExcelWriter {
 					.map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
 
 			if (bindingCT.isEmpty()) {
-				Row currentRow = writeRequirementRow(req, sheet, lineNumber, style2apply);
-				// si prépublication => MAJ des données sur l'exigence
-				if (data.getPerimeter().isPrePublication()) {
-					Cell c33 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE);
-					CellStyle c33Style = currentRow.getSheet().getWorkbook().createCellStyle();
-					c33Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE).getCellStyle());
-					c33Style.setFont(linkFont);
-					c33.setCellStyle(c33Style);
-					c33.setCellValue(req.getReference());
-					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
-					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
-					c33.setHyperlink(c33link);
-
-					Cell c34 = currentRow.createCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE);
-					CellStyle c34Style = currentRow.getSheet().getWorkbook().createCellStyle();
-					c34Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).getCellStyle());
-					c34Style.setFont(linkFont);
-					c34.setCellStyle(c34Style);
-					c34.setCellValue(req.getReferenceSocle());
-					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
-					c34link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
-					c34.setHyperlink(c34link);
-				}
-				lineNumber++;
+				// On ajoute un test vide pour pouvoir formater les cellules
+				bindingCT.add(0L);
 			}
 
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
-				TestCase testCase = data.getTestCases().get(tcID);
+				TestCase testCase;
+				if (tcID != 0L) {
+					testCase = data.getTestCases().get(tcID);
+				} else {
+					testCase = new TestCase(tcID, "", "", "", "", "");
+					List<Long> stepIds = new ArrayList<Long>();
+					// stepIds.add(0L);
+					testCase.setOrderedStepIds(stepIds);
+				}
 				// on ecrit (ou réecrit) les colonnes sur les exigences
 				Row rowWithTC = writeRequirementRow(req, sheet, lineNumber, style2apply);
 
@@ -283,21 +271,37 @@ public class ExcelWriter {
 					XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c35link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
 					c35.setHyperlink(c35link);
-	
+
 					Cell c36 = rowWithTC.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
 					CellStyle c36Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
 					c36Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_POINTS_DE_VERIF).getCellStyle());
 					c36Style.setFont(linkFont);
 					c36.setCellStyle(c36Style);
 					c36.setCellValue(testCase.getPointsDeVerification());
-					
+
 				}
 				lineNumber++;
 			}
 
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
-		sheet.shiftRows(REM_LINE_STYLE_TEMPLATE_INDEX + 1 , lineNumber - 1, -1);
+		sheet.shiftRows(REM_LINE_STYLE_TEMPLATE_INDEX + 1, lineNumber - 1, -1);
+		// TODO : add borders to cells
+		for (Row row : sheet) {
+			for (Cell cell : row) {
+				CellStyle style = cell.getCellStyle();
+				style.setBorderBottom(BorderStyle.THIN);
+				style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+				style.setBorderLeft(BorderStyle.THIN);
+				style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+				style.setBorderRight(BorderStyle.THIN);
+				style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+				style.setBorderTop(BorderStyle.THIN);
+				style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+				cell.setCellStyle(style);
+			}
+		}
+
 		writeErrorSheet(workbook);
 
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
@@ -463,6 +467,11 @@ public class ExcelWriter {
 		c11.setCellStyle(c11Style);
 		c11.setCellValue(String.format("Cf. Scénarios Coeur de métier\n%s\n[%d] preuve(s)", testcase.getDescription(),
 				testcase.getOrderedStepIds().size()));
+		// Création de cellules vides pour chaque step afin de respecter le formatage
+		for (int i = REM_COLUMN_SCENARIO_CONFORMITE + 1 ; i <= REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEPS * 2 ; i++) {
+			Cell blank = row.createCell(i);
+			blank.setCellStyle(row.getSheet().getWorkbook().createCellStyle());
+		}
 	}
 
 	private void writeErrorSheet(XSSFWorkbook workbook) {
