@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.poi.common.usermodel.Hyperlink;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -191,7 +191,7 @@ public class ExcelWriter {
 		linkFont.setFontHeight(height);
 		linkFont.setFontName("ARIAL");
 		linkFont.setUnderline(XSSFFont.U_SINGLE);
-		linkFont.setColor(HSSFColor.BLUE.index);
+		linkFont.setColor(HSSFColorPredefined.BLUE.getIndex());
 		// boucle sur les exigences
 		for (ExcelRow req : data.getRequirements()) {
 
@@ -209,7 +209,7 @@ public class ExcelWriter {
 					c33Style.setFont(linkFont);
 					c33.setCellStyle(c33Style);
 					c33.setCellValue(req.getReference());
-					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
 					c33.setHyperlink(c33link);
 
@@ -219,7 +219,7 @@ public class ExcelWriter {
 					c34Style.setFont(linkFont);
 					c34.setCellStyle(c34Style);
 					c34.setCellValue(req.getReferenceSocle());
-					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c34link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
 					c34.setHyperlink(c34link);
 				}
@@ -260,7 +260,7 @@ public class ExcelWriter {
 					c33Style.setFont(linkFont);
 					c33.setCellStyle(c33Style);
 					c33.setCellValue(req.getReference());
-					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
 					c33.setHyperlink(c33link);
 
@@ -270,7 +270,7 @@ public class ExcelWriter {
 					c34Style.setFont(linkFont);
 					c34.setCellStyle(c34Style);
 					c34.setCellValue(testCase.getReference());
-					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c34link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl, testCase.getTcln_id()));
 					c34.setHyperlink(c34link);
 
@@ -280,7 +280,7 @@ public class ExcelWriter {
 					c35Style.setFont(linkFont);
 					c35.setCellStyle(c35Style);
 					c35.setCellValue(req.getReferenceSocle());
-					XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c35link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
 					c35.setHyperlink(c35link);
 	
@@ -297,11 +297,7 @@ public class ExcelWriter {
 
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
-			// removeRow(sheet, REM_LINE_STYLE_TEMPLATE_INDEX);
-			// Bug car les hyperliens ne suivent pas les lignes (on masque la ligne)
-
-		sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX).setZeroHeight(true);
-		sheet.removeRow(sheet.getRow(REM_LINE_STYLE_TEMPLATE_INDEX));
+		sheet.shiftRows(REM_LINE_STYLE_TEMPLATE_INDEX + 1 , lineNumber - 1, -1);
 		writeErrorSheet(workbook);
 
 		LOGGER.info("  fin remplissage du woorkbook: " + workbook);
