@@ -152,7 +152,7 @@ public class ExcelWriterTest {
 	}
 
 	@Test
-	void generateExcelFileWithOneRequirementNoTestCase() throws Exception {
+	void generateExcelFilePublication() throws Exception {
 		XSSFWorkbook workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
 		// ecriture du workbook
 		data.getPerimeter().setMilestoneStatus(Constantes.MILESTONE_LOCKED);
