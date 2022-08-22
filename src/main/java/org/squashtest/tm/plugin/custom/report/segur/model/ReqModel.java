@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.squashtest.tm.plugin.custom.report.segur.Constantes;
 import org.squashtest.tm.plugin.custom.report.segur.Level;
-import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 
 import lombok.Getter;

@@ -235,9 +235,9 @@ public class ExcelWriter {
 				if (data.getPerimeter().isPrePublication()) {
 					Cell c32 = rowWithTC.createCell(PREPUB_COLUMN_BON_POUR_PUBLICATION);
 					c32.setCellStyle(style2apply.getCell(PREPUB_COLUMN_BON_POUR_PUBLICATION).getCellStyle());
-					if ((req.getReqStatus().equals(Constantes.STATUS_APPROVED))
-							&& (testCase.getTcStatus().equals(Constantes.STATUS_APPROVED))) {
+					if (req.getReqStatus().equals(Constantes.STATUS_APPROVED) && testCase.getTcln_id() == 0L) {
 						c32.setCellValue(" X ");
+//TODO Ajouter exigences liées
 					} else {
 						c32.setCellValue(" ");
 					}
@@ -286,7 +286,7 @@ public class ExcelWriter {
 		} // exigences
 			// Suppression de la ligne 1 (template de style)
 		sheet.shiftRows(REM_LINE_STYLE_TEMPLATE_INDEX + 1, lineNumber - 1, -1);
-		// TODO : add borders to cells
+		//add borders to cells
 		for (Row row : sheet) {
 			for (Cell cell : row) {
 				CellStyle style = cell.getCellStyle();
@@ -468,7 +468,7 @@ public class ExcelWriter {
 		c11.setCellValue(String.format("Cf. Scénarios Coeur de métier\n%s\n[%d] preuve(s)", testcase.getDescription(),
 				testcase.getOrderedStepIds().size()));
 		// Création de cellules vides pour chaque step afin de respecter le formatage
-		for (int i = REM_COLUMN_SCENARIO_CONFORMITE + 1 ; i <= REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEPS * 2 ; i++) {
+		for (int i = REM_COLUMN_SCENARIO_CONFORMITE + 1; i <= REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEPS * 2; i++) {
 			Cell blank = row.createCell(i);
 			blank.setCellStyle(row.getSheet().getWorkbook().createCellStyle());
 		}
