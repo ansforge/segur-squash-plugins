@@ -65,7 +65,7 @@ public class ExcelWriterTest {
 		requirement1
 				.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
-		requirement1.setReference(null);
+		requirement1.setReference("REF-1");
 		requirement1.setReferenceSocle(null);
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
@@ -89,7 +89,7 @@ public class ExcelWriterTest {
 				+ "                adresse r&eacute;seau</li>" + "        <li>" + "                ...</li>"
 				+ "</ul>" + "<p>" + "        &nbsp;</p>\r\n"));
 		requirement2.setReqStatus(Constantes.STATUS_APPROVED);
-		requirement2.setReference(null);
+		requirement2.setReference("REF-2");
 		requirement2.setReferenceSocle(null);
 		data.getRequirements().add(requirement2);
 

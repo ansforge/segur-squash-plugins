@@ -29,11 +29,11 @@ public class ReqModel {
 	private String reference;
 	private String requirementStatus;
 
-	private ExcelRow excelData = new ExcelRow();
+	private ExcelRow row = new ExcelRow();
 
 	private List<Cuf> cufs;
 
-	// calcul�e
+	// calculé
 	private String idSection;
 	private String section;
 
@@ -72,9 +72,9 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		this.traceur = traceur;
 
 		// id nécessaire pour lecture des liens exigence-CTs-(steps)
-		excelData.setResId(resId);
+		row.setResId(resId);
 		
-		excelData.setReqId(reqId);
+		row.setReqId(reqId);
 
 		// les cufs ont �t� lus en BDD, on met � jour "excelData"
 
@@ -85,27 +85,27 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 			calculExigenceConditionelle(rawProfil.getLabel());
 		}
 
-		excelData.setProfil_2(rawProfil.getLabel());
+		row.setProfil_2(rawProfil.getLabel());
 
 		// traitement de la section
 		Cuf rawSection = findSpecificCuf(Constantes.SECTION);
 		splitSectionAndSetExcelData(rawSection.getLabel());
 
-		excelData.setBloc_5(findSpecificCuf(Constantes.BLOC).getLabel());
+		row.setBloc_5(findSpecificCuf(Constantes.BLOC).getLabel());
 
-		excelData.setFonction_6(findSpecificCuf(Constantes.FONCTION).getLabel());
+		row.setFonction_6(findSpecificCuf(Constantes.FONCTION).getLabel());
 
 		calculCategorieNature(category);
 
-		excelData.setNumeroExigence_8(reference);
+		row.setNumeroExigence_8(reference);
 
-		excelData.setEnonceExigence_9(description);
+		row.setEnonceExigence_9(description);
 
 		// colonnes prepublications:
-		excelData.setReqStatus(requirementStatus);
-		excelData.setReference(reference);
+		row.setReqStatus(requirementStatus);
+		row.setReference(reference);
 
-		return excelData;
+		return row;
 	}
 
 	/**
@@ -134,8 +134,8 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 			traceur.addMessage(Level.ERROR, resId,
 					"Impossible d'extraitre d'idSection et la section du CUF Section: " + cufSection);
 		} else {
-			excelData.setId_section_3(cufSection.substring(0, separator));
-			excelData.setSection_4(cufSection.substring(separator + 1));
+			row.setId_section_3(cufSection.substring(0, separator));
+			row.setSection_4(cufSection.substring(separator + 1));
 		}
 	}
 
@@ -152,9 +152,9 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		}
 
 		if (labelProfil.equalsIgnoreCase(Constantes.PROFIL_GENERAL)) {
-			excelData.setBoolExigenceConditionnelle_1(Constantes.NON);
+			row.setBoolExigenceConditionnelle_1(Constantes.NON);
 		} else {
-			excelData.setBoolExigenceConditionnelle_1(Constantes.OUI);
+			row.setBoolExigenceConditionnelle_1(Constantes.OUI);
 		}
 	}
 
@@ -170,17 +170,17 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 			categorie = categorie.replace('É', 'E');
 
 			if (categorie.toUpperCase().contains(Constantes.CATEGORIE_EXIGENCE)) {
-				excelData.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
+				row.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
 				update = true;
 			} else if (categorie.toUpperCase().contains(Constantes.CATEGORIE_PRECONISATION)) {
-				excelData.setNatureExigence_7(Constantes.CATEGORIE_PRECONISATION);
+				row.setNatureExigence_7(Constantes.CATEGORIE_PRECONISATION);
 				update = true;
 			}
 		}
 		if (update == false) {
 			traceur.addMessage(Level.WARNING, resId,
 					"Impossible d'identifier la nature pour l'exigence. Cuf'Catégorie'= " + categorie);
-			excelData.setNatureExigence_7("");
+			row.setNatureExigence_7("");
 		}
 
 	}

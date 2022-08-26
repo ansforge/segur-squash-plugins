@@ -59,6 +59,11 @@ public class ExcelRow {
 	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;
+	
 	private String referenceSocle;
 	private Long socleResId;
+	/**
+	 * IdSocle pour créer Hyperlien dans Excel
+	 */
+	private Long socleReqId;
 }

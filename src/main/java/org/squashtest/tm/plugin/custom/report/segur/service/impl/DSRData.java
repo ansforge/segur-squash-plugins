@@ -31,7 +31,6 @@ import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsColle
 import lombok.Getter;
 import lombok.Setter;
 
-
 /**
  * The Class DSRData.
  */
@@ -52,13 +51,13 @@ public class DSRData {
 	private Map<Long, Step> steps = new HashMap<>();
 
 	private Traceur traceur;
-	
+
 	private PerimeterData perimeter;
 
 	/**
 	 * Instantiates a new DSR data.
 	 *
-	 * @param traceur the traceur
+	 * @param traceur      the traceur
 	 * @param reqCollector the req collector
 	 */
 	public DSRData(Traceur traceur, RequirementsCollector reqCollector, PerimeterData perimeter) {
@@ -66,6 +65,13 @@ public class DSRData {
 		this.traceur = traceur;
 		this.reqCollector = reqCollector;
 		this.perimeter = perimeter;
+	}
+
+	public ExcelRow getRequirementById(Long id) {
+		return requirements.stream()
+				.filter(row -> id == row.getReqId())
+				.findAny()
+				.orElse(null);
 	}
 
 	/**
@@ -94,7 +100,6 @@ public class DSRData {
 		// lecture des données sur les steps
 		populateStepsData(distinctCT);
 	}
-
 
 	private Set<Long> populateRequirementData(Map<Long, Long> linkedReqs, List<LinkedReq> linkedOrNotReqs) {
 
@@ -137,15 +142,15 @@ public class DSRData {
 		// Mise à jour des données uniquement pour les exigences de l'arbre liées à une
 		// exigence du socle
 		for (Long resId : linkedReqs.keySet()) {
-			ExcelRow projet = reqs.get(resId).getExcelData();
-			ExcelRow socle = reqs.get(linkedReqs.get(resId)).getExcelData();
+			ExcelRow projet = reqs.get(resId).getRow();
+			ExcelRow socle = reqs.get(linkedReqs.get(resId)).getRow();
 			ExcelRow update = mergeData(projet, socle);
-			reqs.get(resId).setExcelData(update);
+			reqs.get(resId).setRow(update);
 		}
 
 		// ajout des exigences de l'arbre à la liste
 		for (Long resIdP : treeReqIs) {
-			requirements.add(reqs.get(resIdP).getExcelData());
+			requirements.add(reqs.get(resIdP).getRow());
 		}
 		return reqKetSet;
 	}
@@ -255,76 +260,77 @@ public class DSRData {
 		return result;
 	}
 
-	private ExcelRow mergeData(ExcelRow projet, ExcelRow socle) {
-		ExcelRow update = new ExcelRow();
+	private ExcelRow mergeData(ExcelRow requirementRow, ExcelRow socleData) {
+		ExcelRow updatedRequirement = new ExcelRow();
 		// champs à ne pas merger
-		update.setReferenceSocle(socle.getReference());
-		update.setSocleResId(socle.getResId());
-		update.setReqStatus(projet.getReqStatus());
-		update.setReference(projet.getReference());
-		update.setResId(projet.getResId());
+		updatedRequirement.setReferenceSocle(socleData.getReference());
+		updatedRequirement.setSocleResId(socleData.getResId());
+		updatedRequirement.setSocleReqId(socleData.getReqId());
+		updatedRequirement.setReqStatus(requirementRow.getReqStatus());
+		updatedRequirement.setReference(requirementRow.getReference());
+		updatedRequirement.setResId(requirementRow.getResId());
 		// champs mergés
-		if (projet.getBoolExigenceConditionnelle_1().equals(Constantes.NON_RENSEIGNE)) {
-			update.setBoolExigenceConditionnelle_1(socle.getBoolExigenceConditionnelle_1());
+		if (requirementRow.getBoolExigenceConditionnelle_1().equals(Constantes.NON_RENSEIGNE)) {
+			updatedRequirement.setBoolExigenceConditionnelle_1(socleData.getBoolExigenceConditionnelle_1());
 		} else {
-			update.setBoolExigenceConditionnelle_1(projet.getBoolExigenceConditionnelle_1());
+			updatedRequirement.setBoolExigenceConditionnelle_1(requirementRow.getBoolExigenceConditionnelle_1());
 		}
 
-		if (projet.getEnonceExigence_9().isEmpty()) {
-			update.setEnonceExigence_9(socle.getEnonceExigence_9());
+		if (requirementRow.getEnonceExigence_9().isEmpty()) {
+			updatedRequirement.setEnonceExigence_9(socleData.getEnonceExigence_9());
 		} else {
-			update.setEnonceExigence_9(projet.getEnonceExigence_9());
+			updatedRequirement.setEnonceExigence_9(requirementRow.getEnonceExigence_9());
 		}
 
-		if (projet.getBloc_5().isEmpty()) {
-			update.setBloc_5(socle.getBloc_5());
+		if (requirementRow.getBloc_5().isEmpty()) {
+			updatedRequirement.setBloc_5(socleData.getBloc_5());
 		} else {
-			update.setBloc_5(projet.getBloc_5());
+			updatedRequirement.setBloc_5(requirementRow.getBloc_5());
 		}
 
-		if (projet.getFonction_6().isEmpty()) {
-			update.setFonction_6(socle.getFonction_6());
+		if (requirementRow.getFonction_6().isEmpty()) {
+			updatedRequirement.setFonction_6(socleData.getFonction_6());
 		} else {
-			update.setFonction_6(projet.getFonction_6());
+			updatedRequirement.setFonction_6(requirementRow.getFonction_6());
 		}
 
-		if (projet.getProfil_2().isEmpty()) {
-			update.setProfil_2(socle.getProfil_2());
+		if (requirementRow.getProfil_2().isEmpty()) {
+			updatedRequirement.setProfil_2(socleData.getProfil_2());
 		} else {
-			update.setProfil_2(projet.getProfil_2());
+			updatedRequirement.setProfil_2(requirementRow.getProfil_2());
 		}
 
-		if (projet.getProfil_2().isEmpty()) {
-			update.setProfil_2(socle.getProfil_2());
+		if (requirementRow.getProfil_2().isEmpty()) {
+			updatedRequirement.setProfil_2(socleData.getProfil_2());
 		} else {
-			update.setProfil_2(projet.getProfil_2());
+			updatedRequirement.setProfil_2(requirementRow.getProfil_2());
 		}
 
-		if (projet.getSection_4().isEmpty()) {
-			update.setSection_4(socle.getSection_4());
+		if (requirementRow.getSection_4().isEmpty()) {
+			updatedRequirement.setSection_4(socleData.getSection_4());
 		} else {
-			update.setSection_4(projet.getSection_4());
+			updatedRequirement.setSection_4(requirementRow.getSection_4());
 		}
 
-		if (projet.getId_section_3().isEmpty()) {
-			update.setId_section_3(socle.getId_section_3());
+		if (requirementRow.getId_section_3().isEmpty()) {
+			updatedRequirement.setId_section_3(socleData.getId_section_3());
 		} else {
-			update.setId_section_3(projet.getId_section_3());
+			updatedRequirement.setId_section_3(requirementRow.getId_section_3());
 		}
 
-		if (projet.getNatureExigence_7().isEmpty()) {
-			update.setNatureExigence_7(socle.getNatureExigence_7());
+		if (requirementRow.getNatureExigence_7().isEmpty()) {
+			updatedRequirement.setNatureExigence_7(socleData.getNatureExigence_7());
 		} else {
-			update.setNatureExigence_7(projet.getNatureExigence_7());
+			updatedRequirement.setNatureExigence_7(requirementRow.getNatureExigence_7());
 		}
 
-		if (projet.getNumeroExigence_8().isEmpty()) {
-			update.setNumeroExigence_8(socle.getNumeroExigence_8());
+		if (requirementRow.getNumeroExigence_8().isEmpty()) {
+			updatedRequirement.setNumeroExigence_8(socleData.getNumeroExigence_8());
 		} else {
-			update.setNumeroExigence_8(projet.getNumeroExigence_8());
+			updatedRequirement.setNumeroExigence_8(requirementRow.getNumeroExigence_8());
 		}
 
-		return update;
+		return updatedRequirement;
 	}
 
 }

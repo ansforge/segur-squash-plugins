@@ -23,9 +23,9 @@ public class CufToExcelDataTest {
 	
 	List<Cuf> cufs = new ArrayList<Cuf>();
 	
-	static /*final*/ String labelSection = "MSS_2changes_via_MS-Sant�";
+	static /*final*/ String labelSection = "MSS_2changes_via_MS-Santé";
 	static final String idSection = "MSS";
-	static final String section = "2changes_via_MS-Sant�";
+	static final String section = "2changes_via_MS-Santé";
 	
 	/**
 	 * Find specific cuf test.
@@ -56,8 +56,8 @@ public class CufToExcelDataTest {
 		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null);
 		//labelSection = "MSS_";
 		reqModel.splitSectionAndSetExcelData(labelSection);
-		assertEquals(idSection, reqModel.getExcelData().getId_section_3() );
-		assertEquals(section, reqModel.getExcelData().getSection_4() );
+		assertEquals(idSection, reqModel.getRow().getId_section_3() );
+		assertEquals(section, reqModel.getRow().getSection_4() );
 //		System.out.println(reqModel.getExcelData().getId_section_3());
 //		System.out.println(reqModel.getExcelData().getSection_4());
 	}
@@ -69,11 +69,11 @@ public class CufToExcelDataTest {
 	public void calculExigenceConditionelleTest() {
 		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null);
 		reqModel.calculExigenceConditionelle("Général");
-		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.NON);
+		assertEquals(reqModel.getRow().getBoolExigenceConditionnelle_1(), Constantes.NON);
 		reqModel.calculExigenceConditionelle("général");
-		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.NON);
+		assertEquals(reqModel.getRow().getBoolExigenceConditionnelle_1(), Constantes.NON);
 		reqModel.calculExigenceConditionelle("quelquonque_général");
-		assertEquals(reqModel.getExcelData().getBoolExigenceConditionnelle_1(), Constantes.OUI);		
+		assertEquals(reqModel.getRow().getBoolExigenceConditionnelle_1(), Constantes.OUI);		
 	}
 	
 	/**
@@ -83,22 +83,22 @@ public class CufToExcelDataTest {
 	public void calculCategorieTest() {
 		ReqModel reqModel = new ReqModel(null,null,null,null,null,null);
 		reqModel.calculCategorieNature("exigence (Doit)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("eXigeNce (Doit)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("Exigence (Doit)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("Éxigence (Doit)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("éxigence (Doit)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		
 		reqModel.calculCategorieNature("préconisation (Peut)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
 		reqModel.calculCategorieNature("preconisation (Peut)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
 		reqModel.calculCategorieNature("PrÉconisation (Peut)");
-		assertEquals(reqModel.getExcelData().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
+		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_PRECONISATION);
 
 
 
