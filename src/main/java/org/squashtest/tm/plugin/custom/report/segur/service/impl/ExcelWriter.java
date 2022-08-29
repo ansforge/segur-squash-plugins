@@ -287,9 +287,20 @@ public class ExcelWriter {
 					Cell c36 = rowWithTC.createCell(PREPUB_COLUMN_POINTS_DE_VERIF);
 					CellStyle c36Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
 					c36Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_POINTS_DE_VERIF).getCellStyle());
-					c36Style.setFont(linkFont);
 					c36.setCellStyle(c36Style);
 					c36.setCellValue(testCase.getPointsDeVerification());
+					
+					Cell c37 = rowWithTC.createCell(PREPUB_COLUMN_NOTE_INTERNE);
+					CellStyle c37Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
+					c37Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_NOTE_INTERNE).getCellStyle());
+					c37.setCellStyle(c37Style);
+					c37.setCellValue(req.getNoteInterne());
+					
+					Cell c38 = rowWithTC.createCell(PREPUB_COLUMN_SEGUR_REM);
+					CellStyle c38Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
+					c38Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_SEGUR_REM).getCellStyle());
+					c38.setCellStyle(c38Style);
+					c38.setCellValue(req.getSegurRem());
 
 				}
 				lineNumber++;
@@ -566,22 +577,4 @@ public class ExcelWriter {
 		return RandomStringUtils.random(255, 33, 122, false, false);
 	}
 
-	/**
-	 * Remove a row by its index
-	 * 
-	 * @param sheet    a Excel sheet
-	 * @param rowIndex a 0 based index of removing row
-	 */
-	public void removeRow(XSSFSheet sheet, int rowIndex) {
-		int lastRowNum = sheet.getLastRowNum();
-		if (rowIndex >= 0 && rowIndex < lastRowNum) {
-			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
-		}
-		if (rowIndex == lastRowNum) {
-			XSSFRow removingRow = sheet.getRow(rowIndex);
-			if (removingRow != null) {
-				sheet.removeRow(removingRow);
-			}
-		}
-	}
 }

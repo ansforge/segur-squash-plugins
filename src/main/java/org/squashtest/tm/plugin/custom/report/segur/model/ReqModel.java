@@ -76,7 +76,7 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		
 		row.setReqId(reqId);
 
-		// les cufs ont �t� lus en BDD, on met � jour "excelData"
+		// les cufs ont été lus en BDD, on met à jour "excelRow"
 
 		Cuf rawProfil = findSpecificCuf(Constantes.PROFIL);
 		if (rawProfil == null) {
@@ -104,7 +104,8 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		// colonnes prepublications:
 		row.setReqStatus(requirementStatus);
 		row.setReference(reference);
-
+		row.setNoteInterne(findSpecificCuf(Constantes.NOTE_INTERNE).getLabel());
+		row.setSegurRem(findSpecificCuf(Constantes.SEGUR_REM).getLabel());
 		return row;
 	}
 

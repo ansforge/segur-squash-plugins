@@ -33,6 +33,12 @@ public class Constantes {
 	
 	/** The Constant VERIF_PREUVE. */
 	public final static String VERIF_PREUVE = "VERIF_PREUVE";
+	
+	/** The Constant NOTE_INTERNE. */
+	public final static String NOTE_INTERNE = "NOTE_INTERNE";
+	
+	/** The Constant SEGUR_REM. */
+	public final static String SEGUR_REM = "SEGUR_REM";
 
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
@@ -96,7 +102,7 @@ public class Constantes {
 	
 	/** The Constant PREFIX_PROJET__METIER_SIZE. */
 	public final static int PREFIX_PROJET__METIER_SIZE = 3;
-	// public final static String PREFIX_PROJET_PROJET = "";
+
 
 	// voir aussi constantes définies dans ExcelWriterUtil => nom du template,
 	// numéro des colonnes,...

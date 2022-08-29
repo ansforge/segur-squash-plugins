@@ -59,6 +59,9 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;
+	private String noteInterne = "";
+	private String segurRem = "";
+	
 	
 	private String referenceSocle;
 	private Long socleResId;
@@ -120,7 +123,7 @@ public class ExcelRow implements Comparable<ExcelRow>{
 			break;
 		}
 		
-		sortingKey.concat(testRef);
+		sortingKey = sortingKey.concat(testRef);
 	}
 
 	@Override
