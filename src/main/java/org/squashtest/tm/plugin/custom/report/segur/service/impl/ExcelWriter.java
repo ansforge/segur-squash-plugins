@@ -126,6 +126,12 @@ public class ExcelWriter {
 
 	/** The Constant PREPUB_COLUMN_POINTS_DE_VERIF. */
 	public static final int PREPUB_COLUMN_POINTS_DE_VERIF = PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE + 1;
+	
+	/** The Constant PREPUB_COLUMN_NOTE_INTERNE. */
+	public static final int PREPUB_COLUMN_NOTE_INTERNE = PREPUB_COLUMN_POINTS_DE_VERIF + 1;
+
+	/** The Constant PREPUB_COLUMN_SEGUR_REM. */
+	public static final int PREPUB_COLUMN_SEGUR_REM = PREPUB_COLUMN_NOTE_INTERNE + 1;
 
 	/** The Constant ERROR_COLUMN_LEVEL. */
 
@@ -237,7 +243,10 @@ public class ExcelWriter {
 					c32.setCellStyle(style2apply.getCell(PREPUB_COLUMN_BON_POUR_PUBLICATION).getCellStyle());
 					if (req.getReqStatus().equals(Constantes.STATUS_APPROVED)) {
 						ExcelRow socleReq = data.getRequirementById(req.getSocleReqId());
-						String socleStatus = socleReq.getReqStatus();
+						String socleStatus = "";
+						if (socleReq != null) {
+							socleStatus = socleReq.getReqStatus();
+						}
 						if (testCase.getTcln_id() == 0L || socleStatus.equals(Constantes.STATUS_APPROVED)) {
 							c32.setCellValue(" X ");
 						} else {
