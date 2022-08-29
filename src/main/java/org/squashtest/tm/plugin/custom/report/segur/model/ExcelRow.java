@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ExcelRow {
+public class ExcelRow implements Comparable<ExcelRow>{
 
 	/* ********************************************** */
 	// Données pour la partie exigence du template excel
@@ -66,4 +66,68 @@ public class ExcelRow {
 	 * IdSocle pour créer Hyperlien dans Excel
 	 */
 	private Long socleReqId;
+	
+	/**
+	 * Clef de tri composée de la référence (socle en premier) concaténée à la réference du cas de test
+	 */
+	private String sortingKey;
+	
+	public void setSortingKey(String testRef) {
+		
+		switch (id_section_3) {
+		case "INS":
+			sortingKey = "0".concat(reference);
+			break;
+
+		case "DMP":
+			sortingKey = "1".concat(reference);
+			break;
+
+		case "MSS":
+			sortingKey = "2".concat(reference);
+			break;
+
+		case "PSC":
+			sortingKey = "3".concat(reference);
+			break;
+
+		case "ANN":
+			sortingKey = "4".concat(reference);
+			break;
+
+		case "TBB":
+			sortingKey = "5".concat(reference);
+			break;
+
+		case "HOP":
+			sortingKey = "6".concat(reference);
+			break;
+
+		case "DOC":
+			sortingKey = "7".concat(reference);
+			break;
+
+		case "PORT":
+			sortingKey = "8".concat(reference);
+			break;
+			
+		case "EPR":
+			sortingKey = "9".concat(reference);
+			break;
+			
+		default:
+			sortingKey = reference;
+			break;
+		}
+		
+		sortingKey.concat(testRef);
+	}
+
+	@Override
+	public int compareTo(ExcelRow o) {
+		if (sortingKey == null || o.getSortingKey() == null) {
+			return 0;
+		}
+		return sortingKey.compareTo(o.getSortingKey());
+	}
 }

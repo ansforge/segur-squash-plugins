@@ -4,10 +4,12 @@
 package org.squashtest.tm.plugin.custom.report.segur.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,10 +70,7 @@ public class DSRData {
 	}
 
 	public ExcelRow getRequirementById(Long id) {
-		return requirements.stream()
-				.filter(row -> id == row.getReqId())
-				.findAny()
-				.orElse(null);
+		return requirements.stream().filter(row -> id == row.getReqId()).findAny().orElse(null);
 	}
 
 	/**
@@ -92,7 +91,10 @@ public class DSRData {
 
 		// lecture des données sur les CTs
 		populateTestCases(distinctCT, perimeter);
-
+		// Ajout des clefs de tri (REF SOCLE, puis réference Exigences, puis réference
+		// scénario
+		addSortingKeyToRequirementsRow();
+		Collections.sort(requirements);
 		// lecture des IDs des CTs 'coeur de métier' => sous un répertoire "_METIER" et
 		// mise à jour de la propriété dans l'objet TestCase
 		addTestCaseCoeurDeMetier(perimeter);
@@ -155,6 +157,42 @@ public class DSRData {
 		return reqKetSet;
 	}
 
+	private void populateTestCases(List<Long> xdistinctCT, PerimeterData perimeterData) {
+		testCases = reqCollector.findTestCase(xdistinctCT);
+		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + testCases.size());
+
+		// mise à jour de la liste des Step dans les CTs
+		TestCase tcTmp;
+		List<Long> ctSteps;
+
+		for (Long testCaseId : testCases.keySet()) {
+			tcTmp = testCases.get(testCaseId);
+			ctSteps = reqCollector.findStepIdsByTestCaseId(testCaseId);
+			tcTmp.setOrderedStepIds(ctSteps);
+			if (perimeterData.isPrePublication()) {
+				List<String> ptsDeVerif = reqCollector.findPointsDeVerificationByTcStepsIds(ctSteps);
+				StringBuilder builder = new StringBuilder();
+				for (String verif : ptsDeVerif) {
+					builder.append(Parser.convertHTMLtoString(verif));
+				}
+				tcTmp.setPointsDeVerification(builder.toString());
+			}
+			testCases.put(testCaseId, tcTmp);
+		}
+	}
+
+	private void addSortingKeyToRequirementsRow() {
+		for (ExcelRow requirement : requirements) {
+			Optional<ReqStepBinding> binding = bindings.stream()
+					.filter(b -> b.getResId().equals(requirement.getResId())).findAny();
+			if (binding.isPresent()) {
+				requirement.setSortingKey(testCases.get(binding.get().getTclnId()).getReference());
+			} else {
+				requirement.setSortingKey("");
+			}
+		}
+	}
+
 	private void addTestCaseCoeurDeMetier(PerimeterData perimeterData) {
 		perimeterData.setTclnIdFolderMetier(reqCollector.findIdFolderMetier(perimeterData.getProjectId()));
 		LOGGER.info(" rootMetierId (tcln_id du répertoire des cas de test '_METIER' "
@@ -188,30 +226,6 @@ public class DSRData {
 			currentStep = steps.get(stepId);
 			currentStep.setReference(ref_step);
 			steps.put(stepId, currentStep);
-		}
-	}
-
-	private void populateTestCases(List<Long> xdistinctCT, PerimeterData perimeterData) {
-		testCases = reqCollector.findTestCase(xdistinctCT);
-		LOGGER.info(" lecture des données sur les CTs. Nbre CT: " + testCases.size());
-
-		// mise à jour de la liste des Step dans les CTs
-		TestCase tcTmp;
-		List<Long> ctSteps;
-
-		for (Long testCaseId : testCases.keySet()) {
-			tcTmp = testCases.get(testCaseId);
-			ctSteps = reqCollector.findStepIdsByTestCaseId(testCaseId);
-			tcTmp.setOrderedStepIds(ctSteps);
-			if (perimeterData.isPrePublication()) {
-				List<String> ptsDeVerif = reqCollector.findPointsDeVerificationByTcStepsIds(ctSteps);
-				StringBuilder builder = new StringBuilder();
-				for (String verif : ptsDeVerif) {
-					builder.append(Parser.convertHTMLtoString(verif));
-				}
-				tcTmp.setPointsDeVerification(builder.toString());
-			}
-			testCases.put(testCaseId, tcTmp);
 		}
 	}
 
