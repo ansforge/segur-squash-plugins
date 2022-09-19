@@ -6,7 +6,7 @@
 
 	<groupId>org.squashtest.tm.plugin</groupId>
 	<artifactId>report.ans.segur</artifactId>
-	<version>1.0.0.RC11</version>
+	<version>1.0.0.RC12</version>
 	<packaging>jar</packaging>
 	<name>segur-rapport-exigences</name>
 
@@ -247,8 +247,8 @@
 									<shadedPattern>com.microsoft.shaded.schemas</shadedPattern>
 								</relocation>
 								<relocation>
-									<pattern>org.w3</pattern>
-									<shadedPattern>org.w3.shaded</shadedPattern>
+									<pattern>org.w3.x2000</pattern>
+									<shadedPattern>org.w3.x2000.shaded</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.openxmlformats</pattern>
