@@ -29,7 +29,6 @@
   </dependencyManagement>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -38,6 +37,22 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>3.14</version><!--$NO-MVN-MAN-VER$-->
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>3.14</version><!--$NO-MVN-MAN-VER$-->
+      <exclusions>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!--======= SQUASHTEST MODULES ======== -->
@@ -74,7 +89,6 @@
       <version>${squash.core.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -208,5 +222,5 @@
       <url>https://nexus.squashtest.org/nexus/repository/maven-squashtest-public-releases</url>
     </repository>
   </repositories>
-
+  
 </project>
