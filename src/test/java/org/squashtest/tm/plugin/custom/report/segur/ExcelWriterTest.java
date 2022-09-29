@@ -67,7 +67,7 @@ public class ExcelWriterTest {
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference("REF-1");
 		requirement1.setReferenceSocle(null);
-		requirement1.setNoteInterne("Ceci est une note interne");
+		requirement1.setNoteInterne("<p>Ceci est une note interne</p>");
 		requirement1.setSegurRem("Remarque Ségur");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();

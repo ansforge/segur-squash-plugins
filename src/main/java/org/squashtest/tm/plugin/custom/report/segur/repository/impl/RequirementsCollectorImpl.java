@@ -87,7 +87,9 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 //				+ "where cufv.bound_entity_type ='REQUIREMENT_VERSION' " + "and cufv.bound_entity_id=?";
 
 		List<Cuf> cufs = dsl
-				.select(CUSTOM_FIELD.CODE, nvl2(CUSTOM_FIELD_VALUE_OPTION.LABEL, CUSTOM_FIELD_VALUE_OPTION.LABEL, ""))
+				.select(CUSTOM_FIELD.CODE, nvl2(CUSTOM_FIELD_VALUE_OPTION.LABEL, CUSTOM_FIELD_VALUE_OPTION.LABEL,
+						nvl2(CUSTOM_FIELD_VALUE.LARGE_VALUE,CUSTOM_FIELD_VALUE.LARGE_VALUE,
+						nvl2(CUSTOM_FIELD_VALUE.VALUE,CUSTOM_FIELD_VALUE.VALUE, ""))))
 				.from(CUSTOM_FIELD_VALUE).innerJoin(CUSTOM_FIELD_BINDING)
 				.on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_VALUE.CFB_ID))
 

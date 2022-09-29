@@ -292,7 +292,7 @@ public class ExcelWriter {
 					CellStyle c37Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
 					c37Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_NOTE_INTERNE).getCellStyle());
 					c37.setCellStyle(c37Style);
-					c37.setCellValue(req.getNoteInterne());
+					c37.setCellValue(Parser.convertHTMLtoString(req.getNoteInterne()));
 					
 					Cell c38 = rowWithTC.createCell(PREPUB_COLUMN_SEGUR_REM);
 					CellStyle c38Style = rowWithTC.getSheet().getWorkbook().createCellStyle();
