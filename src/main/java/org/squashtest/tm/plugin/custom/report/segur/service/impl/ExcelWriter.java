@@ -44,11 +44,9 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 @Component
 public class ExcelWriter {
 
-	private static final String REQ_CONTEXT_PATH = "%s/requirement-workspace/requirement/%d/content";
+	private static final String REQ_CONTEXT_PATH = "%srequirement-workspace/requirement/%d/content";
 
-	private static final String REQ_SOCLE_CONTEXT_PATH = "%s/requirement-workspace/requirement-version/detail/%d/content";
-
-	private static final String TESTCASE_CONTEXT_PATH = "%s/test-case-workspace/test-case/%d/content";
+	private static final String TESTCASE_CONTEXT_PATH = "%stest-case-workspace/test-case/%d/content";
 
 	private static final int MAX_STEPS = 10;
 
@@ -281,10 +279,10 @@ public class ExcelWriter {
 					c35Style.cloneStyleFrom(style2apply.getCell(PREPUB_COLUMN_REFERENCE_EXIGENCE_SOCLE).getCellStyle());
 					c35Style.setFont(linkFont);
 					c35.setCellStyle(c35Style);
-					if (req.getSocleResId() > 0) {
+					if (req.getSocleReqId() > 0) {
 						c35.setCellValue(req.getReferenceSocle());
 						XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
-						c35link.setAddress(String.format(REQ_SOCLE_CONTEXT_PATH, squashBaseUrl, req.getSocleResId()));
+						c35link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleReqId()));
 						c35.setHyperlink(c35link);
 					}
 

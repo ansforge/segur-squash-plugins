@@ -283,6 +283,7 @@ public class DSRData {
 		updatedRequirement.setReqStatus(requirementRow.getReqStatus());
 		updatedRequirement.setReference(requirementRow.getReference());
 		updatedRequirement.setResId(requirementRow.getResId());
+		updatedRequirement.setReqId(requirementRow.getReqId());
 		// champs mergés
 		if (requirementRow.getBoolExigenceConditionnelle_1().equals(Constantes.NON_RENSEIGNE)) {
 			updatedRequirement.setBoolExigenceConditionnelle_1(socleData.getBoolExigenceConditionnelle_1());

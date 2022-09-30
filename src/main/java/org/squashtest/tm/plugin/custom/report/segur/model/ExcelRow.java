@@ -64,11 +64,11 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	
 	
 	private String referenceSocle = "";
-	private Long socleResId;
+	private Long socleResId = 0L;
 	/**
 	 * IdSocle pour créer Hyperlien dans Excel
 	 */
-	private Long socleReqId;
+	private Long socleReqId = 0L;
 	
 	/**
 	 * Clef de tri composée de la référence (socle en premier) concaténée à la réference du cas de test
