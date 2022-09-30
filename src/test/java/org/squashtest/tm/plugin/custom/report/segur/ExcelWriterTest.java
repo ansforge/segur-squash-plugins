@@ -47,7 +47,7 @@ public class ExcelWriterTest {
 
 		perimeterData.setProjectName("DSR_1");
 		perimeterData.setMilestoneName("MILESTONE");
-		perimeterData.setSquashBaseUrl("https://squash-segur.henix.com");
+		perimeterData.setSquashBaseUrl("https://squash-segur.henix.com/squash/");
 
 		data = new DSRData(traceur, new RequirementsCollectorImpl(), perimeterData);
 		excel = new ExcelWriter(new Traceur());
