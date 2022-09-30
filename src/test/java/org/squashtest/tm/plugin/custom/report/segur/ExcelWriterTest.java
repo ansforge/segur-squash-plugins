@@ -66,7 +66,6 @@ public class ExcelWriterTest {
 				.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference("REF-1");
-		requirement1.setReferenceSocle(null);
 		requirement1.setNoteInterne("<p>Ceci est une note interne</p>");
 		requirement1.setSegurRem("Remarque Ségur");
 		data.getRequirements().add(requirement1);
@@ -92,8 +91,28 @@ public class ExcelWriterTest {
 				+ "</ul>" + "<p>" + "        &nbsp;</p>\r\n"));
 		requirement2.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement2.setReference("REF-2");
-		requirement2.setReferenceSocle(null);
+		requirement2.setReferenceSocle("SC-2");
+		requirement2.setSocleResId(1L);
 		data.getRequirements().add(requirement2);
+		ExcelRow requirement3 = new ExcelRow();
+		requirement3.setResId(3L);
+		requirement3.setReqId(3L);
+		requirement3.setBoolExigenceConditionnelle_1(Constantes.NON);
+		requirement3.setProfil_2("Général");
+		requirement3.setId_section_3("MSS");
+		requirement3.setSection_4("Échanges via MS-Santé");
+		requirement3.setBloc_5("Transmission via MS-Santé");
+		requirement3.setFonction_6("Envoi des messages MSS");
+		requirement3.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
+		requirement3.setNumeroExigence_8("CI-SIS/MSS.02");
+		requirement3
+				.setEnonceExigence_9("En cas de modification d'un des documents listés dans le DSR en annexe 3,"
+						+ " le système DOIT pouvoir transmettre par messagerie sécurisée de santé"
+						+ " la nouvelle version du document avec une mention du type &quot;annule"
+						+ " et remplace&quot; pré-paramétrée.");
+		requirement3.setReqStatus(Constantes.STATUS_APPROVED);
+		requirement3.setReference("SC.CI-SIS/MSS.02");
+		data.getRequirements().add(requirement3);
 
 		// TestCases
 		TestCase test1 = new TestCase(1L, "SC.INS.01.01",

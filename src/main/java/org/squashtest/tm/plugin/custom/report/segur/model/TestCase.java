@@ -17,7 +17,7 @@ public class TestCase {
 
 	Long tcln_id;
 
-	String reference;
+	String reference = "";
 
 	String prerequisite = "";
 

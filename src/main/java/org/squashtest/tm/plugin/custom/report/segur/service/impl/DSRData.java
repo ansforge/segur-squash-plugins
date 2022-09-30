@@ -114,9 +114,9 @@ public class DSRData {
 		allReqIds.addAll(linkedReqs.values());
 		// liste des exigences de l'arbre
 
-		LOGGER.error(" treeReqIs " + treeReqIs.size());
-		LOGGER.error(" allReqIds " + allReqIds.size());
-		LOGGER.error(" linkedReqs " + linkedReqs.size());
+		LOGGER.info(" treeReqIs " + treeReqIs.size());
+		LOGGER.info(" allReqIds " + allReqIds.size());
+		LOGGER.info(" linkedReqs " + linkedReqs.size());
 
 		// Lecture des données de toutes les exigences (arbre et liées)
 		Map<Long, ReqModel> reqs = reqCollector.mapFindRequirementByResId(allReqIds);

@@ -63,7 +63,7 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	private String segurRem = "";
 	
 	
-	private String referenceSocle;
+	private String referenceSocle = "";
 	private Long socleResId;
 	/**
 	 * IdSocle pour créer Hyperlien dans Excel
