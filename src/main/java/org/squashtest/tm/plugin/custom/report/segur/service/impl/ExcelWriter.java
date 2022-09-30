@@ -428,7 +428,7 @@ public class ExcelWriter {
 		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
-		if ("".equals(testcase.getPrerequisite()) || testcase.getPrerequisite() == null) {
+		if ("".equals(testcase.getPrerequisite()) && !"".equals(testcase.getDescription())) {
 			c11.setCellValue("Description : " + Constantes.LINE_SEPARATOR
 					+ Parser.convertHTMLtoString(testcase.getDescription()));
 		} else {
