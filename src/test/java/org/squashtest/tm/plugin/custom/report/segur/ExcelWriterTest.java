@@ -82,7 +82,7 @@ public class ExcelWriterTest {
 		requirement2.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
 		requirement2.setNumeroExigence_8("SC.INS.01.01");
 		requirement2.setEnonceExigence_9(Parser.convertHTMLtoString("<p>\r\n"
-				+ "        Lorsqu&#39;une BAL est bloqu&eacute;e par un administrateur global, des traces fonctionnelles et applicatives sont constitu&eacute;es et doivent au moins contenir les informations suivantes :</p>\r\n"
+				+ "        Lorsqu&#39;une BAL est bloqu&eacute;e par un administrateur global, des &quot;traces fonctionnelles&quot; et applicatives sont constitu&eacute;es et doivent au moins contenir les informations suivantes :</p>\r\n"
 				+ "<ul>\r\n" + "        <li>"
 				+ "                type d&#39;action ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</li>"
 				+ "        <li>" + "                identit&eacute; de son auteur ;</li>" + "        <li>"
@@ -165,7 +165,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(89,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
+		assertEquals(102,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
 		workbook.close();
 		out.close();
 	}
@@ -182,7 +182,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(476,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+		assertEquals(478,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
 
 		workbook.close();
 		out.close();

@@ -55,6 +55,8 @@ public class Parser {
 		doc.select("br").before("\\n");
 		doc.select("p").before("\\n");
 		String str = doc.html().replaceAll("\\\\n", "\n");
-		return Jsoup.clean(str, "", Whitelist.simpleText(), outputSettings).replaceAll("&apos;", "'");
+		return Jsoup.clean(str, "", Whitelist.simpleText(), outputSettings)
+				.replaceAll("&apos;", "'")
+				.replaceAll("&quot;", "\"");
 	}
 }
