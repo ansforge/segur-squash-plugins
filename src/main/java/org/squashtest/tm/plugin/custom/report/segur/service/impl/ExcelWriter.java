@@ -432,13 +432,22 @@ public class ExcelWriter {
 		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
-		if ("".equals(testcase.getPrerequisite()) && !"".equals(testcase.getDescription())) {
-			c11.setCellValue("Description : " + Constantes.LINE_SEPARATOR
-					+ Parser.convertHTMLtoString(testcase.getDescription()));
-		} else {
-			c11.setCellValue("Prérequis :" + Constantes.LINE_SEPARATOR
-					+ Parser.convertHTMLtoString(testcase.getPrerequisite()) + "\n\nDescription :"
-					+ Constantes.LINE_SEPARATOR + Parser.convertHTMLtoString(testcase.getDescription()));
+		if (testcase.getTcln_id() > 0) {
+			String content = "";
+			if (!"".equals(testcase.getPrerequisite())) {
+				content += "Prérequis :" + Constantes.LINE_SEPARATOR
+						+ Parser.convertHTMLtoString(testcase.getPrerequisite());
+				if (!"".equals(testcase.getDescription())) {
+					content += "\n\nDescription :" + Constantes.LINE_SEPARATOR
+							+ Parser.convertHTMLtoString(testcase.getDescription());
+				}
+			} else { // cas où une description existe sans prérequis
+				if (!"".equals(testcase.getDescription())) {
+					content += "Description :" + Constantes.LINE_SEPARATOR
+							+ Parser.convertHTMLtoString(testcase.getDescription());
+				}
+			}
+			c11.setCellValue(content);
 		}
 		// les steps sont reordonnées dans la liste à partir de leur référence
 		int currentExcelColumn = REM_COLUMN_FIRST_NUMERO_PREUVE;
