@@ -44,6 +44,8 @@ import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 @Component
 public class ExcelWriter {
 
+	private static final String EXCLUDED_TC_STATUS = "OBSOLETE";
+
 	private static final String REQ_CONTEXT_PATH = "%srequirement-workspace/requirement/%d/content";
 
 	private static final String TESTCASE_CONTEXT_PATH = "%stest-case-workspace/test-case/%d/content";
@@ -213,7 +215,7 @@ public class ExcelWriter {
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
 				TestCase testCase;
-				if (tcID != 0L) {
+				if (tcID != 0L || !data.getTestCases().get(tcID).getTcStatus().equals(EXCLUDED_TC_STATUS)) {
 					testCase = data.getTestCases().get(tcID);
 				} else {
 					testCase = new TestCase(tcID, "", "", "", "", "");
