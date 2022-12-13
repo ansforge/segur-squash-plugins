@@ -157,6 +157,11 @@ public class ExcelWriterTest {
 		orderedStepIdsScenarioMetier.add(1L);
 		test3.setOrderedStepIds(orderedStepIdsScenarioMetier);
 		data.getTestCases().put(3L, test3);
+		// Test 4 obsolète : ne doit pas apparaitre
+		TestCase test4 = new TestCase(4L, "SC.INS.03.01", "",
+				"",
+				"OBSOLETE", "001 Dossier parent");
+		data.getTestCases().put(4L, test4);
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
 		r1t1.setResId(1L);
@@ -167,9 +172,13 @@ public class ExcelWriterTest {
 		ReqStepBinding r3t3 = new ReqStepBinding();
 		r3t3.setResId(2L);
 		r3t3.setTclnId(3L);
+		ReqStepBinding r3t4 = new ReqStepBinding();
+		r3t4.setResId(3L);
+		r3t4.setTclnId(4L);
 		data.getBindings().add(r1t1);
 		data.getBindings().add(r2t2);
 		data.getBindings().add(r3t3);
+		data.getBindings().add(r3t4);
 
 	}
 
