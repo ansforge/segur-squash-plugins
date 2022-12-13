@@ -194,7 +194,8 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(102,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
+		assertEquals(88,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
+		
 		workbook.close();
 		out.close();
 	}
