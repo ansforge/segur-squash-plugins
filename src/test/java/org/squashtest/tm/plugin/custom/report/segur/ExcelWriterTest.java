@@ -61,11 +61,12 @@ public class ExcelWriterTest {
 		requirement1.setBloc_5("null");
 		requirement1.setFonction_6("Alimentation manuelle");
 		requirement1.setNatureExigence_7(Constantes.CATEGORIE_EXIGENCE);
-		requirement1.setNumeroExigence_8("SC.INS.01.02");
+		requirement1.setNumeroExigence_8("PSC.03");
 		requirement1
 				.setEnonceExigence_9("texte de l'éxigence avec paragraphes :</br> <p>P1 : text </p><p>P2 : text 2</p>");
 		requirement1.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement1.setReference("REF-1");
+		requirement1.setReferenceSocle("SC-PSC-03");
 		requirement1.setNoteInterne("<p>Ceci est une note interne</p>");
 		requirement1.setSegurRem("Remarque Ségur");
 		data.getRequirements().add(requirement1);
@@ -144,12 +145,12 @@ public class ExcelWriterTest {
 		test1.setOrderedStepIds(orderedStepIds);
 		data.getSteps().put(1L, s1t1);
 		data.getSteps().put(2L, s2t1);
-		TestCase test2 = new TestCase(2L, "SC.INS.02.01", null,
+		TestCase test2 = new TestCase(2L, "SC.INS.02.01", "",
 				"description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe",
 				Constantes.STATUS_APPROVED, "002 Dossier parent");
 		data.getTestCases().put(2L, test2);
-		TestCase test3 = new TestCase(3L, "SC.INS.03.01", null,
-				"libellé du cas de test",
+		TestCase test3 = new TestCase(3L, "SC.INS.03.01", "",
+				"",
 				Constantes.STATUS_APPROVED, "001 Dossier parent");
 		test3.setIsCoeurDeMetier(true);
 		List<Long> orderedStepIdsScenarioMetier = new ArrayList<>();

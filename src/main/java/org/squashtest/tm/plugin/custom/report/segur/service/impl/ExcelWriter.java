@@ -407,7 +407,11 @@ public class ExcelWriter {
 		CellStyle c8Style = sheet.getWorkbook().createCellStyle();
 		c8Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
 		c8.setCellStyle(c8Style);
-		c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
+		if(data.getReferenceSocle().isEmpty()) {
+			c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
+		} else {
+			c8.setCellValue(data.getNumeroExigence_8());
+		}
 
 		Cell c9 = row.createCell(REM_COLUMN_ENONCE);
 		CellStyle c9Style = sheet.getWorkbook().createCellStyle();
