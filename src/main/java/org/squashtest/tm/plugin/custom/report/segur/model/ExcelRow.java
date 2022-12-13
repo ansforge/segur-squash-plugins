@@ -77,7 +77,7 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	
 	public void setSortingKey(String testRef) {
 		
-		switch (id_section_3) {
+		switch (id_section_3.split("/")[0]) {
 		case "INS":
 			sortingKey = "0".concat(reference);
 			break;

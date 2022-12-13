@@ -48,7 +48,7 @@ class ExcelRowTest {
 		
 		ExcelRow row2 = new ExcelRow();
 		row2.setReference("SC.INS.01.02");
-		row2.setId_section_3("INS");
+		row2.setId_section_3("INS/CONF");
 		row2.setSortingKey("SC.INS.01.03");
 		
 		ExcelRow row3 = new ExcelRow();
@@ -59,7 +59,7 @@ class ExcelRowTest {
 		
 		ExcelRow row4 = new ExcelRow();
 		row4.setReference("SC.INS.01.02");
-		row4.setId_section_3("INS");
+		row4.setId_section_3("INS/CONF");
 		row4.setSortingKey("SC.INS.01.01");
 		
 		requirements.add(row3);
