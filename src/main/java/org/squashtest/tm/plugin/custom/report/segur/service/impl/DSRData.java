@@ -40,6 +40,8 @@ import lombok.Setter;
 @Setter
 public class DSRData {
 
+	private static final String EXCLUDED_STATUS = "OBSOLETE";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DSRData.class);
 
 	RequirementsCollector reqCollector;
@@ -152,7 +154,10 @@ public class DSRData {
 
 		// ajout des exigences de l'arbre à la liste
 		for (Long resIdP : treeReqIs) {
-			requirements.add(reqs.get(resIdP).getRow());
+			ExcelRow row = reqs.get(resIdP).getRow();
+			if (!row.getReqStatus().equals(EXCLUDED_STATUS)) {
+				requirements.add(row);
+			}
 		}
 		return reqKetSet;
 	}
@@ -280,10 +285,15 @@ public class DSRData {
 		updatedRequirement.setReferenceSocle(socleData.getReference());
 		updatedRequirement.setSocleResId(socleData.getResId());
 		updatedRequirement.setSocleReqId(socleData.getReqId());
-		updatedRequirement.setReqStatus(requirementRow.getReqStatus());
 		updatedRequirement.setReference(requirementRow.getReference());
 		updatedRequirement.setResId(requirementRow.getResId());
 		updatedRequirement.setReqId(requirementRow.getReqId());
+		// Une exigence est obsolète si l'exigence socle l'est aussi.
+		if (socleData.getReqStatus().equals(EXCLUDED_STATUS)) {
+			updatedRequirement.setReqStatus(socleData.getReqStatus());
+		} else {
+			updatedRequirement.setReqStatus(requirementRow.getReqStatus());
+		}
 		// champs mergés
 		if (requirementRow.getBoolExigenceConditionnelle_1().equals(Constantes.NON_RENSEIGNE)) {
 			updatedRequirement.setBoolExigenceConditionnelle_1(socleData.getBoolExigenceConditionnelle_1());
