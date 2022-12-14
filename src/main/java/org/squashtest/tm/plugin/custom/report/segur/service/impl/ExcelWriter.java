@@ -339,14 +339,6 @@ public class ExcelWriter {
 		}
 	}
 
-	private TestCase createDummyTestCase(Long tcID) {
-		TestCase testCase;
-		testCase = new TestCase(tcID, "", "", "", "", "");
-		List<Long> stepIds = new ArrayList<Long>();
-		testCase.setOrderedStepIds(stepIds);
-		return testCase;
-	}
-
 	/**
 	 * Flush to temporary file.
 	 *
@@ -597,6 +589,13 @@ public class ExcelWriter {
 		LOGGER.info("Unlock Password : {}", password);
 		sheet.protectSheet(password);
 		sheet.enableLocking();
+	}
+
+	private TestCase createDummyTestCase(Long tcID) {
+		TestCase testCase = new TestCase(tcID, "", "", "", "", "");
+		List<Long> stepIds = new ArrayList<Long>();
+		testCase.setOrderedStepIds(stepIds);
+		return testCase;
 	}
 
 	private String generateRandomPassword() {
