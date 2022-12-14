@@ -215,13 +215,14 @@ public class ExcelWriter {
 			// si il existe des CTs
 			for (Long tcID : bindingCT) {
 				TestCase testCase;
-				if (tcID != 0L || !data.getTestCases().get(tcID).getTcStatus().equals(EXCLUDED_TC_STATUS)) {
-					testCase = data.getTestCases().get(tcID);
+				if (tcID == 0L) {
+					testCase = createDummyTestCase(tcID);
 				} else {
-					testCase = new TestCase(tcID, "", "", "", "", "");
-					List<Long> stepIds = new ArrayList<Long>();
-					// stepIds.add(0L);
-					testCase.setOrderedStepIds(stepIds);
+					if (EXCLUDED_TC_STATUS.equals(data.getTestCases().get(tcID).getTcStatus())) {
+						testCase = createDummyTestCase(0L);
+					} else {
+						testCase = data.getTestCases().get(tcID);
+					}
 				}
 				// on ecrit (ou réecrit) les colonnes sur les exigences
 				Row rowWithTC = writeRequirementRow(req, sheet, lineNumber, style2apply);
@@ -338,6 +339,14 @@ public class ExcelWriter {
 		}
 	}
 
+	private TestCase createDummyTestCase(Long tcID) {
+		TestCase testCase;
+		testCase = new TestCase(tcID, "", "", "", "", "");
+		List<Long> stepIds = new ArrayList<Long>();
+		testCase.setOrderedStepIds(stepIds);
+		return testCase;
+	}
+
 	/**
 	 * Flush to temporary file.
 	 *
@@ -409,7 +418,7 @@ public class ExcelWriter {
 		CellStyle c8Style = sheet.getWorkbook().createCellStyle();
 		c8Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NUMERO_EXIGENCE).getCellStyle());
 		c8.setCellStyle(c8Style);
-		if(data.getReferenceSocle().isEmpty()) {
+		if (data.getReferenceSocle().isEmpty()) {
 			c8.setCellValue(extractNumberFromReference(data.getNumeroExigence_8()));
 		} else {
 			c8.setCellValue(data.getNumeroExigence_8());
