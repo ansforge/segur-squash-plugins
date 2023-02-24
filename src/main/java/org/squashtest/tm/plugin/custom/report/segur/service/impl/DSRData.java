@@ -189,7 +189,7 @@ public class DSRData {
 	private void addSortingKeyToRequirementsRow() {
 		for (ExcelRow requirement : requirements) {
 			Optional<ReqStepBinding> binding = bindings.stream()
-					.filter(b -> b.getResId().equals(requirement.getResId())).findAny();
+					.filter(b -> b.getResId().equals(requirement.getResId())).findFirst();
 			if (binding.isPresent()) {
 				requirement.setSortingKey(testCases.get(binding.get().getTclnId()).getReference());
 			} else {
@@ -246,6 +246,7 @@ public class DSRData {
 		for (ReqStepBinding reqStepBinding : bindings) {
 			if (inversedLinkedReq.containsKey(reqStepBinding.getResId())) {
 				reqStepBinding.setResId(inversedLinkedReq.get(reqStepBinding.getResId()));
+				reqStepBinding.setFromSocle(true);
 			}
 		}
 

@@ -44,6 +44,7 @@ import org.squashtest.tm.plugin.custom.report.segur.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.report.segur.model.PerimeterData;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqModel;
 import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
+import org.squashtest.tm.plugin.custom.report.segur.model.Requirement;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 import org.squashtest.tm.plugin.custom.report.segur.repository.RequirementsCollector;
@@ -198,6 +199,49 @@ public class RequirementsCollectorImpl implements RequirementsCollector {
 
 	}
 
+	/**
+	 * 
+	 * @param projectId
+	 * @param milestoneId
+	 * @return la liste des exigences du projet.
+	 */
+	
+	public List<Requirement> findRequirements(Long projectId, Long milestoneId){
+		return dsl
+				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REQUIREMENT_ID, REQUIREMENT_VERSION.REFERENCE,
+						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+						RESOURCE.DESCRIPTION)
+				.from(REQUIREMENT_VERSION).innerJoin(RESOURCE).on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.innerJoin(INFO_LIST_ITEM).on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
+				.where(REQUIREMENT_LIBRARY_NODE.PROJECT_ID.eq(projectId)
+						.and(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(milestoneId)))
+				.fetchInto(Requirement.class);
+	}
+	
+	/**
+	 * 
+	 * @param resId
+	 * @return l'exigence socle liée
+	 */
+	public Requirement findSocleRequirement(Long resId ) {
+		return dsl
+				.select(REQUIREMENT_VERSION.RES_ID, REQUIREMENT_VERSION.REQUIREMENT_ID, REQUIREMENT_VERSION.REFERENCE,
+						REQUIREMENT_VERSION.REQUIREMENT_STATUS, INFO_LIST_ITEM.LABEL.as("CATEGORY"),
+						RESOURCE.DESCRIPTION)
+				.from(REQUIREMENT_VERSION).innerJoin(RESOURCE)
+				.on(RESOURCE.RES_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.innerJoin(INFO_LIST_ITEM)
+				.on(INFO_LIST_ITEM.ITEM_ID.eq(REQUIREMENT_VERSION.CATEGORY))
+				.innerJoin(REQUIREMENT_VERSION_LINK)
+				.on(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+				.where(REQUIREMENT_VERSION_LINK.REQUIREMENT_VERSION_ID.eq(resId))
+				.fetchOneInto(Requirement.class);
+	}
+	
+	public List<TestCase> findTestCases(Long reqID){
+		return null;
+	}
+	
 	@Override
 	public List<ReqStepBinding> findTestRequirementBindingFiltreJalonTC(Set<Long> reqId, Long milestoneId) {
 //		select rvc.REQUIREMENT_VERSION_COVERAGE_ID, rvc.VERIFIED_REQ_VERSION_ID, rvc.VERIFYING_TEST_CASE_ID, vs.TEST_STEP_ID

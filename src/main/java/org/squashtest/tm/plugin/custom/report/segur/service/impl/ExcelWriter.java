@@ -35,6 +35,7 @@ import org.squashtest.tm.plugin.custom.report.segur.Message;
 import org.squashtest.tm.plugin.custom.report.segur.Parser;
 import org.squashtest.tm.plugin.custom.report.segur.Traceur;
 import org.squashtest.tm.plugin.custom.report.segur.model.ExcelRow;
+import org.squashtest.tm.plugin.custom.report.segur.model.ReqStepBinding;
 import org.squashtest.tm.plugin.custom.report.segur.model.Step;
 import org.squashtest.tm.plugin.custom.report.segur.model.TestCase;
 
@@ -204,19 +205,28 @@ public class ExcelWriter {
 		for (ExcelRow req : data.getRequirements()) {
 
 			// extraire les CTs liés à l'exigence de la map du binding
-			List<Long> bindingCT = data.getBindings().stream().filter(p -> p.getResId().equals(req.getResId()))
-					.map(val -> val.getTclnId()).distinct().collect(Collectors.toList());
-
-			if (bindingCT.isEmpty()) {
-				// On ajoute un test vide pour pouvoir formater les cellules
-				bindingCT.add(0L);
+			List<ReqStepBinding> bindingCT = data.getBindings()
+					.stream()
+					.filter(p -> p.getResId().equals(req.getResId()))
+					.distinct().collect(Collectors.toList());
+			// Traitement des cas de test 
+			// socle présents même si un cas de test existe sur l'exigence REM
+			// On supprime le cas de test socle pour ne garder que les cas de test dérivés
+			List<Long> tcIds;
+			if (bindingCT.size()> 1) {
+				tcIds = bindingCT.stream().filter(b -> b.getFromSocle().equals(Boolean.FALSE))
+				.map(item -> item.getTclnId()).collect(Collectors.toList());
+	
+			}else {
+				tcIds = bindingCT.stream().map(item -> item.getTclnId()).collect(Collectors.toList());
 			}
-
-			// si il existe des CTs
-			// TODO :si il existe des cas de test liés à une exigence socle et des cas de test liés à une exigence REM,
-			// alors on ne garde que ceux de la REM
 			
-			for (Long tcID : bindingCT) {
+			if (tcIds.isEmpty()) {
+				// On ajoute un test vide pour pouvoir formater les cellules
+				tcIds.add(0L);
+			}
+			
+			for (Long tcID : tcIds) {
 				TestCase testCase;
 				if (tcID == 0L) {
 					testCase = createDummyTestCase(tcID);
@@ -445,16 +455,14 @@ public class ExcelWriter {
 		if (testcase.getTcln_id() > 0) {
 			String content = "";
 			if (!"".equals(testcase.getPrerequisite())) {
-				content += "Prérequis :" + Constantes.LINE_SEPARATOR + Constantes.LINE_SEPARATOR
-						+ Parser.convertHTMLtoString(testcase.getPrerequisite());
+				content += "Prérequis : " + Parser.convertHTMLtoString(testcase.getPrerequisite());
 				if (!"".equals(testcase.getDescription())) {
-					content += "\n\nDescription :" + Constantes.LINE_SEPARATOR
+					content += Constantes.LINE_SEPARATOR
 							+ Parser.convertHTMLtoString(testcase.getDescription());
 				}
 			} else { // cas où une description existe sans prérequis
 				if (!"".equals(testcase.getDescription())) {
-					content += "Description :" + Constantes.LINE_SEPARATOR
-							+ Parser.convertHTMLtoString(testcase.getDescription());
+					content += Parser.convertHTMLtoString(testcase.getDescription());
 				}
 			}
 			c11.setCellValue(content);

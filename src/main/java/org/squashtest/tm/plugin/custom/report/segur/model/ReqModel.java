@@ -38,10 +38,6 @@ public class ReqModel {
 	private String section;
 
 	private Traceur traceur;
-//	private static final Logger LOGGER = LoggerFactory.getLogger(ReqModel.class);
-
-//	// mise à jour des champs issus des Cufs	
-//	private Cuf rawProfil;
 
 	/**
  * Instantiates a new req model.

@@ -24,4 +24,7 @@ public class ReqStepBinding {
 
 	// id du step
 	Long stepId;
+	
+	//Flag pour savoir si le binding a été surchargé
+	Boolean fromSocle = Boolean.FALSE;
 }
