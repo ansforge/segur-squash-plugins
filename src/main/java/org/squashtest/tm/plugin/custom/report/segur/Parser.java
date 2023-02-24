@@ -28,7 +28,11 @@ public class Parser {
 		if (html == null || html.isEmpty()) {
 			return tmp;
 		}
-		Document doc = Jsoup.parse(html);
+		//On commence par supprimer tous les retours chariot en trop.
+		String sanitizedHtml = html.replaceAll("\\r", "")
+		.replaceAll("\\n", "")
+		.replaceAll("\\t", "");
+		Document doc = Jsoup.parse(sanitizedHtml);
 		Document.OutputSettings outputSettings = new Document.OutputSettings();
 		outputSettings.escapeMode(EscapeMode.xhtml);
 		outputSettings.prettyPrint(false);
@@ -37,9 +41,15 @@ public class Parser {
 		Elements ol = doc.select("ol");
 		for (Element orderedLists : ol) {
 			Elements items = orderedLists.children();
-			int number = 1;
+			int number;
+			// Traitement des listes qui ne commencent pas à 1
+			if(orderedLists.hasAttr("start")) {
+				number = Integer.parseInt(orderedLists.attr("start"));
+			}else {
+				number = 1;
+			}
 			for (Element item : items) {
-				item.before("\\n" + Constantes.PREFIX_ELEMENT_LISTE_A_PUCES + number + ".");
+				item.before("\\n" + number + ".");
 				number++;
 			}
 		}
@@ -54,9 +64,15 @@ public class Parser {
 		// traitement des paragraphes et retours à la ligne
 		doc.select("br").before("\\n");
 		doc.select("p").before("\\n");
+		doc.select("p").after("\\n");
+		doc.select("ol").after("\\n\\n");
+		doc.select("ul").after("\\n\\n");
 		String str = doc.html().replaceAll("\\\\n", "\n");
-		return Jsoup.clean(str, "", Whitelist.simpleText(), outputSettings)
+		return Jsoup.clean(str, "", Whitelist.none(), outputSettings)
 				.replaceAll("&apos;", "'")
-				.replaceAll("&quot;", "\"");
+				.replaceAll("&quot;", "\"")
+				.replaceAll("&gt;", ">")
+				.replaceAll("&lt;", "<")
+				.replaceAll("&amp;", "&");
 	}
 }

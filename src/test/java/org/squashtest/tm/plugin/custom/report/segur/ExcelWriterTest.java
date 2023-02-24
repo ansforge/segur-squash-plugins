@@ -110,17 +110,16 @@ public class ExcelWriterTest {
 				.setEnonceExigence_9("En cas de modification d'un des documents listés dans le DSR en annexe 3,"
 						+ " le système DOIT pouvoir transmettre par messagerie sécurisée de santé"
 						+ " la nouvelle version du document avec une mention du type &quot;annule"
-						+ " et remplace&quot; pré-paramétrée.");
+						+ " &amp; remplace&quot; pré-paramétrée.");
 		requirement3.setReqStatus(Constantes.STATUS_APPROVED);
 		requirement3.setReference("SC.CI-SIS/MSS.02");
 		data.getRequirements().add(requirement3);
 
 		// TestCases
 		TestCase test1 = new TestCase(1L, "SC.INS.01.01",
-				"mon pré-requis" 
-						+ "<ol>" 
-						+ "<li>element ordonné 1</li>" 
-						+ "<li>element ordonné 2</li>" 
+						"<ol>" 
+						+ "<li>pré requis 1</li>" 
+						+ "<li>pré requis 2</li>" 
 						+ "</ol>"
 						+ "<ol>" 
 						+ "<li>element 1 ordonné liste 2</li>" 
@@ -136,7 +135,7 @@ public class ExcelWriterTest {
 		Step s1t1 = new Step(1L, Parser.convertHTMLtoString(
 				"résultat attendu step 2 (order 1)<BR/> <ul><li>1ere ligne</li><li>2eme ligne</li></ul>"), 0);
 		s1t1.setReference("SC.INS.01.10");
-		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("<p>résultat attendu avec paragraphe (order 2)<BR/></p>"),
+		Step s2t1 = new Step(2L, Parser.convertHTMLtoString("<p>résultat attendu avec paragraphe (order 2)  &amp; (ampersand) ou &gt; (supérieur)<BR/></p>"),
 				1);
 		s2t1.setReference("SC.INS.01.01");
 		List<Long> orderedStepIds = new ArrayList<>();
@@ -146,7 +145,13 @@ public class ExcelWriterTest {
 		data.getSteps().put(1L, s1t1);
 		data.getSteps().put(2L, s2t1);
 		TestCase test2 = new TestCase(2L, "SC.INS.02.01", "",
-				"description du cas de test sans pré-requis et sans steps avec l&apos;apostrophe",
+				"<strong>description</strong> du cas de test sans pré-requis"
+				+ " et sans steps avec l&apos;apostrophe"
+				+ "<ol start=\"3\">" 
+				+ "<li>element ordonné (la liste démarre à 3)</li>" 
+				+ "<li>element ordonné ( deuxième élément de la liste : numéro 4)</li>" 
+				+ "</ol>"
+				+"reprise du texte après la liste, il faut Une ligne blanche avant",
 				Constantes.STATUS_APPROVED, "002 Dossier parent");
 		data.getTestCases().put(2L, test2);
 		TestCase test3 = new TestCase(3L, "SC.INS.03.01", "",
@@ -194,7 +199,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(88,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
+		assertEquals(256,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
 		
 		workbook.close();
 		out.close();
@@ -212,7 +217,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(478,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+		assertEquals(467,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
 
 		workbook.close();
 		out.close();

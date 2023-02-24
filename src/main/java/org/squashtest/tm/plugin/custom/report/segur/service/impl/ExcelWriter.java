@@ -213,6 +213,9 @@ public class ExcelWriter {
 			}
 
 			// si il existe des CTs
+			// TODO :si il existe des cas de test liés à une exigence socle et des cas de test liés à une exigence REM,
+			// alors on ne garde que ceux de la REM
+			
 			for (Long tcID : bindingCT) {
 				TestCase testCase;
 				if (tcID == 0L) {
@@ -442,7 +445,7 @@ public class ExcelWriter {
 		if (testcase.getTcln_id() > 0) {
 			String content = "";
 			if (!"".equals(testcase.getPrerequisite())) {
-				content += "Prérequis :" + Constantes.LINE_SEPARATOR
+				content += "Prérequis :" + Constantes.LINE_SEPARATOR + Constantes.LINE_SEPARATOR
 						+ Parser.convertHTMLtoString(testcase.getPrerequisite());
 				if (!"".equals(testcase.getDescription())) {
 					content += "\n\nDescription :" + Constantes.LINE_SEPARATOR
