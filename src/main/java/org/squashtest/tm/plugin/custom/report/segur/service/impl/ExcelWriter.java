@@ -226,8 +226,6 @@ public class ExcelWriter {
 			// - Sinon => On conserve tout
 			}else {
 				tcIds = bindingCT.stream().map(item -> item.getTclnId()).collect(Collectors.toList());
-			}
-
 			
 			if (tcIds.isEmpty()) {
 				// On ajoute un test vide pour pouvoir formater les cellules
