@@ -210,8 +210,6 @@ public class ExcelWriter {
 					.filter(p -> p.getResId().equals(req.getResId()))
 					.distinct().collect(Collectors.toList());
 			// Traitement des cas de test 
-			// socle présents même si un cas de test existe sur l'exigence REM
-			// On supprime le cas de test socle pour ne garder que les cas de test dérivés
 			
 			//Liste finale des cas de test à exporter
 			List<Long> tcIds;
@@ -227,7 +225,6 @@ public class ExcelWriter {
 			}else {
 				tcIds = bindingCT.stream().map(item -> item.getTclnId()).collect(Collectors.toList());
 			}
-
 			
 			if (tcIds.isEmpty()) {
 				// On ajoute un test vide pour pouvoir formater les cellules
