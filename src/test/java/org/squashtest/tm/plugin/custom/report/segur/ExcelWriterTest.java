@@ -167,6 +167,7 @@ public class ExcelWriterTest {
 				"",
 				"OBSOLETE", "001 Dossier parent");
 		data.getTestCases().put(4L, test4);
+		
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
 		r1t1.setResId(1L);
@@ -174,15 +175,15 @@ public class ExcelWriterTest {
 		ReqStepBinding r2t2 = new ReqStepBinding();
 		r2t2.setResId(2L);
 		r2t2.setTclnId(2L);
-		ReqStepBinding r3t3 = new ReqStepBinding();
-		r3t3.setResId(2L);
-		r3t3.setTclnId(3L);
+		ReqStepBinding r2t3 = new ReqStepBinding();
+		r2t3.setResId(2L);
+		r2t3.setTclnId(3L);
 		ReqStepBinding r3t4 = new ReqStepBinding();
 		r3t4.setResId(3L);
 		r3t4.setTclnId(4L);
 		data.getBindings().add(r1t1);
 		data.getBindings().add(r2t2);
-		data.getBindings().add(r3t3);
+		data.getBindings().add(r2t3);
 		data.getBindings().add(r3t4);
 
 	}

@@ -212,14 +212,23 @@ public class ExcelWriter {
 			// Traitement des cas de test 
 			// socle présents même si un cas de test existe sur l'exigence REM
 			// On supprime le cas de test socle pour ne garder que les cas de test dérivés
+			
+			//Liste finale des cas de test à exporter
 			List<Long> tcIds;
-			if (bindingCT.size()> 1) {
-				tcIds = bindingCT.stream().filter(b -> b.getFromSocle().equals(Boolean.FALSE))
-				.map(item -> item.getTclnId()).collect(Collectors.toList());
-	
-			}else {
+			
+			// Il faut déterminer quels sont les cas de test à conserver :
+			int tcNumberFromSocle = bindingCT.stream().filter(b -> b.getFromSocle().equals(Boolean.TRUE))
+					.map(item -> item.getTclnId()).collect(Collectors.toList()).size();
+			// - Si tous les cas de test viennent du socle => On conserve tout
+			// - Si aucun cas de test ne provient du socle => On conserve tout
+			if(tcNumberFromSocle == bindingCT.size() || tcNumberFromSocle == 0) {
 				tcIds = bindingCT.stream().map(item -> item.getTclnId()).collect(Collectors.toList());
+			// - Sinon => On conserve uniquement ceux dérivés
+			}else {
+				tcIds = bindingCT.stream().filter(b -> b.getFromSocle().equals(Boolean.FALSE))
+						.map(item -> item.getTclnId()).collect(Collectors.toList());
 			}
+
 			
 			if (tcIds.isEmpty()) {
 				// On ajoute un test vide pour pouvoir formater les cellules
