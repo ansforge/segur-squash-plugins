@@ -204,6 +204,12 @@ public class ExcelWriter {
 		// boucle sur les exigences
 		for (ExcelRow req : data.getRequirements()) {
 
+			//##DEBUG
+			//String reqResume = "Num exi : " + req.getNumeroExigence_8() + " // nat exigence = " + req.getNatureExigence_7()+ " // reference = " + req.getReference()+ " // referenceSocle = " + req.getReferenceSocle();
+			//traceur.addMessage(Level.INFO, req.getResId(),reqResume);
+			//
+			
+	
 			// extraire les CTs liés à l'exigence de la map du binding
 			List<ReqStepBinding> bindingCT = data.getBindings()
 					.stream()
@@ -232,6 +238,8 @@ public class ExcelWriter {
 				tcIds.add(0L);
 			}
 			
+			//construction d'une liste de testcase à partie de la liste des ID des testcases
+			List<TestCase> tcList = new ArrayList<TestCase>();
 			for (Long tcID : tcIds) {
 				TestCase testCase;
 				if (tcID == 0L) {
@@ -243,6 +251,24 @@ public class ExcelWriter {
 						testCase = data.getTestCases().get(tcID);
 					}
 				}
+				tcList.add(testCase);
+			}
+
+			Collections.sort(tcList);
+
+			for (TestCase testCase : tcList ) {
+
+			// for (Long tcID : tcIds) {
+			// 	TestCase testCase;
+			// 	if (tcID == 0L) {
+			// 		testCase = createDummyTestCase(0L);
+			// 	} else {
+			// 		if (EXCLUDED_TC_STATUS.equals(data.getTestCases().get(tcID).getTcStatus())) {
+			// 			testCase = createDummyTestCase(0L);
+			// 		} else {
+			// 			testCase = data.getTestCases().get(tcID);
+			// 		}
+			// 	}
 				// on ecrit (ou réecrit) les colonnes sur les exigences
 				Row rowWithTC = writeRequirementRow(req, sheet, lineNumber, style2apply);
 
@@ -460,16 +486,19 @@ public class ExcelWriter {
 		c11.setCellStyle(c11Style);
 		if (testcase.getTcln_id() > 0) {
 			String content = "";
-			if (!"".equals(testcase.getPrerequisite())) {
-				content += "Prérequis : " + Parser.convertHTMLtoString(testcase.getPrerequisite());
-				if (!"".equals(testcase.getDescription())) {
-					content += Constantes.LINE_SEPARATOR
-							+ Parser.convertHTMLtoString(testcase.getDescription());
-				}
-			} else { // cas où une description existe sans prérequis
-				if (!"".equals(testcase.getDescription())) {
+			//if (!"".equals(testcase.getPrerequisite())) {
+			//	content += "Prérequis : " + Parser.convertHTMLtoString(testcase.getPrerequisite());
+			//	if (!"".equals(testcase.getDescription())) {
+			//		content += Constantes.LINE_SEPARATOR
+			//				+ Parser.convertHTMLtoString(testcase.getDescription());
+			//	}
+			//} else { // cas où une description existe sans prérequis
+			//	if (!"".equals(testcase.getDescription())) {
+			//		content += Parser.convertHTMLtoString(testcase.getDescription());
+			//	}
+			//}
+			if (!"".equals(testcase.getDescription())) {
 					content += Parser.convertHTMLtoString(testcase.getDescription());
-				}
 			}
 			c11.setCellValue(content);
 		}

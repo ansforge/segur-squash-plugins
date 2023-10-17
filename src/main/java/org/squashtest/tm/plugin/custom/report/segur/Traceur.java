@@ -23,7 +23,8 @@ public class Traceur {
 	private int COUNTER_MSG = 0;
 
 	@Getter
-	private static final int MAX_MSG = 50;
+	//private static final int MAX_MSG = 50;
+	private static final int MAX_MSG = 500;
 
 	/**
 	 * Adds the message.

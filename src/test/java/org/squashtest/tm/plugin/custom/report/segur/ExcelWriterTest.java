@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,6 +145,7 @@ public class ExcelWriterTest {
 		test1.setOrderedStepIds(orderedStepIds);
 		data.getSteps().put(1L, s1t1);
 		data.getSteps().put(2L, s2t1);
+		//TestCase test2 = new TestCase(2L, "SC.INS.02.01", "",
 		TestCase test2 = new TestCase(2L, "SC.INS.02.01", "",
 				"<strong>description</strong> du cas de test sans pré-requis"
 				+ " et sans steps avec l&apos;apostrophe"
@@ -154,7 +156,7 @@ public class ExcelWriterTest {
 				+"reprise du texte après la liste, il faut Une ligne blanche avant",
 				Constantes.STATUS_APPROVED, "002 Dossier parent");
 		data.getTestCases().put(2L, test2);
-		TestCase test3 = new TestCase(3L, "SC.INS.03.01", "",
+		TestCase test3 = new TestCase(3L, "SC.INS.04.01", "",
 				"",
 				Constantes.STATUS_APPROVED, "001 Dossier parent");
 		test3.setIsCoeurDeMetier(true);
@@ -167,6 +169,16 @@ public class ExcelWriterTest {
 				"",
 				"OBSOLETE", "001 Dossier parent");
 		data.getTestCases().put(4L, test4);
+		TestCase test5 = new TestCase(2L, "SC.INS.01.01", "",
+				"<strong>description</strong> du cas de test sans pré-requis"
+				+ " et sans steps avec l&apos;apostrophe"
+				+ "<ol start=\"3\">" 
+				+ "<li>element ordonné (la liste démarre à 3)</li>" 
+				+ "<li>element ordonné ( deuxième élément de la liste : numéro 4)</li>" 
+				+ "</ol>"
+				+"reprise du texte après la liste, il faut Une ligne blanche avant",
+				Constantes.STATUS_APPROVED, "002 Dossier parent");
+		data.getTestCases().put(5L, test5);
 		
 		// binding REQ-TC
 		ReqStepBinding r1t1 = new ReqStepBinding();
@@ -178,12 +190,17 @@ public class ExcelWriterTest {
 		ReqStepBinding r2t3 = new ReqStepBinding();
 		r2t3.setResId(2L);
 		r2t3.setTclnId(3L);
+		ReqStepBinding r2t5 = new ReqStepBinding();
+		r2t5.setResId(2L);
+		r2t5.setTclnId(5L);
 		ReqStepBinding r3t4 = new ReqStepBinding();
 		r3t4.setResId(3L);
 		r3t4.setTclnId(4L);
+
 		data.getBindings().add(r1t1);
 		data.getBindings().add(r2t2);
 		data.getBindings().add(r2t3);
+		data.getBindings().add(r2t5);
 		data.getBindings().add(r3t4);
 
 	}
@@ -221,6 +238,25 @@ public class ExcelWriterTest {
 		assertEquals(467,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
 
 		workbook.close();
-		out.close();
+		out.close();	
+	}
+
+	@Test
+	void sortTestCaseList(){
+		List<TestCase> tcList = new ArrayList<TestCase>();;
+		tcList.add(data.getTestCases().get(1L));
+		tcList.add(data.getTestCases().get(2L));
+		tcList.add(data.getTestCases().get(3L));
+		tcList.add(data.getTestCases().get(4L));
+
+		for (TestCase tc : tcList ) {
+			System.out.println(tc.getReference());
+		}
+		
+		Collections.sort(tcList);
+
+		for (TestCase tc : tcList ) {
+			System.out.println(tc.getReference());
+		}
 	}
 }

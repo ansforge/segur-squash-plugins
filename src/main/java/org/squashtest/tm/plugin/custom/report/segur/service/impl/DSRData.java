@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Iterator;
 
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
@@ -81,13 +82,49 @@ public class DSRData {
 	 * @param perimeter the perimeter
 	 */
 	public void loadData() {
-
+		traceur.addMessage(Level.INFO, "PROJET NAME",perimeter.getProjectName());
+		
 		List<LinkedReq> linkedOrNotReqs = reqCollector.findLinkedReq(perimeter.getProjectId(),
 				perimeter.getMilestoneId());
 		// Map des exgicences de l'arbre (projet) avec ID des exigences liées (attention
 		// si une exigence n'est pas lié , elle n'est pas dans la map)
+		////DEBUG DEBUT afffichage du contenu de la liste linkedOrNotReqs
+		String msg3 = "";
+		for (int j=0; j<linkedOrNotReqs.size();j++)
+				{
+					msg3 = linkedOrNotReqs.get(j) + " " + msg3;
+
+				}
+        traceur.addMessage(Level.INFO, "1-LIST",msg3);
+		////DEBUG FIN afffichage du contenu de la liste linkedOrNotReqs
+
+
 		Map<Long, Long> linkedReqs = getMapTreeRequirementAndlinkedRequirement(linkedOrNotReqs);
+		
+		////DEBUG DEBUT afffichage du contenu de la Map
+		Set<Long> listKeys=linkedReqs.keySet();  // Obtenir la liste des clés
+    	Iterator<Long> iterateur=listKeys.iterator();
+    		// Parcourir les clés et afficher les entrées de chaque clé;
+		String msg = "";
+    	while(iterateur.hasNext())
+    		{
+    			Object key= iterateur.next();
+				msg = key + "=>" + linkedReqs.get(key) + " " + msg;
+    		}
+		//traceur.addMessage(Level.INFO, "2-MAP",msg);
+		////DEBUG FIN
+
 		Set<Long> reqIds = populateRequirementData(linkedReqs, linkedOrNotReqs);
+		
+		////DEBUG DEBUT
+		Iterator<Long> it = reqIds.iterator();
+		String msg2 = "";
+		while (it.hasNext()) {
+			msg2 = it.next() + " " + msg2;
+        }
+		//traceur.addMessage(Level.INFO, "3-SET",msg2);
+		////DEBUG FIN
+
 		// lecture des liens exigence-CT et récupération de la liste des CTs à lire
 		List<Long> distinctCT = setBinding(reqIds, perimeter.getMilestoneId(), linkedReqs);
 
@@ -110,10 +147,38 @@ public class DSRData {
 		// liste des exigences de l'arbre
 		Set<Long> treeReqIs = getTreeResId(linkedOrNotReqs);
 
+		////DEBUG DEBUT affichage SET treeReqIs
+		Iterator<Long> it1 = treeReqIs.iterator();
+		String msg4 = "";
+		while (it1.hasNext()) {
+			msg4 = it1.next() + " " + msg4;
+        }
+		//traceur.addMessage(Level.INFO, "4-SET",msg4);
+		////DEBUG FIN affichage SET treeReqIs
+
 		// liste de toutes les exigences: arbre et liées
 		Set<Long> allReqIds = new HashSet<Long>();
 		allReqIds.addAll(treeReqIs);
+		////DEBUG DEBUT affichage SET allReqIds
+		Iterator<Long> it2 = allReqIds.iterator();
+		String msg5 = "";
+		while (it2.hasNext()) {
+			msg5 = it2.next() + " " + msg5;
+        }
+		//traceur.addMessage(Level.INFO, "5-SET",msg5);
+		////DEBUG FIN affichage SET allReqIds
+
 		allReqIds.addAll(linkedReqs.values());
+
+		////DEBUG DEBUT affichage SET allReqIds
+		Iterator<Long> it3 = allReqIds.iterator();
+		String msg6 = "";
+		while (it3.hasNext()) {
+			msg6 = it3.next() + " " + msg6;
+        }
+		//traceur.addMessage(Level.INFO, "6-SET",msg6);
+		////DEBUG FIN affichage SET allReqIds
+
 		// liste des exigences de l'arbre
 
 		LOGGER.info(" treeReqIs " + treeReqIs.size());

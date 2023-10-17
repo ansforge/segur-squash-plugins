@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TestCase {
+public class TestCase implements Comparable<TestCase> {
 
 	Long tcln_id;
 
@@ -53,5 +53,13 @@ public class TestCase {
 		this.description = description;
 		this.tcStatus = tcStatus;
 		this.parentName = parentName;
+	}
+
+	@Override
+	public int compareTo(TestCase o) {
+		if (reference == null || o.getReference() == null) {
+			return 0;
+		}
+		return reference.compareTo(o.getReference());
 	}
 }
