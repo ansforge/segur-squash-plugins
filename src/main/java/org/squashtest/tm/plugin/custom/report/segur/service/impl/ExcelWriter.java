@@ -76,8 +76,7 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_CONDITIONNELLE. */
 	public static final int REM_COLUMN_CONDITIONNELLE = 0;
 
-	/** The Constant REM_COLUMN_PROFIL. */
-	public static final int REM_COLUMN_PROFIL = 1;
+
 
 	/** The Constant REM_COLUMN_ID_SECTION. */
 	public static final int REM_COLUMN_ID_SECTION = 2;
@@ -88,23 +87,29 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_BLOC. */
 	public static final int REM_COLUMN_BLOC = 4;
 
-	/** The Constant REM_COLUMN_FONCTION. */
-	public static final int REM_COLUMN_FONCTION = 5;
-
-	/** The Constant REM_COLUMN_NATURE. */
-	public static final int REM_COLUMN_NATURE = 6;
-
 	/** The Constant REM_COLUMN_NUMERO_EXIGENCE. */
-	public static final int REM_COLUMN_NUMERO_EXIGENCE = 7;
-
+	//public static final int REM_COLUMN_NUMERO_EXIGENCE = 7;
+	public static final int REM_COLUMN_NUMERO_EXIGENCE = 0;
+	/** The Constant REM_COLUMN_CHAPITRE. */
+	public static final int REM_COLUMN_CHAPITRE = 1;
+	/** The Constant REM_COLUMN_FONCTION. */
+	//public static final int REM_COLUMN_FONCTION = 5;
+	public static final int REM_COLUMN_FONCTION = 2;
 	/** The Constant REM_COLUMN_ENONCE. */
-	public static final int REM_COLUMN_ENONCE = 8;
-
+	//public static final int REM_COLUMN_ENONCE = 8;
+	public static final int REM_COLUMN_ENONCE = 3;
+	/** The Constant REM_COLUMN_NATURE. */
+	//public static final int REM_COLUMN_NATURE = 6;
+	public static final int REM_COLUMN_NATURE = 4;
+	/** The Constant REM_COLUMN_PROFIL. */
+	//public static final int REM_COLUMN_PROFIL = 1;
+	public static final int REM_COLUMN_PROFIL = 5;
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
-	public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
-
+	//public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 6;
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
-	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
+	//public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 7;
 
 	/** The Constant MAX_STEP_NUMBER. */
 	public static final int MAX_STEP_NUMBER = 10;
@@ -409,11 +414,11 @@ public class ExcelWriter {
 
 		Row row = sheet.createRow(lineIndex);
 
-		Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
-		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
-		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
-		c0.setCellStyle(c0Style);
-		c0.setCellValue(data.getBoolExigenceConditionnelle_1());
+		// Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
+		// CellStyle c0Style = sheet.getWorkbook().createCellStyle();
+		// c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
+		// c0.setCellStyle(c0Style);
+		// c0.setCellValue(data.getBoolExigenceConditionnelle_1());
 
 		Cell c1 = row.createCell(REM_COLUMN_PROFIL);
 		CellStyle c1Style = sheet.getWorkbook().createCellStyle();
@@ -421,13 +426,20 @@ public class ExcelWriter {
 		c1.setCellStyle(c1Style);
 		c1.setCellValue(data.getProfil_2());
 
-		Cell c2 = row.createCell(REM_COLUMN_ID_SECTION);
-		CellStyle c2Style = sheet.getWorkbook().createCellStyle();
-		c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
-		c2.setCellStyle(c2Style);
-		c2.setCellValue(data.getId_section_3());
+		// Cell c2 = row.createCell(REM_COLUMN_ID_SECTION);
+		// CellStyle c2Style = sheet.getWorkbook().createCellStyle();
+		// c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
+		// c2.setCellStyle(c2Style);
+		// c2.setCellValue(data.getId_section_3());
 
-		Cell c4 = row.createCell(REM_COLUMN_SECTION);
+		Cell c3 = row.createCell(REM_COLUMN_CHAPITRE);
+		CellStyle c3Style = sheet.getWorkbook().createCellStyle();
+		c3Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CHAPITRE).getCellStyle());
+		c3.setCellStyle(c3Style);
+		c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
+
+	
+/* 		Cell c4 = row.createCell(REM_COLUMN_SECTION);
 		CellStyle c4Style = sheet.getWorkbook().createCellStyle();
 		c4Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SECTION).getCellStyle());
 		c4.setCellStyle(c4Style);
@@ -437,9 +449,10 @@ public class ExcelWriter {
 		CellStyle c5Style = sheet.getWorkbook().createCellStyle();
 		c5Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_BLOC).getCellStyle());
 		c5.setCellStyle(c5Style);
-		c5.setCellValue(data.getBloc_5());
+		c5.setCellValue(data.getBloc_5()); */
 
-		Cell c6 = row.createCell(REM_COLUMN_FONCTION);
+
+ 		Cell c6 = row.createCell(REM_COLUMN_FONCTION);
 		CellStyle c6Style = sheet.getWorkbook().createCellStyle();
 		c6Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_FONCTION).getCellStyle());
 		c6.setCellStyle(c6Style);
@@ -466,7 +479,8 @@ public class ExcelWriter {
 		c9Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
-		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
+		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9())); 
+
 		return row;
 
 	}

@@ -33,8 +33,10 @@ public class ExcelWriterTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriterTest.class);
 
 	/** The Constant TEMPLATE_NAME. */
-	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
-	public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	//public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	//public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	public static final String TEMPLATE_NAME = "template-segur-requirement-export-modifie.xlsx";
+	public static final String PREPUB_TEMPLATE_NAME = "template-segur-requirement-export-avec-colonnes-prepub-modifie.xlsx";
 	private ExcelWriter excel;
 
 	private DSRData data;

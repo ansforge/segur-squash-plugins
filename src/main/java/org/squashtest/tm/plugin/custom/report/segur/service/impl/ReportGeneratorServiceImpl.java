@@ -31,10 +31,12 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportGeneratorServiceImpl.class);
 	
 	/** The Constant TEMPLATE_NAME. */
-	public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	//public static final String TEMPLATE_NAME = "template-segur-requirement-export.xlsx";
+	public static final String TEMPLATE_NAME = "template-segur-requirement-export-modifie.xlsx";
 	
 	/** The Constant TEMPLATE_PREPUB_NAME. */
-	public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	//public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub.xlsx";
+	public static final String TEMPLATE_PREPUB_NAME = "template-segur-requirement-export-avec-colonnes-prepub-modifie.xlsx";
 	
 	/** The Constant REM. */
 	// nom du fichier Excel
