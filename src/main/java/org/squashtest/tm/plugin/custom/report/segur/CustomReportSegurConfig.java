@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.squashtest.tm.api.report.Report;
@@ -59,7 +58,6 @@ public class CustomReportSegurConfig {
 		segurReport.setForm(segurForm.getInputs().toArray(new Input[segurForm.getInputs().size()]));
 		return segurReport;
 	}
-
 	/**
 	 * Segur form.
 	 *
@@ -67,10 +65,12 @@ public class CustomReportSegurConfig {
 	 * @return the form
 	 */
 	@Bean
-	public Form segurForm(@Named("segurRadioButton") RadioButtonsGroup segurRadioButton) {
+	public Form segurForm(@Named("segurRadioButton") RadioButtonsGroup segurRadioButton) {//,
+	//					  @Named("templateSelectionRadioButton") RadioButtonsGroup templateSelectionRadioButton) {
 		Form form = new Form();
 		List<Input> inputs = new ArrayList<Input>();
 		inputs.add(segurRadioButton);
+		//inputs.add(templateSelectionRadioButton);
 		form.setInputs(inputs);
 		return form;
 	}
@@ -128,4 +128,48 @@ public class CustomReportSegurConfig {
 		return picker;
 	}
 
+	@Bean(name = "templateSelectionRadioButton")
+	public RadioButtonsGroup templateSelectionRadioButton(
+			@Named("templateDevOption") OptionInput templateDevOption,
+			@Named("templateRemRcOption") OptionInput templateRemRcOption
+	) {
+		RadioButtonsGroup button2 = new RadioButtonsGroup();
+		button2.setLabelKey("button2.label.key");
+		button2.setName("templateSelectionMode");
+		button2.setRequired(true);
+		List<OptionInput> options = new ArrayList<OptionInput>();
+		options.add(templateDevOption);
+		options.add(templateRemRcOption);
+		button2.setOptions(options);
+		return button2;
+	}
+	/**
+	 * Template dev option.
+	 *
+	 * @return the template dev option
+	 */
+	@Bean(name = "templateDevOption")
+	public OptionInput templateDevOption() {
+		OptionInput devOption = new OptionInput();
+		devOption.setLabelKey("dev.template.label");
+		devOption.setValue("TEST");
+		devOption.setGivesAccessTo("TEST"); //
+		devOption.setDefaultSelected(false);
+		return devOption;
+	}
+
+	/**
+	 * Template RemRC option.
+	 *
+	 * @return the template RemRC option
+	 */
+	@Bean(name = "templateRemRcOption")
+	public OptionInput templateRemRcOption() {
+		OptionInput remRCOption = new OptionInput();
+		remRCOption.setLabelKey("remrc.template.label");
+		remRCOption.setValue("TEST2");
+		remRCOption.setGivesAccessTo("TEST2");
+		remRCOption.setDefaultSelected(true);
+		return remRCOption;
+	}
 }

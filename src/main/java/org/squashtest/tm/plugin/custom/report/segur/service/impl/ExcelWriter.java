@@ -110,16 +110,21 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
 	//public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
 	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 7;
-
+	
 	/** The Constant MAX_STEP_NUMBER. */
 	public static final int MAX_STEP_NUMBER = 10;
 
 	/** The Constant REM_COLUMN_FIRST_NUMERO_PREUVE. */
 	public static final int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
+    public static final int REM_COLUMN_COMMENTAIRE = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
+
+	public static final int REM_COLUMN_STATUT_PUBLICATION = REM_COLUMN_COMMENTAIRE + 1;
 	/** The Constant PREPUB_COLUMN_BON_POUR_PUBLICATION. */
+	//public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
+	//		+ 1;
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
-			+ 1;
+			+ 3;
 
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
@@ -479,7 +484,21 @@ public class ExcelWriter {
 		c9Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
-		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9())); 
+		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
+
+		Cell c12 = row.createCell(REM_COLUMN_COMMENTAIRE);
+		CellStyle c12Style = sheet.getWorkbook().createCellStyle();
+		c12Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_COMMENTAIRE).getCellStyle());
+		c12.setCellStyle(c12Style);
+		c12Style.setWrapText(true);
+		c12.setCellValue(Parser.convertHTMLtoString(data.getCommentaire())); 
+		
+		Cell c13 = row.createCell(REM_COLUMN_STATUT_PUBLICATION);
+		CellStyle c13Style = sheet.getWorkbook().createCellStyle();
+		c13Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_STATUT_PUBLICATION).getCellStyle());
+		c13.setCellStyle(c13Style);
+		c13Style.setWrapText(true);
+		c13.setCellValue(data.getStatutPublication()); 
 
 		return row;
 
@@ -586,8 +605,11 @@ public class ExcelWriter {
 
 			for (Message msgLine : msg) {
 				Row row = errorSheet.createRow(++line);
+				LOGGER.info("  C1: " + msgLine.getLevel().name());
 				row.createCell(ERROR_COLUMN_LEVEL).setCellValue(msgLine.getLevel().name());
+				LOGGER.info("  C2 : " + msgLine.getResId());
 				row.createCell(ERROR_COLUMN_RESID).setCellValue(msgLine.getResId());
+				LOGGER.info("  C3: " + msgLine.getMsg());
 				row.createCell(ERROR_COLUMN_MSG).setCellValue(msgLine.getMsg());
 			}
 		}

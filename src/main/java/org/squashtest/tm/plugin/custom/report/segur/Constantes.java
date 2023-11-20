@@ -40,6 +40,12 @@ public class Constantes {
 	/** The Constant SEGUR_REM. */
 	public final static String SEGUR_REM = "SEGUR_REM";
 
+	/** The Constant COMENTAIRE. */
+	public final static String COMMENTAIRE = "COMMENTAIRE";
+
+	/** The Constant STATUT_PUBLICATION. */
+	public final static String STATUT_PUBLICATION = "STATUT_PUBLICATION";
+
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
 

@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm.plugin</groupId>
   <artifactId>report.ans.segur</artifactId>
-  <version>1.0.0.RC26-a</version>
+  <version>1.0.0.RC27</version>
   <packaging>jar</packaging>
   <name>segur-rapport-exigences</name>
 

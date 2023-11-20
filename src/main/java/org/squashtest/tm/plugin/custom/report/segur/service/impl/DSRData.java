@@ -420,6 +420,16 @@ public class DSRData {
 		} else {
 			updatedRequirement.setNumeroExigence_8(requirementRow.getNumeroExigence_8());
 		}
+		if (requirementRow.getCommentaire().isEmpty()) {
+			updatedRequirement.setCommentaire(socleData.getCommentaire());
+		} else {
+			updatedRequirement.setCommentaire(requirementRow.getCommentaire());
+		}
+		if (requirementRow.getStatutPublication().isEmpty()) {
+			updatedRequirement.setStatutPublication(socleData.getStatutPublication());
+		} else {
+			updatedRequirement.setStatutPublication(requirementRow.getStatutPublication());
+		}
 
 		return updatedRequirement;
 	}

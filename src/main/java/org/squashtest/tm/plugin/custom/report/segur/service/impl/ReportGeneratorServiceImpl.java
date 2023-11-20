@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -62,10 +64,23 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
 		LOGGER.info(" SquashTm-segur plugin report ");
 		// lecture des critères
+	
+		// Afficher le contenu du MAP
+		Set<String> listKeys=criterias.keySet();  // Obtenir la liste des clés
+		Iterator<String> iterateur=listKeys.iterator();
+		// Parcourir les clés et afficher les entrées de chaque clé;
+		while(iterateur.hasNext())
+		{
+			Object key= iterateur.next();
+			//System.out.println (key+"=>"+myMap.get(key));
+			LOGGER.info( key + " => " + criterias.get(key));
+		}
+		
 		Long selectedProjectId = getProjectId(criterias);
 		Long selectedMilestonesId = getMilestone(criterias);
-		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId);
-
+		//String selectedTemplate = getTemplate(criterias);
+		//LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId + " selectedTemplate: " + selectedTemplate);
+		LOGGER.info(" selectedMilestonesId: " + selectedMilestonesId + " selectedProjectId: " + selectedProjectId );
 		// lecture du statut et du nom du jalon => mode publication ou prépublication
 		// l'objet perimeterData est construit sur lecture du Milestone (name, status)
 		PerimeterData perimeterData = getPerimeterData(selectedMilestonesId, selectedProjectId);
@@ -161,5 +176,11 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 		List<String> selectedProjectIds = (List<String>) criterias.get("projects").getValue();
 		Long selectedProjectId = Long.parseLong(selectedProjectIds.get(0));
 		return selectedProjectId;
+	}
+
+	@SuppressWarnings("unchecked")
+	private String getTemplate(Map<String, Criteria> criterias) {
+		String selectedTemplate = (String) criterias.get("templateSelectionMode").getValue();
+		return selectedTemplate;
 	}
 }

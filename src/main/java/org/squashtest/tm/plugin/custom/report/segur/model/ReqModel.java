@@ -102,6 +102,8 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		row.setReference(reference);
 		row.setNoteInterne(findSpecificCuf(Constantes.NOTE_INTERNE).getLabel());
 		row.setSegurRem(findSpecificCuf(Constantes.SEGUR_REM).getLabel());
+		row.setCommentaire(findSpecificCuf(Constantes.COMMENTAIRE).getLabel());
+		row.setStatutPublication(findSpecificCuf(Constantes.STATUT_PUBLICATION).getLabel());
 		return row;
 	}
 
