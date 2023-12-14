@@ -103,22 +103,6 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_NUMERO_PREUVE. */
 	public static final int REM_COLUMN_PREUVE = 8;
 
-//	public static final int REM_COLUMN_COMMENTAIRE = 9;
-//
-//	public static final int REM_COLUMN_STATUT_PUBLICATION = 10;
-
-	/** The Constant PREPUB_COLUMN_POINTS_DE_VERIF. */
-	// public static final int PREPUB_COLUMN_POINTS_DE_VERIF
-
-//	/** The Constant ERROR_COLUMN_LEVEL. */
-//	public static final int ERROR_COLUMN_LEVEL = 0;
-//
-//	/** The Constant ERROR_COLUMN_RESID. */
-//	public static final int ERROR_COLUMN_RESID = 1;
-//
-//	/** The Constant ERROR_COLUMN_MSG. */
-//	public static final int ERROR_COLUMN_MSG = 2;
-
 	private Traceur traceur;
 
 	private String squashBaseUrl;
@@ -179,17 +163,23 @@ public class ExcelWriter {
 		
 		//map avec les steps de tous les Cts
 		Map<Long, Step> steps= data.getSteps();
+		String milestone = data.getPerimeter().getMilestoneName();
+		if (milestone.equals("Vague 1")) {
+			milestone = "vague 1";
+		} else {
+			if (milestone.equals("va2_conception")) {
+				milestone = "vague 2";
+			} else {
+				if (milestone.equals("va2_RC_0723")) {
+					milestone = "vague 2";
+				}
+			}
+		}
 		
 		
 		// boucle sur les exigences
 		for (ExcelRow req : data.getRequirements()) {
 
-			// ##DEBUG
-			// String reqResume = "Num exi : " + req.getNumeroExigence_8() + " // nat
-			// exigence = " + req.getNatureExigence_7()+ " // reference = " +
-			// req.getReference()+ " // referenceSocle = " + req.getReferenceSocle();
-			// traceur.addMessage(Level.INFO, req.getResId(),reqResume);
-			//
 
 			// extraire les CTs liés à l'exigence de la map du binding
 			List<ReqStepBinding> bindingCT = data.getBindings().stream()
@@ -211,10 +201,6 @@ public class ExcelWriter {
 				tcIds = bindingCT.stream().map(item -> item.getTclnId()).collect(Collectors.toList());
 			}
 
-//			if (tcIds.isEmpty()) {
-//				// On ajoute un test vide pour pouvoir formater les cellules
-//				tcIds.add(0L);
-//			}
 
 			// construction d'une liste de testcase à partir de la liste des IDs des testcases
 			List<TestCase> tcList = new ArrayList<TestCase>();
@@ -229,57 +215,33 @@ public class ExcelWriter {
 			
 			for (TestCase testCase : tcList) {
 				
-			// Construire la liste des steps du scénario	
-			List<Step> testSteps = new ArrayList<>();
-				if (testCase.getOrderedStepIds() != null) {
-					for (Long id : testCase.getOrderedStepIds()) {
-						testSteps.add(steps.get(id));
+				// Construire la liste des steps du scénario	
+				List<Step> testSteps = new ArrayList<>();
+					if (testCase.getOrderedStepIds() != null) {
+						for (Long id : testCase.getOrderedStepIds()) {
+							testSteps.add(steps.get(id));
+						}
 					}
+				//ordonner la liste des steps
+				Collections.sort(testSteps);
+				
+				//step dummy si le scénario n'a pas de preuve
+				if (testSteps.size() == 0)
+				{
+					testSteps.add(new Step(0L,"",0));
 				}
-			//ordonner la liste des steps
-			Collections.sort(testSteps);
-			
-			//step dummy si le scénario n'a pas de preuve
-			if (testSteps.size() == 0)
-			{
-				testSteps.add(new Step(0L,"",0));
-			}
-			
-			for (Step  step: testSteps) {
 				
-//				if (testSteps.size() < MAX_STEPS) {
-//					for (int i = testSteps.size(); i < MAX_STEPS; i++) {
-//						testSteps.add(new Step(Long.valueOf(i), "", i));
-//					}
-//				}
+				for (Step  step: testSteps) {
+					
+					//EVOL CONVERGENCE
+					// on ecrit (ou réecrit) les colonnes sur les exigences
+					Row currentRow = writeRequirementRow(req, sheet, lineNumber, style2apply,milestone);
 
-//			 for (Long tcID : tcIds) {
-//			 	TestCase testCase;
-//			 	if (tcID == 0L) {
-//			 		testCase = createDummyTestCase(0L);
-//			 	} else {
-//			 		if (EXCLUDED_TC_STATUS.equals(data.getTestCases().get(tcID).getTcStatus())) {
-//			 			testCase = createDummyTestCase(0L);
-//			 		} else {
-//			 			testCase = data.getTestCases().get(tcID);
-//			 		}
-//			 	}
-
-				//EVOL CONVERGENCE
-				// on ecrit (ou réecrit) les colonnes sur les exigences
-				Row currentRow = writeRequirementRow(req, sheet, lineNumber, style2apply);
-
-				//TODO A vérif qu'il n'y a pas de scénario 'coeur de métier'
-//				if (testCase.getIsCoeurDeMetier()) {
-//					writeCaseTestPartCoeurDeMetier(testCase, null, data.getSteps(), currentRow, style2apply);
-//				} else { // non coeur de métier => on prends tous les steps du CT
 					writeCaseTestStepByStep(testCase, step, currentRow, style2apply);
-//				}
-				
 
-				//fin evol CONVERGENCE
-				lineNumber++;
-			}//boucle steps
+					//fin evol CONVERGENCE
+					lineNumber++;
+				}//boucle steps
 			}//boucle scénarii
 		} //boucle exigences
 		
@@ -330,28 +292,42 @@ public class ExcelWriter {
 		return tempFile;
 	}
 
-	private Row writeRequirementRow(ExcelRow data, XSSFSheet sheet, int lineIndex, Row style2apply) {
+	private Row writeRequirementRow(ExcelRow data, XSSFSheet sheet, int lineIndex, Row style2apply, String milestone) {
 		// ecriture des données
 
 		Row row = sheet.createRow(lineIndex);
-
-		// Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
-		// CellStyle c0Style = sheet.getWorkbook().createCellStyle();
-		// c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
-		// c0.setCellStyle(c0Style);
-		// c0.setCellValue(data.getBoolExigenceConditionnelle_1());
 
 		Cell c1 = row.createCell(REM_COLUMN_PROFIL);
 		CellStyle c1Style = sheet.getWorkbook().createCellStyle();
 		c1Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PROFIL).getCellStyle());
 		c1.setCellStyle(c1Style);
-		c1.setCellValue(data.getProfil_2());
+		String profil = data.getProfil_2();
+		String profilDef;
+		if (profil.startsWith("va1")) {
+				profilDef = "Profil " + profil.substring(4) + " - vague 1";
+		} else {
+			if (profil.startsWith("va2")) {
+					profilDef = "Profil " + profil.substring(4) + " - vague 2";
+			} else {
+				if (profil.startsWith("Profil")) {
+					if (profil.contains(" - vague")) {
+						profilDef = profil;
+					} else {
+						profilDef = profil + " - " + milestone;
+					}
+				} else {
+					if (profil.isEmpty()){
+						profilDef = "Profil Général - " + milestone;
+					} else {
+						profilDef = "Profil " + profil + " - " + milestone;
+					}
+					
+				}
+			}
+		}
+		
+		c1.setCellValue(profilDef);
 
-		// Cell c2 = row.createCell(REM_COLUMN_ID_SECTION);
-		// CellStyle c2Style = sheet.getWorkbook().createCellStyle();
-		// c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
-		// c2.setCellStyle(c2Style);
-		// c2.setCellValue(data.getId_section_3());
 
 		Cell c3 = row.createCell(REM_COLUMN_CHAPITRE);
 		CellStyle c3Style = sheet.getWorkbook().createCellStyle();
@@ -359,17 +335,7 @@ public class ExcelWriter {
 		c3.setCellStyle(c3Style);
 		c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
 
-		/*
-		 * Cell c4 = row.createCell(REM_COLUMN_SECTION); CellStyle c4Style =
-		 * sheet.getWorkbook().createCellStyle();
-		 * c4Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SECTION).getCellStyle()
-		 * ); c4.setCellStyle(c4Style); c4.setCellValue(data.getSection_4());
-		 * 
-		 * Cell c5 = row.createCell(REM_COLUMN_BLOC); CellStyle c5Style =
-		 * sheet.getWorkbook().createCellStyle();
-		 * c5Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_BLOC).getCellStyle());
-		 * c5.setCellStyle(c5Style); c5.setCellValue(data.getBloc_5());
-		 */
+
 
 		Cell c6 = row.createCell(REM_COLUMN_FONCTION);
 		CellStyle c6Style = sheet.getWorkbook().createCellStyle();
@@ -377,11 +343,6 @@ public class ExcelWriter {
 		c6.setCellStyle(c6Style);
 		c6.setCellValue(data.getFonction_6());
 
-//		Cell c7 = row.createCell(REM_COLUMN_NATURE);
-//		CellStyle c7Style = sheet.getWorkbook().createCellStyle();
-//		c7Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_NATURE).getCellStyle());
-//		c7.setCellStyle(c7Style);
-//		c7.setCellValue(data.getNatureExigence_7());
 
 		Cell c8 = row.createCell(REM_COLUMN_NUMERO_EXIGENCE);
 		CellStyle c8Style = sheet.getWorkbook().createCellStyle();
@@ -399,20 +360,6 @@ public class ExcelWriter {
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
 		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
-
-//		Cell c12 = row.createCell(REM_COLUMN_COMMENTAIRE);
-//		CellStyle c12Style = sheet.getWorkbook().createCellStyle();
-//		c12Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_COMMENTAIRE).getCellStyle());
-//		c12.setCellStyle(c12Style);
-//		c12Style.setWrapText(true);
-//		c12.setCellValue(Parser.convertHTMLtoString(data.getCommentaire()));
-//
-//		Cell c13 = row.createCell(REM_COLUMN_STATUT_PUBLICATION);
-//		CellStyle c13Style = sheet.getWorkbook().createCellStyle();
-//		c13Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_STATUT_PUBLICATION).getCellStyle());
-//		c13.setCellStyle(c13Style);
-//		c13Style.setWrapText(true);
-//		c13.setCellValue(data.getStatutPublication());
 
 		return row;
 
@@ -434,48 +381,10 @@ public class ExcelWriter {
 		if (testcase.getTcln_id() > 0) {
 		
 			//EVOL CONVERGENCE  =>- non utile, on prend le html brut
-//			String content = "";
-//			// if (!"".equals(testcase.getPrerequisite())) {
-//			// content += "Prérequis : " +
-//			// Parser.convertHTMLtoString(testcase.getPrerequisite());
-//			// if (!"".equals(testcase.getDescription())) {
-//			// content += Constantes.LINE_SEPARATOR
-//			// + Parser.convertHTMLtoString(testcase.getDescription());
-//			// }
-//			// } else { // cas où une description existe sans prérequis
-//			// if (!"".equals(testcase.getDescription())) {
-//			// content += Parser.convertHTMLtoString(testcase.getDescription());
-//			// }
-//			// }
-//			if (!"".equals(testcase.getDescription())) {
-//				content += Parser.convertHTMLtoString(testcase.getDescription());
-//			}
-//			c11.setCellValue(content);
-			//FIN EVOL CONVERGENCE  =>- non utile, on prend le html brut
-			//TODO fct pour correction du html brut.
+
 			c11.setCellValue(testcase.getDescription());
 		}
-		//EVOL CONVERGENCE  => deplacement du code
-		// les steps sont reordonnées dans la liste à partir de leur référence
-//		int currentExcelColumn = REM_COLUMN_NUMERO_PREUVE;
-//		List<Step> testSteps = new ArrayList<>();
-//		if (testcase.getOrderedStepIds() != null) {
-//			for (Long id : testcase.getOrderedStepIds()) {
-//				testSteps.add(steps.get(id));
-//			}
-//		}
-//		Collections.sort(testSteps);
-//		if (testSteps.size() < MAX_STEPS) {
-//			for (int i = testSteps.size(); i < MAX_STEPS; i++) {
-//				testSteps.add(new Step(Long.valueOf(i), "", i));
-//			}
-//		}
-//		for (Step step : testSteps) {
-//			if (currentExcelColumn > REM_COLUMN_FIRST_NUMERO_PREUVE + MAX_STEPS * 2) {
-//				traceur.addMessage(Level.WARNING, testcase.getTcln_id(),
-//						String.format("Le test contient plus de %s preuves", MAX_STEPS));
-//				break;
-//			}
+
 		    
 		//Ecriture des données sur le step
 			Cell c12plus = row.createCell(REM_COLUMN_NUMERO_PREUVE);
