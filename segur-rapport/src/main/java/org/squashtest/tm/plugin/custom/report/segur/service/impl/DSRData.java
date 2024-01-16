@@ -430,6 +430,12 @@ public class DSRData {
 		} else {
 			updatedRequirement.setStatutPublication(requirementRow.getStatutPublication());
 		}
+		if (requirementRow.getVaNMoins1().isEmpty()) {
+			updatedRequirement.setVaNMoins1(socleData.getVaNMoins1());
+		} else {
+			updatedRequirement.setVaNMoins1(requirementRow.getVaNMoins1());
+		}
+
 
 		return updatedRequirement;
 	}

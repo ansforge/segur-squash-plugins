@@ -74,6 +74,7 @@ public class ExcelWriterTest {
 		requirement1.setSegurRem("Remarque Ségur");
 		requirement1.setCommentaire("Ceci est un autre commentaire");
 		requirement1.setStatutPublication("Inchangée");
+		requirement1.setVaNMoins1("OUI");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setResId(2L);
@@ -101,6 +102,7 @@ public class ExcelWriterTest {
 		requirement2.setSocleResId(1L);
 		requirement2.setCommentaire("Ceci est un commentaire");
 		requirement2.setStatutPublication("Modifiée");
+		requirement2.setVaNMoins1("NON");
 		data.getRequirements().add(requirement2);
 		ExcelRow requirement3 = new ExcelRow();
 		requirement3.setResId(3L);
@@ -122,6 +124,7 @@ public class ExcelWriterTest {
 		requirement3.setReference("SC.CI-SIS/MSS.02");
 		requirement3.setCommentaire("Ceci est encore un autre commentaire");
 		requirement3.setStatutPublication("Modifiée");
+		requirement3.setVaNMoins1("OUI");
 		data.getRequirements().add(requirement3);
 
 		// TestCases
@@ -243,7 +246,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(467,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+		assertEquals(3,workbook.getSheet("Exigences").getRow(3).getCell(30).getStringCellValue().length());
 
 		workbook.close();
 		out.close();	

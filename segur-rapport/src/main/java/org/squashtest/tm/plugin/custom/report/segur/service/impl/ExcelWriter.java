@@ -120,11 +120,13 @@ public class ExcelWriter {
     public static final int REM_COLUMN_COMMENTAIRE = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
 
 	public static final int REM_COLUMN_STATUT_PUBLICATION = REM_COLUMN_COMMENTAIRE + 1;
+	
+	public static final int REM_COLUMN_VA_NMOINS1 = REM_COLUMN_STATUT_PUBLICATION + 1;
 	/** The Constant PREPUB_COLUMN_BON_POUR_PUBLICATION. */
 	//public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
 	//		+ 1;
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
-			+ 3;
+			+ 4;
 
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
@@ -499,6 +501,13 @@ public class ExcelWriter {
 		c13.setCellStyle(c13Style);
 		c13Style.setWrapText(true);
 		c13.setCellValue(data.getStatutPublication()); 
+
+	 	Cell c14 = row.createCell(REM_COLUMN_VA_NMOINS1);
+		CellStyle c14Style = sheet.getWorkbook().createCellStyle();
+		c14Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_VA_NMOINS1).getCellStyle());
+		c14.setCellStyle(c14Style);
+		c14Style.setWrapText(true);
+		c14.setCellValue(data.getVaNMoins1());  
 
 		return row;
 

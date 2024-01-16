@@ -63,6 +63,7 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	private String segurRem = "";
 	private String commentaire = "";
 	private String statutPublication = "";
+	private String vaNMoins1 = "";
 	
 	
 	private String referenceSocle = "";

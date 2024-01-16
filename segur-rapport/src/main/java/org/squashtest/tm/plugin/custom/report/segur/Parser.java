@@ -24,7 +24,7 @@ public class Parser {
 	 * @return the string
 	 */
 	public static String convertHTMLtoString(String html) {
-		String tmp = "";
+ 		String tmp = "";
 		if (html == null || html.isEmpty()) {
 			return tmp;
 		}
@@ -73,6 +73,7 @@ public class Parser {
 				.replaceAll("&quot;", "\"")
 				.replaceAll("&gt;", ">")
 				.replaceAll("&lt;", "<")
-				.replaceAll("&amp;", "&");
+				.replaceAll("&amp;", "&"); 
+		//return html;
 	}
 }

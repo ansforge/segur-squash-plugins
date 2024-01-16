@@ -46,6 +46,9 @@ public class Constantes {
 	/** The Constant STATUT_PUBLICATION. */
 	public final static String STATUT_PUBLICATION = "STATUT_PUBLICATION";
 
+	/** The Constant VA_NMOINS1. */
+	public final static String VA_NMOINS1 = "VA_NMOINS1";
+
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
 
