@@ -443,7 +443,8 @@ public class ExcelWriter {
 		CellStyle c3Style = sheet.getWorkbook().createCellStyle();
 		c3Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CHAPITRE).getCellStyle());
 		c3.setCellStyle(c3Style);
-		c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
+		//c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
+		c3.setCellValue(data.getBloc_5());
 
 	
 /* 		Cell c4 = row.createCell(REM_COLUMN_SECTION);
