@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.plugin.custom.export.convergence.model.Cuf;
 import org.squashtest.tm.plugin.custom.export.convergence.model.LinkedReq;
 import org.squashtest.tm.plugin.custom.export.convergence.model.PerimeterData;

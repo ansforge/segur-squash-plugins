@@ -56,6 +56,9 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	// description texte RTE
 	private String enonceExigence_9 = "";
 
+	// Périmètre (vague 1 ou vague 2)
+	private String perimetre_10 = "";
+
 	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;

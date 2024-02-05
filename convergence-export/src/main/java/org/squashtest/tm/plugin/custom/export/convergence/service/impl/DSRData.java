@@ -431,6 +431,16 @@ public class DSRData {
 		} else {
 			updatedRequirement.setStatutPublication(requirementRow.getStatutPublication());
 		}
+		if (requirementRow.getPerimetre_10().isEmpty()) {
+			updatedRequirement.setPerimetre_10(socleData.getPerimetre_10());
+		} else {
+			updatedRequirement.setPerimetre_10(requirementRow.getPerimetre_10());
+		} 
+		if (requirementRow.getProfilHistorique_11().isEmpty()) {
+			updatedRequirement.setProfilHistorique_11(socleData.getProfilHistorique_11());
+		} else {
+			updatedRequirement.setProfilHistorique_11(requirementRow.getProfilHistorique_11());
+		}
 
 		return updatedRequirement;
 	}

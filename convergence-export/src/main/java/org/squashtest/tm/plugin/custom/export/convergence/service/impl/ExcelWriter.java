@@ -77,31 +77,37 @@ public class ExcelWriter {
 	// public static final int REM_COLUMN_ID_SECTION = 2;
 
 	/** The Constant REM_COLUMN_NUMERO_EXIGENCE. */
-	public static final int REM_COLUMN_NUMERO_EXIGENCE = 0;
+	public static final int REM_COLUMN_PERIMETRE = 0;
+
+	/** The Constant REM_COLUMN_NUMERO_EXIGENCE. */
+	public static final int REM_COLUMN_NUMERO_EXIGENCE = 1; //0;
 
 	/** The Constant REM_COLUMN_CHAPITRE. */
-	public static final int REM_COLUMN_CHAPITRE = 1;
+	public static final int REM_COLUMN_CHAPITRE = 2; //1;
 
 	/** The Constant REM_COLUMN_FONCTION. */
-	public static final int REM_COLUMN_FONCTION = 2;
+	public static final int REM_COLUMN_FONCTION = 3; //2;
 
 	/** The Constant REM_COLUMN_ENONCE. */
-	public static final int REM_COLUMN_ENONCE = 3;
+	public static final int REM_COLUMN_ENONCE = 4; //3;
 
 	/** The Constant REM_COLUMN_PROFIL. */
-	public static final int REM_COLUMN_PROFIL = 4;
+	public static final int REM_COLUMN_PROFIL = 5; //4;
 
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
-	public static final int REM_COLUMN_NUMERO_SCENARIO = 5;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 6; //5;
 
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
-	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 6;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 7; //6;
 
 	/** The Constant REM_COLUMN_NUMERO_PREUVE. */
-	public static final int REM_COLUMN_NUMERO_PREUVE = 7;
+	public static final int REM_COLUMN_NUMERO_PREUVE = 8; //7;
 
 	/** The Constant REM_COLUMN_NUMERO_PREUVE. */
-	public static final int REM_COLUMN_PREUVE = 8;
+	public static final int REM_COLUMN_PREUVE = 9; //8;
+
+	/** The Constant REM_COLUMN_PROFIL_HISTO. */
+	public static final int REM_COLUMN_PROFIL_HISTO= 10; 
 
 	private Traceur traceur;
 
@@ -297,11 +303,18 @@ public class ExcelWriter {
 
 		Row row = sheet.createRow(lineIndex);
 
+		Cell c0 = row.createCell(REM_COLUMN_PERIMETRE);
+		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
+		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PERIMETRE).getCellStyle());
+		c0.setCellStyle(c0Style);
+		//c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
+		c0.setCellValue(data.getPerimetre_10());
+
 		Cell c1 = row.createCell(REM_COLUMN_PROFIL);
 		CellStyle c1Style = sheet.getWorkbook().createCellStyle();
 		c1Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PROFIL).getCellStyle());
 		c1.setCellStyle(c1Style);
-		String profil = data.getProfil_2();
+/* 		String profil = data.getProfil_2();
 		String profilDef;
 		if (profil.startsWith("va1")) {
 				profilDef = "Profil " + profil.substring(4) + " - vague 1";
@@ -324,18 +337,17 @@ public class ExcelWriter {
 					
 				}
 			}
-		}
+		} */
 		
-		c1.setCellValue(profilDef);
+		c1.setCellValue(data.getProfil_2());
 
 
 		Cell c3 = row.createCell(REM_COLUMN_CHAPITRE);
 		CellStyle c3Style = sheet.getWorkbook().createCellStyle();
 		c3Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CHAPITRE).getCellStyle());
 		c3.setCellStyle(c3Style);
-		c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
-
-
+		//c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
+		c3.setCellValue(data.getBloc_5());
 
 		Cell c6 = row.createCell(REM_COLUMN_FONCTION);
 		CellStyle c6Style = sheet.getWorkbook().createCellStyle();
@@ -360,6 +372,12 @@ public class ExcelWriter {
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
 		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
+
+		Cell c2 = row.createCell(REM_COLUMN_PROFIL_HISTO);
+		CellStyle c2Style = sheet.getWorkbook().createCellStyle();
+		c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PROFIL_HISTO).getCellStyle());
+		c2.setCellStyle(c2Style);
+		c2.setCellValue(data.getProfilHistorique_11());
 
 		return row;
 

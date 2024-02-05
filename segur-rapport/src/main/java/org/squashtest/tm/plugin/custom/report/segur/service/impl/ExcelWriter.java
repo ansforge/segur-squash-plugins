@@ -86,30 +86,32 @@ public class ExcelWriter {
 
 	/** The Constant REM_COLUMN_BLOC. */
 	public static final int REM_COLUMN_BLOC = 4;
-
+	
+	/** The Constant REM_COLUMN_PERIMETRE. */
+	public static final int REM_COLUMN_PERIMETRE = 0;
 	/** The Constant REM_COLUMN_NUMERO_EXIGENCE. */
 	//public static final int REM_COLUMN_NUMERO_EXIGENCE = 7;
-	public static final int REM_COLUMN_NUMERO_EXIGENCE = 0;
+	public static final int REM_COLUMN_NUMERO_EXIGENCE = 1; //0;
 	/** The Constant REM_COLUMN_CHAPITRE. */
-	public static final int REM_COLUMN_CHAPITRE = 1;
+	public static final int REM_COLUMN_CHAPITRE = 2; //1;
 	/** The Constant REM_COLUMN_FONCTION. */
 	//public static final int REM_COLUMN_FONCTION = 5;
-	public static final int REM_COLUMN_FONCTION = 2;
+	public static final int REM_COLUMN_FONCTION = 3; //2;
 	/** The Constant REM_COLUMN_ENONCE. */
 	//public static final int REM_COLUMN_ENONCE = 8;
-	public static final int REM_COLUMN_ENONCE = 3;
+	public static final int REM_COLUMN_ENONCE = 4; // 3;
 	/** The Constant REM_COLUMN_NATURE. */
 	//public static final int REM_COLUMN_NATURE = 6;
-	public static final int REM_COLUMN_NATURE = 4;
+	public static final int REM_COLUMN_NATURE = 5; //4;
 	/** The Constant REM_COLUMN_PROFIL. */
 	//public static final int REM_COLUMN_PROFIL = 1;
-	public static final int REM_COLUMN_PROFIL = 5;
+	public static final int REM_COLUMN_PROFIL = 6; //5;
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
 	//public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
-	public static final int REM_COLUMN_NUMERO_SCENARIO = 6;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 7; //6;
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
 	//public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
-	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 7;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 8; // 7;
 	
 	/** The Constant MAX_STEP_NUMBER. */
 	public static final int MAX_STEP_NUMBER = 10;
@@ -421,11 +423,11 @@ public class ExcelWriter {
 
 		Row row = sheet.createRow(lineIndex);
 
-		// Cell c0 = row.createCell(REM_COLUMN_CONDITIONNELLE);
-		// CellStyle c0Style = sheet.getWorkbook().createCellStyle();
-		// c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CONDITIONNELLE).getCellStyle());
-		// c0.setCellStyle(c0Style);
-		// c0.setCellValue(data.getBoolExigenceConditionnelle_1());
+		Cell c0 = row.createCell(REM_COLUMN_PERIMETRE);
+		CellStyle c0Style = sheet.getWorkbook().createCellStyle();
+		c0Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PERIMETRE).getCellStyle());
+		c0.setCellStyle(c0Style);
+		c0.setCellValue(data.getPerimetre_10());
 
 		Cell c1 = row.createCell(REM_COLUMN_PROFIL);
 		CellStyle c1Style = sheet.getWorkbook().createCellStyle();
@@ -433,31 +435,12 @@ public class ExcelWriter {
 		c1.setCellStyle(c1Style);
 		c1.setCellValue(data.getProfil_2());
 
-		// Cell c2 = row.createCell(REM_COLUMN_ID_SECTION);
-		// CellStyle c2Style = sheet.getWorkbook().createCellStyle();
-		// c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ID_SECTION).getCellStyle());
-		// c2.setCellStyle(c2Style);
-		// c2.setCellValue(data.getId_section_3());
-
 		Cell c3 = row.createCell(REM_COLUMN_CHAPITRE);
 		CellStyle c3Style = sheet.getWorkbook().createCellStyle();
 		c3Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CHAPITRE).getCellStyle());
 		c3.setCellStyle(c3Style);
 		//c3.setCellValue(data.getSection_4() + " " + data.getBloc_5());
 		c3.setCellValue(data.getBloc_5());
-
-	
-/* 		Cell c4 = row.createCell(REM_COLUMN_SECTION);
-		CellStyle c4Style = sheet.getWorkbook().createCellStyle();
-		c4Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SECTION).getCellStyle());
-		c4.setCellStyle(c4Style);
-		c4.setCellValue(data.getSection_4());
-
-		Cell c5 = row.createCell(REM_COLUMN_BLOC);
-		CellStyle c5Style = sheet.getWorkbook().createCellStyle();
-		c5Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_BLOC).getCellStyle());
-		c5.setCellStyle(c5Style);
-		c5.setCellValue(data.getBloc_5()); */
 
 
  		Cell c6 = row.createCell(REM_COLUMN_FONCTION);

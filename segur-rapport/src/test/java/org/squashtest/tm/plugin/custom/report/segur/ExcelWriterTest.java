@@ -55,6 +55,7 @@ public class ExcelWriterTest {
 		data = new DSRData(traceur, new RequirementsCollectorImpl(), perimeterData);
 		excel = new ExcelWriter(new Traceur());
 		ExcelRow requirement1 = new ExcelRow();
+		requirement1.setPerimetre_10("Vague 1");
 		requirement1.setResId(1L);
 		requirement1.setReqId(1L);
 		requirement1.setBoolExigenceConditionnelle_1(Constantes.NON);
@@ -77,6 +78,7 @@ public class ExcelWriterTest {
 		requirement1.setVaNMoins1("OUI");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
+		requirement2.setPerimetre_10("Vague 8");
 		requirement2.setResId(2L);
 		requirement2.setReqId(2L);
 		requirement2.setBoolExigenceConditionnelle_1(Constantes.NON);
@@ -105,6 +107,7 @@ public class ExcelWriterTest {
 		requirement2.setVaNMoins1("NON");
 		data.getRequirements().add(requirement2);
 		ExcelRow requirement3 = new ExcelRow();
+		requirement3.setPerimetre_10("Vague 13");
 		requirement3.setResId(3L);
 		requirement3.setReqId(3L);
 		requirement3.setBoolExigenceConditionnelle_1(Constantes.NON);

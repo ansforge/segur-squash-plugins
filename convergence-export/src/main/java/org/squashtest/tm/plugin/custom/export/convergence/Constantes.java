@@ -15,6 +15,9 @@ public class Constantes {
 	/** The Constant PROFIL. */
 	// valeurs codes et labels des CUFs
 	public final static String PROFIL = "PROFIL"; // CODE du CUF dans squash
+
+	// valeurs codes et labels des CUFs
+	public final static String PROFIL_HISTO = "PROFIL_HISTO"; // CODE du CUF dans squash
 	
 	/** The Constant SECTION. */
 	public final static String SECTION = "SECTION";
@@ -46,8 +49,12 @@ public class Constantes {
 	/** The Constant STATUT_PUBLICATION. */
 	public final static String STATUT_PUBLICATION = "STATUT_PUBLICATION";
 
+	/** The Constant PERIMETRE. */
+	public final static String PERIMETRE = "PERIMETRE";
+
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
+
 
 	/** The Constant CUF_TYPE_OBJECT_REQ. */
 	// CUFs

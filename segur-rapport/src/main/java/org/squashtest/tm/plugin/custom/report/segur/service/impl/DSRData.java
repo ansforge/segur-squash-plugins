@@ -435,6 +435,17 @@ public class DSRData {
 		} else {
 			updatedRequirement.setVaNMoins1(requirementRow.getVaNMoins1());
 		}
+		if (requirementRow.getVaNMoins1().isEmpty()) {
+			updatedRequirement.setVaNMoins1(socleData.getVaNMoins1());
+		} else {
+			updatedRequirement.setVaNMoins1(requirementRow.getVaNMoins1());
+		}
+		if (requirementRow.getPerimetre_10().isEmpty()) {
+			updatedRequirement.setPerimetre_10(socleData.getPerimetre_10());
+		} else {
+			updatedRequirement.setPerimetre_10(requirementRow.getPerimetre_10());
+		}
+
 
 
 		return updatedRequirement;

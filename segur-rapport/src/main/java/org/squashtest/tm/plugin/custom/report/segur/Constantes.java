@@ -49,6 +49,9 @@ public class Constantes {
 	/** The Constant VA_NMOINS1. */
 	public final static String VA_NMOINS1 = "VA_NMOINS1";
 
+	/** The Constant PERIMETRE */
+	public final static String PERIMETRE = "PERIMETRE";
+
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
 

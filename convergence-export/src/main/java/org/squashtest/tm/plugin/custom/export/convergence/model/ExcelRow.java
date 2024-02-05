@@ -53,8 +53,14 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	// Référence
 	private String numeroExigence_8 = "";
 
-	// description texte RTE
+	// description texte RTE 
 	private String enonceExigence_9 = "";
+
+	// Périmètre
+	private String perimetre_10 = "";
+
+	// Profil historique
+	private String profilHistorique_11 = "";
 
 	// pour les colonnes de prépublication
 	private String reqStatus;
