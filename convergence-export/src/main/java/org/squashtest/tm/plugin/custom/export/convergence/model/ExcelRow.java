@@ -62,6 +62,9 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	// Profil historique
 	private String profilHistorique_11 = "";
 
+	// Criticité
+	private String criticite_12 = "";
+
 	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;

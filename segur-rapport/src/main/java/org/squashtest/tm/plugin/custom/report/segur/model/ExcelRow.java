@@ -59,6 +59,9 @@ public class ExcelRow implements Comparable<ExcelRow>{
 	// Périmètre (vague 1 ou vague 2)
 	private String perimetre_10 = "";
 
+	//Criticité
+	private String criticite_11 = "";
+
 	// pour les colonnes de prépublication
 	private String reqStatus;
 	private String reference;

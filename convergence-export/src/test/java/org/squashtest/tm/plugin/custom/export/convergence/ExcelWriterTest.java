@@ -80,6 +80,7 @@ public class ExcelWriterTest {
 		requirement1.setCommentaire("Ceci est un autre commentaire");
 		requirement1.setStatutPublication("Inchangée");
 		requirement1.setProfilHistorique_11("Général");
+		requirement1.setCriticite_12("Mineure");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setPerimetre_10("Vague 8");
@@ -109,6 +110,7 @@ public class ExcelWriterTest {
 		requirement2.setCommentaire("Ceci est un commentaire");
 		requirement2.setStatutPublication("Modifiée");
 		requirement2.setProfilHistorique_11("Commandant");
+		requirement2.setCriticite_12("Majeure");
 		data.getRequirements().add(requirement2);
 		ExcelRow requirement3 = new ExcelRow();
 		requirement3.setPerimetre_10("Vague floue");
@@ -132,6 +134,7 @@ public class ExcelWriterTest {
 		requirement3.setCommentaire("Ceci est encore un autre commentaire");
 		requirement3.setStatutPublication("Modifiée");
 		requirement3.setProfilHistorique_11("Lieutenant");
+		requirement3.setCriticite_12("Critique");
 		data.getRequirements().add(requirement3);
 
 		// TestCases

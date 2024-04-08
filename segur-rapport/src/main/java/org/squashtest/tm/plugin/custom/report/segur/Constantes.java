@@ -49,6 +49,13 @@ public class Constantes {
 	/** The Constant VA_NMOINS1. */
 	public final static String VA_NMOINS1 = "VA_NMOINS1";
 
+	/** The Constant CRITICITE. */
+	public final static String CRITICITE = "CRITICITE";
+	public final static String CRITICALITY_MINOR = "MINOR";
+	public final static String CRITICALITY_MAJOR = "MAJOR";
+	public final static String CRITICALITY_CRITICAL = "CRITICAL";
+	public final static String CRITICALITY_UNDEFINED = "UNDEFINED";
+
 	/** The Constant PERIMETRE */
 	public final static String PERIMETRE = "PERIMETRE";
 

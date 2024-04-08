@@ -445,8 +445,11 @@ public class DSRData {
 		} else {
 			updatedRequirement.setPerimetre_10(requirementRow.getPerimetre_10());
 		}
-
-
+		if (requirementRow.getCriticite_11().isEmpty()) {
+			updatedRequirement.setCriticite_11(socleData.getCriticite_11());
+		} else {
+			updatedRequirement.setCriticite_11(requirementRow.getCriticite_11());
+		}
 
 		return updatedRequirement;
 	}

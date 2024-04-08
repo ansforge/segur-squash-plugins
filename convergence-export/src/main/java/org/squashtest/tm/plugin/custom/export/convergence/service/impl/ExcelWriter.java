@@ -94,6 +94,7 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_PROFIL. */
 	public static final int REM_COLUMN_PROFIL = 5; //4;
 
+
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
 	public static final int REM_COLUMN_NUMERO_SCENARIO = 6; //5;
 
@@ -108,6 +109,10 @@ public class ExcelWriter {
 
 	/** The Constant REM_COLUMN_PROFIL_HISTO. */
 	public static final int REM_COLUMN_PROFIL_HISTO= 10; 
+
+	/** The Constant REM_COLUMN_CRITICITE. */
+	public static final int REM_COLUMN_CRITICITY= 11; 
+
 
 	private Traceur traceur;
 
@@ -378,6 +383,13 @@ public class ExcelWriter {
 		c2Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PROFIL_HISTO).getCellStyle());
 		c2.setCellStyle(c2Style);
 		c2.setCellValue(data.getProfilHistorique_11());
+
+		Cell c15 = row.createCell(REM_COLUMN_CRITICITY);
+		CellStyle c15Style = sheet.getWorkbook().createCellStyle();
+		c15Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CRITICITY).getCellStyle());
+		c15.setCellStyle(c15Style);
+		c15Style.setWrapText(true);
+		c15.setCellValue(data.getCriticite_12());  
 
 		return row;
 

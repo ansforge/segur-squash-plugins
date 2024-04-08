@@ -28,6 +28,7 @@ public class ReqModel {
 	private String description;
 	private String reference;
 	private String requirementStatus;
+	private String criticite;
 
 	private ExcelRow row = new ExcelRow();
 
@@ -48,7 +49,7 @@ public class ReqModel {
  * @param category the category
  * @param description the description
  */
-public ReqModel(Long resId, Long reqId, String reference, String requirementStatus, String category, String description) {
+public ReqModel(Long resId, Long reqId, String reference, String requirementStatus, String category, String description, String criticite) {
 		super();
 		this.resId = resId;
 		this.reqId = reqId;
@@ -56,6 +57,7 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		this.description = description;
 		this.reference = reference;
 		this.requirementStatus = requirementStatus;
+		this.criticite = criticite;
 	}
 
 	/**
@@ -106,6 +108,8 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		row.setStatutPublication(findSpecificCuf(Constantes.STATUT_PUBLICATION).getLabel());
 		row.setVaNMoins1(findSpecificCuf(Constantes.VA_NMOINS1).getLabel());		
 		row.setPerimetre_10(findSpecificCuf(Constantes.PERIMETRE).getLabel());
+		//row.setCriticite_12(criticite);
+		calculCriticite(criticite);
 
 		return row;
 	}
@@ -183,6 +187,37 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 			traceur.addMessage(Level.WARNING, resId,
 					"Impossible d'identifier la nature pour l'exigence. Cuf'Catégorie'= " + categorie);
 			row.setNatureExigence_7("");
+		}
+
+	}
+			/**
+	 * Calcul criticité.
+	 *
+	 * @param criticite the criticality
+	 */
+	public void calculCriticite(String criticite) {
+		Boolean update = false;
+		if (criticite != null) {
+			
+
+			if (criticite.equalsIgnoreCase(Constantes.CRITICALITY_MINOR)) {
+				row.setCriticite_11("Mineure");
+				update = true;
+			} else if (criticite.equalsIgnoreCase(Constantes.CRITICALITY_MAJOR)) {
+				row.setCriticite_11("Majeure");
+				update = true;
+			} else if (criticite.equalsIgnoreCase(Constantes.CRITICALITY_CRITICAL)) {
+				row.setCriticite_11("Critique");
+				update = true;
+			}else if (criticite.equalsIgnoreCase(Constantes.CRITICALITY_UNDEFINED)) {
+				row.setCriticite_11("Non définie");
+				update = true;
+			}
+		}
+		if (update == false) {
+			traceur.addMessage(Level.WARNING, resId,
+					"Impossible d'identifier la criticité pour l'exigence. criticité = " + criticite);
+			row.setCriticite_11("");
 		}
 
 	}

@@ -76,6 +76,7 @@ public class ExcelWriterTest {
 		requirement1.setCommentaire("Ceci est un autre commentaire");
 		requirement1.setStatutPublication("Inchangée");
 		requirement1.setVaNMoins1("OUI");
+		requirement1.setCriticite_11("Mineure");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setPerimetre_10("Vague 8");
@@ -105,6 +106,7 @@ public class ExcelWriterTest {
 		requirement2.setCommentaire("Ceci est un commentaire");
 		requirement2.setStatutPublication("Modifiée");
 		requirement2.setVaNMoins1("NON");
+		requirement2.setCriticite_11("Majeure");
 		data.getRequirements().add(requirement2);
 		ExcelRow requirement3 = new ExcelRow();
 		requirement3.setPerimetre_10("Vague 13");
@@ -128,6 +130,7 @@ public class ExcelWriterTest {
 		requirement3.setCommentaire("Ceci est encore un autre commentaire");
 		requirement3.setStatutPublication("Modifiée");
 		requirement3.setVaNMoins1("OUI");
+		requirement3.setCriticite_11("Critique");
 		data.getRequirements().add(requirement3);
 
 		// TestCases
@@ -231,7 +234,7 @@ public class ExcelWriterTest {
 		File tempFile = new File(filename);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		workbook.write(out);
-		assertEquals(242,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());
+		assertEquals(242,workbook.getSheet("Exigences").getRow(2).getCell(8).getStringCellValue().length());
 		
 		workbook.close();
 		out.close();

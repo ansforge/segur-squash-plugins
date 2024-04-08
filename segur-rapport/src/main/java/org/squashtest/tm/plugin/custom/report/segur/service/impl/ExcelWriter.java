@@ -124,11 +124,13 @@ public class ExcelWriter {
 	public static final int REM_COLUMN_STATUT_PUBLICATION = REM_COLUMN_COMMENTAIRE + 1;
 	
 	public static final int REM_COLUMN_VA_NMOINS1 = REM_COLUMN_STATUT_PUBLICATION + 1;
+
+	public static final int REM_COLUMN_CRITICITY = REM_COLUMN_VA_NMOINS1 + 1;
 	/** The Constant PREPUB_COLUMN_BON_POUR_PUBLICATION. */
 	//public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
 	//		+ 1;
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
-			+ 4;
+			+ 5;
 
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
@@ -492,6 +494,13 @@ public class ExcelWriter {
 		c14.setCellStyle(c14Style);
 		c14Style.setWrapText(true);
 		c14.setCellValue(data.getVaNMoins1());  
+
+		Cell c15 = row.createCell(REM_COLUMN_CRITICITY);
+		CellStyle c15Style = sheet.getWorkbook().createCellStyle();
+		c15Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_CRITICITY).getCellStyle());
+		c15.setCellStyle(c15Style);
+		c15Style.setWrapText(true);
+		c15.setCellValue(data.getCriticite_11());  
 
 		return row;
 

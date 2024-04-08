@@ -34,7 +34,7 @@ public class CufToExcelDataTest {
 	@Test
 	public void findSpecificCufTest() {
 		// JDD
-		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null);
+		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null,null);
 		cufs.clear();
 		cufs.add(new Cuf(Constantes.SECTION, labelSection));
 		//cufs.add(new Cuf(CufCode.SECTION, "ttttt"));
@@ -54,7 +54,7 @@ public class CufToExcelDataTest {
 	 */
 	@Test
 	public void splitSectionTest() {
-		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null);
+		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null,null);
 		//labelSection = "MSS_";
 		reqModel.splitSectionAndSetExcelData(labelSection);
 		assertEquals(idSection, reqModel.getRow().getId_section_3() );
@@ -68,7 +68,7 @@ public class CufToExcelDataTest {
 	 */
 	@Test
 	public void calculExigenceConditionelleTest() {
-		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null);
+		ReqModel reqModel = new  ReqModel(null,null,null,null,null,null,null);
 		reqModel.calculExigenceConditionelle("Général");
 		assertEquals(reqModel.getRow().getBoolExigenceConditionnelle_1(), Constantes.NON);
 		reqModel.calculExigenceConditionelle("général");
@@ -82,7 +82,7 @@ public class CufToExcelDataTest {
 	 */
 	@Test
 	public void calculCategorieTest() {
-		ReqModel reqModel = new ReqModel(null,null,null,null,null,null);
+		ReqModel reqModel = new ReqModel(null,null,null,null,null,null,null);
 		reqModel.calculCategorieNature("exigence (Doit)");
 		assertEquals(reqModel.getRow().getNatureExigence_7(), Constantes.CATEGORIE_EXIGENCE);
 		reqModel.calculCategorieNature("eXigeNce (Doit)");

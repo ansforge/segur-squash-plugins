@@ -441,6 +441,11 @@ public class DSRData {
 		} else {
 			updatedRequirement.setProfilHistorique_11(requirementRow.getProfilHistorique_11());
 		}
+		if (requirementRow.getCriticite_12().isEmpty()) {
+			updatedRequirement.setCriticite_12(socleData.getCriticite_12());
+		} else {
+			updatedRequirement.setCriticite_12(requirementRow.getCriticite_12());
+		}
 
 		return updatedRequirement;
 	}

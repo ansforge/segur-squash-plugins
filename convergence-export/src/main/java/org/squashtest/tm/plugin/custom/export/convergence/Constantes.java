@@ -101,6 +101,14 @@ public class Constantes {
 	/** The Constant CATEGORIE_PRECONISATION. */
 	public final static String CATEGORIE_PRECONISATION = "PRECONISATION";
 
+	
+	/** The Constant CRITICITE. */
+	public final static String CRITICITE = "CRITICITE";
+	public final static String CRITICALITY_MINOR = "MINOR";
+	public final static String CRITICALITY_MAJOR = "MAJOR";
+	public final static String CRITICALITY_CRITICAL = "CRITICAL";
+	public final static String CRITICALITY_UNDEFINED = "UNDEFINED";
+
 	/** The Constant CRLF. */
 	public final static String LINE_SEPARATOR = "\n";
 
