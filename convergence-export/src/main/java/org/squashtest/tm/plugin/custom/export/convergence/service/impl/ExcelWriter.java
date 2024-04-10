@@ -113,6 +113,8 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_CRITICITE. */
 	public static final int REM_COLUMN_CRITICITY= 11; 
 
+	public static final int REM_COLUMN_ORDRE = 12;
+
 
 	private Traceur traceur;
 
@@ -390,6 +392,13 @@ public class ExcelWriter {
 		c15.setCellStyle(c15Style);
 		c15Style.setWrapText(true);
 		c15.setCellValue(data.getCriticite_12());  
+
+		Cell c16 = row.createCell(REM_COLUMN_ORDRE);
+		CellStyle c16Style = sheet.getWorkbook().createCellStyle();
+		c16Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ORDRE).getCellStyle());
+		c16.setCellStyle(c16Style);
+		c16Style.setWrapText(true);
+		c16.setCellValue(data.getOrdre());  
 
 		return row;
 

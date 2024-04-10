@@ -354,6 +354,7 @@ public class DSRData {
 		updatedRequirement.setReference(requirementRow.getReference());
 		updatedRequirement.setResId(requirementRow.getResId());
 		updatedRequirement.setReqId(requirementRow.getReqId());
+		updatedRequirement.setOrdre(requirementRow.getOrdre());
 		// Une exigence est obsolète si l'exigence socle l'est aussi.
 		if (socleData.getReqStatus().equals(EXCLUDED_STATUS)) {
 			updatedRequirement.setReqStatus(socleData.getReqStatus());
@@ -450,6 +451,11 @@ public class DSRData {
 		} else {
 			updatedRequirement.setCriticite_11(requirementRow.getCriticite_11());
 		}
+		// if (requirementRow.getOrdre().isEmpty()) {
+		// 	updatedRequirement.setOrdre(socleData.getOrdre());
+		// } else {
+		// 	updatedRequirement.setOrdre(requirementRow.getOrdre());
+		// }
 
 		return updatedRequirement;
 	}

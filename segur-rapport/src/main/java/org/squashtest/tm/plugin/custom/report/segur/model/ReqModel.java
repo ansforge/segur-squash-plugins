@@ -108,6 +108,7 @@ public ReqModel(Long resId, Long reqId, String reference, String requirementStat
 		row.setStatutPublication(findSpecificCuf(Constantes.STATUT_PUBLICATION).getLabel());
 		row.setVaNMoins1(findSpecificCuf(Constantes.VA_NMOINS1).getLabel());		
 		row.setPerimetre_10(findSpecificCuf(Constantes.PERIMETRE).getLabel());
+		row.setOrdre(findSpecificCuf(Constantes.ORDRE).getLabel());
 		//row.setCriticite_12(criticite);
 		calculCriticite(criticite);
 

@@ -52,6 +52,10 @@ public class Constantes {
 	/** The Constant PERIMETRE. */
 	public final static String PERIMETRE = "PERIMETRE";
 
+	/** The Constant ORDRE. */
+	public final static String ORDRE = "ORDRE";
+
+
 	/** The Constant PROFIL_GENERAL. */
 	public final static String PROFIL_GENERAL = "Général";
 

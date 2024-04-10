@@ -126,11 +126,13 @@ public class ExcelWriter {
 	public static final int REM_COLUMN_VA_NMOINS1 = REM_COLUMN_STATUT_PUBLICATION + 1;
 
 	public static final int REM_COLUMN_CRITICITY = REM_COLUMN_VA_NMOINS1 + 1;
+
+	public static final int REM_COLUMN_ORDRE = REM_COLUMN_CRITICITY + 1;
 	/** The Constant PREPUB_COLUMN_BON_POUR_PUBLICATION. */
 	//public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
 	//		+ 1;
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
-			+ 5;
+			+ 6;
 
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;
@@ -501,6 +503,13 @@ public class ExcelWriter {
 		c15.setCellStyle(c15Style);
 		c15Style.setWrapText(true);
 		c15.setCellValue(data.getCriticite_11());  
+
+		Cell c16 = row.createCell(REM_COLUMN_ORDRE);
+		CellStyle c16Style = sheet.getWorkbook().createCellStyle();
+		c16Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ORDRE).getCellStyle());
+		c16.setCellStyle(c16Style);
+		c16Style.setWrapText(true);
+		c16.setCellValue(data.getOrdre());  
 
 		return row;
 

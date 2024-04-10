@@ -355,6 +355,7 @@ public class DSRData {
 		updatedRequirement.setReference(requirementRow.getReference());
 		updatedRequirement.setResId(requirementRow.getResId());
 		updatedRequirement.setReqId(requirementRow.getReqId());
+		updatedRequirement.setOrdre(requirementRow.getOrdre());
 		// Une exigence est obsolète si l'exigence socle l'est aussi.
 		if (socleData.getReqStatus().equals(EXCLUDED_STATUS)) {
 			updatedRequirement.setReqStatus(socleData.getReqStatus());

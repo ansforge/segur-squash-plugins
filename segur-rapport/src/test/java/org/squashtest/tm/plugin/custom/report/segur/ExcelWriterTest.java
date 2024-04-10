@@ -77,6 +77,7 @@ public class ExcelWriterTest {
 		requirement1.setStatutPublication("Inchangée");
 		requirement1.setVaNMoins1("OUI");
 		requirement1.setCriticite_11("Mineure");
+		requirement1.setOrdre("1");
 		data.getRequirements().add(requirement1);
 		ExcelRow requirement2 = new ExcelRow();
 		requirement2.setPerimetre_10("Vague 8");
@@ -107,6 +108,7 @@ public class ExcelWriterTest {
 		requirement2.setStatutPublication("Modifiée");
 		requirement2.setVaNMoins1("NON");
 		requirement2.setCriticite_11("Majeure");
+		requirement2.setOrdre("2");
 		data.getRequirements().add(requirement2);
 		ExcelRow requirement3 = new ExcelRow();
 		requirement3.setPerimetre_10("Vague 13");
@@ -131,6 +133,7 @@ public class ExcelWriterTest {
 		requirement3.setStatutPublication("Modifiée");
 		requirement3.setVaNMoins1("OUI");
 		requirement3.setCriticite_11("Critique");
+		requirement3.setOrdre("3");
 		data.getRequirements().add(requirement3);
 
 		// TestCases
