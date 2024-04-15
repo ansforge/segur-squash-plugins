@@ -102,16 +102,16 @@ public class ExcelWriter {
 	public static final int REM_COLUMN_ENONCE = 4; // 3;
 	/** The Constant REM_COLUMN_NATURE. */
 	//public static final int REM_COLUMN_NATURE = 6;
-	public static final int REM_COLUMN_NATURE = 5; //4;
+	public static final int REM_COLUMN_NATURE = 6; //4;
 	/** The Constant REM_COLUMN_PROFIL. */
 	//public static final int REM_COLUMN_PROFIL = 1;
-	public static final int REM_COLUMN_PROFIL = 6; //5;
+	public static final int REM_COLUMN_PROFIL = 7; //5;
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
 	//public static final int REM_COLUMN_NUMERO_SCENARIO = 9;
-	public static final int REM_COLUMN_NUMERO_SCENARIO = 7; //6;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 8; //6;
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
 	//public static final int REM_COLUMN_SCENARIO_CONFORMITE = 10;
-	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 8; // 7;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 9; // 7;
 	
 	/** The Constant MAX_STEP_NUMBER. */
 	public static final int MAX_STEP_NUMBER = 10;
@@ -119,9 +119,9 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_FIRST_NUMERO_PREUVE. */
 	public static final int REM_COLUMN_FIRST_NUMERO_PREUVE = REM_COLUMN_SCENARIO_CONFORMITE + 1;
 
-    public static final int REM_COLUMN_COMMENTAIRE = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
+    public static final int REM_COLUMN_COMMENTAIRE = 5; //REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;
 
-	public static final int REM_COLUMN_STATUT_PUBLICATION = REM_COLUMN_COMMENTAIRE + 1;
+	public static final int REM_COLUMN_STATUT_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2 + 1;//REM_COLUMN_COMMENTAIRE + 1;
 	
 	public static final int REM_COLUMN_VA_NMOINS1 = REM_COLUMN_STATUT_PUBLICATION + 1;
 
@@ -132,7 +132,7 @@ public class ExcelWriter {
 	//public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
 	//		+ 1;
 	public static final int PREPUB_COLUMN_BON_POUR_PUBLICATION = REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEP_NUMBER * 2
-			+ 6;
+			+ 5;
 
 	/** The Constant PREPUB_COLUMN_REFERENCE_EXIGENCE. */
 	public static final int PREPUB_COLUMN_REFERENCE_EXIGENCE = PREPUB_COLUMN_BON_POUR_PUBLICATION + 1;

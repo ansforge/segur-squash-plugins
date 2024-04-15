@@ -91,29 +91,32 @@ public class ExcelWriter {
 	/** The Constant REM_COLUMN_ENONCE. */
 	public static final int REM_COLUMN_ENONCE = 4; //3;
 
+		/** The Constant REM_COLUMN_COMMENTAIRE */
+		public static final int REM_COLUMN_COMMENTAIRE = 5; 
+
 	/** The Constant REM_COLUMN_PROFIL. */
-	public static final int REM_COLUMN_PROFIL = 5; //4;
+	public static final int REM_COLUMN_PROFIL = 6; //4;
 
 
 	/** The Constant REM_COLUMN_NUMERO_SCENARIO. */
-	public static final int REM_COLUMN_NUMERO_SCENARIO = 6; //5;
+	public static final int REM_COLUMN_NUMERO_SCENARIO = 7; //5;
 
 	/** The Constant REM_COLUMN_SCENARIO_CONFORMITE. */
-	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 7; //6;
+	public static final int REM_COLUMN_SCENARIO_CONFORMITE = 8; //6;
 
 	/** The Constant REM_COLUMN_NUMERO_PREUVE. */
-	public static final int REM_COLUMN_NUMERO_PREUVE = 8; //7;
+	public static final int REM_COLUMN_NUMERO_PREUVE = 9; //7;
 
 	/** The Constant REM_COLUMN_NUMERO_PREUVE. */
-	public static final int REM_COLUMN_PREUVE = 9; //8;
+	public static final int REM_COLUMN_PREUVE = 10; //8;
 
 	/** The Constant REM_COLUMN_PROFIL_HISTO. */
-	public static final int REM_COLUMN_PROFIL_HISTO= 10; 
+	public static final int REM_COLUMN_PROFIL_HISTO= 11; 
 
 	/** The Constant REM_COLUMN_CRITICITE. */
-	public static final int REM_COLUMN_CRITICITY= 11; 
+	public static final int REM_COLUMN_CRITICITY= 12; 
 
-	public static final int REM_COLUMN_ORDRE = 12;
+	public static final int REM_COLUMN_ORDRE = 13;
 
 
 	private Traceur traceur;
@@ -379,6 +382,13 @@ public class ExcelWriter {
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
 		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
+
+		Cell c10 = row.createCell(REM_COLUMN_COMMENTAIRE);
+		CellStyle c10Style = sheet.getWorkbook().createCellStyle();
+		c10Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_COMMENTAIRE).getCellStyle());
+		c10.setCellStyle(c10Style);
+		c10Style.setWrapText(true);
+		c10.setCellValue(Parser.convertHTMLtoString(data.getCommentaire()));	
 
 		Cell c2 = row.createCell(REM_COLUMN_PROFIL_HISTO);
 		CellStyle c2Style = sheet.getWorkbook().createCellStyle();
