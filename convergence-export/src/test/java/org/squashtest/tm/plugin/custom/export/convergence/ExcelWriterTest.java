@@ -229,35 +229,6 @@ public class ExcelWriterTest {
 
 	}
 
-	@Test
-	void generateExcelFileExport() throws Exception {
-		XSSFWorkbook workbook = excel.loadWorkbookTemplate(TEMPLATE_NAME);
-		// ecriture du workbook
-		data.getPerimeter().setMilestoneStatus(Constantes.MILESTONE_LOCKED);
-		excel.putDatasInWorkbook(workbook, data);
-		String filename = this.getClass().getResource(".").getPath()
-				+ "generateExcelFile.xlsx";
-		LOGGER.info(filename);
-		File buildExcelFile = new File(filename);
-		FileOutputStream out = new FileOutputStream(buildExcelFile);
-		workbook.write(out);
-//		assertEquals(242,workbook.getSheet("Exigences").getRow(2).getCell(10).getStringCellValue().length());		
-		workbook.close();
-		out.close();
-		
-		
-		//vérification binaire que le fichier est conforme à l'attendu
-//		String expectedFile =  this.getClass().getResource(".").getPath()
-//				+  "expectedGenerateExcelFile.xlsx";
-		File expectedfile = Paths.get("src/test/resources/expectedGenerateExcelFile.xls").toFile();
-//		File expectedfile = new File(getClass().getResource("expectedGenerateExcelFile.xls").getFile());//new File(expectedFile);
-		assertTrue(expectedfile.exists());
-        FileInputStream inRef = new FileInputStream(expectedfile);
-//        FileInputStream inBuild = new FileInputStream(buildExcelFile);
-//        assertTrue(IOUtils.contentEquals(inRef, inBuild));
-        inRef.close();
- //       inBuild.close();
-	}
 
 	@Test
 	void generateConvergenceExport() throws Exception {
@@ -292,7 +263,7 @@ public class ExcelWriterTest {
 		System.out.println(workbook.getSheet("Exigences").getRow(3).getCell(10).getStringCellValue());
 		System.out.println("xxxxxxxxxxxxx");
 		System.out.println(workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
-		assertEquals(467,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+		assertEquals(409,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
 
 		workbook.close();
 		out.close();	

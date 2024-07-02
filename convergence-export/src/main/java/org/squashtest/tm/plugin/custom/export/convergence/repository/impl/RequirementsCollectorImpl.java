@@ -36,7 +36,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
 import org.squashtest.tm.plugin.custom.export.convergence.Constantes;

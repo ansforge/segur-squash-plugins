@@ -44,10 +44,6 @@ public class ExcelWriter {
 
 	private static final String EXCLUDED_TC_STATUS = "OBSOLETE";
 
-	private static final String REQ_CONTEXT_PATH = "%srequirement-workspace/requirement/%d/content";
-
-	private static final String TESTCASE_CONTEXT_PATH = "%stest-case-workspace/test-case/%d/content";
-
 	private static final int MAX_STEPS = 10;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWriter.class);
@@ -120,7 +116,6 @@ public class ExcelWriter {
 
 
 	private Traceur traceur;
-
 	private String squashBaseUrl;
 
 	/**
@@ -381,14 +376,14 @@ public class ExcelWriter {
 		c9Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_ENONCE).getCellStyle());
 		c9.setCellStyle(c9Style);
 		c9Style.setWrapText(true);
-		c9.setCellValue(Parser.convertHTMLtoString(data.getEnonceExigence_9()));
+		c9.setCellValue(Parser.sanitize(data.getEnonceExigence_9()));
 
 		Cell c10 = row.createCell(REM_COLUMN_COMMENTAIRE);
 		CellStyle c10Style = sheet.getWorkbook().createCellStyle();
 		c10Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_COMMENTAIRE).getCellStyle());
 		c10.setCellStyle(c10Style);
 		c10Style.setWrapText(true);
-		c10.setCellValue(Parser.convertHTMLtoString(data.getCommentaire()));	
+		c10.setCellValue(Parser.sanitize(data.getCommentaire()));	
 
 		Cell c2 = row.createCell(REM_COLUMN_PROFIL_HISTO);
 		CellStyle c2Style = sheet.getWorkbook().createCellStyle();
@@ -431,7 +426,7 @@ public class ExcelWriter {
 		
 			//EVOL CONVERGENCE  =>- non utile, on prend le html brut
 
-			c11.setCellValue(testcase.getDescription());
+			c11.setCellValue(Parser.sanitize(testcase.getDescription()));
 		}
 
 		    
@@ -464,7 +459,7 @@ public class ExcelWriter {
 		CellStyle c11Style = row.getSheet().getWorkbook().createCellStyle();
 		c11Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_SCENARIO_CONFORMITE).getCellStyle());
 		c11.setCellStyle(c11Style);
-		c11.setCellValue(String.format("Cf. Scénarios Coeur de métier\n%s\n[%d] preuve(s)", testcase.getDescription(),
+		c11.setCellValue(String.format("Cf. Scénarios Coeur de métier\n%s\n[%d] preuve(s)", Parser.sanitize(testcase.getDescription()),
 				testcase.getOrderedStepIds().size()));
 		// Création de cellules vides pour chaque step afin de respecter le formatage
 		for (int i = REM_COLUMN_SCENARIO_CONFORMITE + 1; i <= REM_COLUMN_SCENARIO_CONFORMITE + MAX_STEPS * 2; i++) {
