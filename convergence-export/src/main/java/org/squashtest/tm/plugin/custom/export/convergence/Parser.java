@@ -21,6 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Parser {
 
+	private static final String MB_1_CLASS = "mb-1";
+	private static final String P_ENTITY_TAG = "p";
+	private static final String BR_ENTITY_TAG = "br";
+	private static final int NBSP_CODE = 160;
+
 	private Parser() {
 	};
 
@@ -63,9 +68,9 @@ public class Parser {
 				item.before("\\n" + Constantes.PREFIX_ELEMENT_LISTE_A_PUCES);
 			}
 		} // traitement des paragraphes et retours à la ligne
-		doc.select("br").before("\\n");
-		doc.select("p").before("\\n");
-		doc.select("p").after("\\n");
+		doc.select(BR_ENTITY_TAG).before("\\n");
+		doc.select(P_ENTITY_TAG).before("\\n");
+		doc.select(P_ENTITY_TAG).after("\\n");
 		doc.select("ol").after("\\n\\n");
 		doc.select("ul").after("\\n\\n");
 		String str = doc.html().replaceAll("\\\\n", "\n");
@@ -87,30 +92,30 @@ public class Parser {
 		List<Element> elementsToremove = new ArrayList<>();
 		Elements elements = document.body().getAllElements();
 		for (Element element : elements) {
-			if (element.tagName().equalsIgnoreCase("br")) {
+			if (element.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
 				Element firstSiblingElement = element.firstElementSibling();
-				if (firstSiblingElement != null && firstSiblingElement.tagName().equalsIgnoreCase("br")) {
+				if (firstSiblingElement != null && firstSiblingElement.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
 					// Si deux BR de suite on supprime le BR suivant
 					if (!elementsToremove.contains(firstSiblingElement)) {
 						elementsToremove.add(firstSiblingElement);
 					}
 				}
-				if (element.parent().tagName().equalsIgnoreCase("p")) {
+				if (element.parent().tagName().equalsIgnoreCase(P_ENTITY_TAG)) {
 					if (!elementsToremove.contains(element)) {
 						elementsToremove.add(element);
 					}
 				}
-			} else if (element.tagName().equalsIgnoreCase("p")) {
+			} else if (element.tagName().equalsIgnoreCase(P_ENTITY_TAG)) {
 				Element nextSiblingElement = element.nextElementSibling();
-				if (nextSiblingElement != null && nextSiblingElement.tagName().equalsIgnoreCase("br")) {
+				if (nextSiblingElement != null && nextSiblingElement.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
 					// Si  BR à la suite on supprime le BR
 					if (!elementsToremove.contains(nextSiblingElement)) {
 						elementsToremove.add(nextSiblingElement);
 					}
 				}
 				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <p>
-				if (!element.hasClass("mb-1")) {
-					element.addClass("mb-1");
+				if (!element.hasClass(MB_1_CLASS)) {
+					element.addClass(MB_1_CLASS);
 				}
 				if (isOnlyWhitespaces(element.text())) {
 					// Supprimer les paragraphes vides, exemple : <p class="mb-1">&nbsp;</p>
@@ -122,8 +127,8 @@ public class Parser {
 				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <ul> et
 				// <ol>
 			} else if (element.tagName().equalsIgnoreCase("ol") || element.tagName().equalsIgnoreCase("ul")) {
-				if (!element.hasClass("mb-1")) {
-					element.addClass("mb-1");
+				if (!element.hasClass(MB_1_CLASS)) {
+					element.addClass(MB_1_CLASS);
 				}
 				// Supprimer les balises <span></span>,
 			} else if (element.tagName().equalsIgnoreCase("span")) {
@@ -151,7 +156,7 @@ public class Parser {
 		for (int i = 0; i < str.length(); i++) {
 			int codePoint = Character.codePointAt(str.toCharArray(), i);
 			// Check whether the character does not satisfy for NO-BREAK SPACE
-			if (160 != (codePoint)) {
+			if (NBSP_CODE != (codePoint)) {
 				return false;
 			}
 		}
@@ -164,10 +169,10 @@ public class Parser {
         int len = val.length;
         int st = 0;
 
-        while ((st < len) && (val[st] == 160)) {
+        while ((st < len) && (val[st] == NBSP_CODE)) {
             st++;
         }
-        while ((st < len) && (val[len - 1] == 160)) {
+        while ((st < len) && (val[len - 1] == NBSP_CODE)) {
             len--;
         }
         return ((st > 0) || (len < val.length)) ? string.substring(st, len) : string;
