@@ -442,7 +442,7 @@ public class ExcelWriter {
 			c13Style.cloneStyleFrom(style2apply.getCell(REM_COLUMN_PREUVE).getCellStyle());
 			c13Style.setWrapText(true);
 			resultCell.setCellStyle(c13Style);
-			resultCell.setCellValue(Parser.convertHTMLtoString(currentStep.getExpectedResult()));
+			resultCell.setCellValue(Parser.sanitize(currentStep.getExpectedResult()));
 //		}
 	}
 

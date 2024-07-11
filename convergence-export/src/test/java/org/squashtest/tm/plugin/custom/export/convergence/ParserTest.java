@@ -36,7 +36,7 @@ public class ParserTest {
 	
 	@Test
 	public void testSanitize() {
-		String html = "<span style=\"font-size:11.0pt\"/><p class=\"mb-1\">&nbsp;<BR/><BR/><BR/></p><p class=\"mb-1\">&nbsp;espace&nbsp;insécable&nbsp;avant&nbsp;le&nbsp;texte&nbsp;</p><BR/>";
-		assertEquals("<p class=\"mb-1\">espace&nbsp;ins&eacute;cable&nbsp;avant&nbsp;le&nbsp;texte</p>",Parser.sanitize(html));
+		String html = "<span style=\"font-size:11.0pt\"/><p class=\"mb-1\">&nbsp;<BR/><BR/><BR/></p><p class=\"mb-1\">&nbsp;espace&nbsp;insécable&nbsp;avant&nbsp;le&nbsp;texte&nbsp;</p><ul><li>item</li></ul><BR/>";
+		assertEquals("<p class=\"mb-1\">espace&nbsp;ins&eacute;cable&nbsp;avant&nbsp;le&nbsp;texte</p><ul class=\" mb-1\"><li>item</li></ul><br />",Parser.sanitize(html));
 	}
 }
