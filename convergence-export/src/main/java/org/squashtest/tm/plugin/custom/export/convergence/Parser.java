@@ -6,6 +6,7 @@ package org.squashtest.tm.plugin.custom.export.convergence;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -83,36 +84,14 @@ public class Parser {
 		if (html == null || html.isEmpty()) {
 			return tmp;
 		}
-
-		Document document = Jsoup.parseBodyFragment(html);
 		Document.OutputSettings outputSettings = new Document.OutputSettings();
-		outputSettings.prettyPrint(false);
-		outputSettings.escapeMode(EscapeMode.extended);
+		outputSettings.prettyPrint(true);
+		Document document = Jsoup.parseBodyFragment(html);
 		document.outputSettings(outputSettings);
 		List<Element> elementsToremove = new ArrayList<>();
 		Elements elements = document.body().getAllElements();
 		for (Element element : elements) {
-			if (element.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
-				Element firstSiblingElement = element.firstElementSibling();
-				if (firstSiblingElement != null && firstSiblingElement.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
-					// Si deux BR de suite on supprime le BR suivant
-					if (!elementsToremove.contains(firstSiblingElement)) {
-						elementsToremove.add(firstSiblingElement);
-					}
-				}
-				if (element.parent().tagName().equalsIgnoreCase(P_ENTITY_TAG)) {
-					if (!elementsToremove.contains(element)) {
-						elementsToremove.add(element);
-					}
-				}
-			} else if (element.tagName().equalsIgnoreCase(P_ENTITY_TAG)) {
-				Element nextSiblingElement = element.nextElementSibling();
-				if (nextSiblingElement != null && nextSiblingElement.tagName().equalsIgnoreCase(BR_ENTITY_TAG)) {
-					// Si  BR à la suite on supprime le BR
-					if (!elementsToremove.contains(nextSiblingElement)) {
-						elementsToremove.add(nextSiblingElement);
-					}
-				}
+			if (element.tagName().equalsIgnoreCase(P_ENTITY_TAG)) {
 				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <p>
 				if (!element.hasClass(MB_1_CLASS)) {
 					element.addClass(MB_1_CLASS);
@@ -123,7 +102,7 @@ public class Parser {
 						elementsToremove.add(element);
 					}
 				}
-				element.text(trim(element.text()));
+				element.html(trim(element.html()));
 				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <ul> et
 				// <ol>
 			} else if (element.tagName().equalsIgnoreCase("ol") || element.tagName().equalsIgnoreCase("ul")) {
@@ -132,8 +111,12 @@ public class Parser {
 				}
 				// Supprimer les balises <span></span>,
 			} else if (element.tagName().equalsIgnoreCase("span")) {
-				if (!elementsToremove.contains(element)) {
-					elementsToremove.add(element);
+				if (!element.hasText()) {
+					// S'il est vide, on le supprime
+					if (!elementsToremove.contains(element)) {
+						elementsToremove.add(element);
+
+					}
 				}
 			}
 		}
@@ -144,7 +127,17 @@ public class Parser {
 				log.info(element.tagName() + " déjà supprimé");
 			}
 		}
-		return document.body().html();
+		return document.body().html()
+				//On supprime les balises span sans toucher au texte
+				.replaceAll("<span[^>]*>", "")
+				.replaceAll("</span>", "")
+				.replaceAll("&NewLine;", "")
+				.replaceAll("&Tab;", "")
+				.replaceAll("<br /><p>", "<p>")
+				.replaceAll("<br /></p>", "</p>")
+				.replaceAll("<p><br />", "<p>")
+				.replaceAll("</p><br />", "</p>")	
+				.replaceAll("<br />\\s*<br />", "<br />");
 	}
 
 	public static boolean isOnlyWhitespaces(String str) {
@@ -163,18 +156,18 @@ public class Parser {
 		// Return true if the character satisfies for whitespace
 		return true;
 	}
-	
-    public static String trim(String string) {
-    	char[] val = string.toCharArray();
-        int len = val.length;
-        int st = 0;
 
-        while ((st < len) && (val[st] == NBSP_CODE)) {
-            st++;
-        }
-        while ((st < len) && (val[len - 1] == NBSP_CODE)) {
-            len--;
-        }
-        return ((st > 0) || (len < val.length)) ? string.substring(st, len) : string;
-    }
+	public static String trim(String string) {
+		char[] val = string.toCharArray();
+		int len = val.length;
+		int st = 0;
+
+		while ((st < len) && (val[st] == NBSP_CODE)) {
+			st++;
+		}
+		while ((st < len) && (val[len - 1] == NBSP_CODE)) {
+			len--;
+		}
+		return ((st > 0) || (len < val.length)) ? string.substring(st, len) : string;
+	}
 }
