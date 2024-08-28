@@ -132,10 +132,10 @@ public class Parser {
 				.replaceAll("</span>", "")
 				.replaceAll("&NewLine;", "")
 				.replaceAll("&Tab;", "")
-				.replaceAll("<br\\s?/><p(.*)>", "<p$1>")
-				.replaceAll("<br\\s?/></p>", "</p>")
-				.replaceAll("<p(.*)><br\\s?/>", "<p$1>")
-				.replaceAll("</p><br\\s?/>", "</p>")
+				.replaceAll("<br\\s?/>\\s*<p(.*)>", "<p$1>")
+				.replaceAll("<br\\s?/>\\s*</p>", "</p>")
+				.replaceAll("<p(.*)>\\s*<br\\s?/>", "<p$1>")
+				.replaceAll("</p>\\s*<br\\s?/>", "</p>")
 				.replaceAll("&nbsp;</p>", "</p>")
 				.replaceAll("<br\\s?/>\\s*<br\\s?/>", "<br />");
 	}
