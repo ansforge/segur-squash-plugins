@@ -96,15 +96,14 @@ public class Parser {
 				if (!element.hasClass(MB_1_CLASS)) {
 					element.addClass(MB_1_CLASS);
 				}
-				if (isOnlyWhitespaces(element.text())) {
+				if (isOnlyWhitespaces(element.text()) || !element.hasText()) {
 					// Supprimer les paragraphes vides, exemple : <p class="mb-1">&nbsp;</p>
 					if (!elementsToremove.contains(element)) {
 						elementsToremove.add(element);
 					}
 				}
 				element.html(trim(element.html()));
-				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <ul> et
-				// <ol>
+				// Ajouter la classe {class="mb -1"} au niveau de toutes les balises <ul> et <ol>
 			} else if (element.tagName().equalsIgnoreCase("ol") || element.tagName().equalsIgnoreCase("ul")) {
 				if (!element.hasClass(MB_1_CLASS)) {
 					element.addClass(MB_1_CLASS);
@@ -133,11 +132,12 @@ public class Parser {
 				.replaceAll("</span>", "")
 				.replaceAll("&NewLine;", "")
 				.replaceAll("&Tab;", "")
-				.replaceAll("<br /><p>", "<p>")
-				.replaceAll("<br /></p>", "</p>")
-				.replaceAll("<p><br />", "<p>")
-				.replaceAll("</p><br />", "</p>")	
-				.replaceAll("<br />\\s*<br />", "<br />");
+				.replaceAll("<br\\s?/><p(.*)>", "<p$1>")
+				.replaceAll("<br\\s?/></p>", "</p>")
+				.replaceAll("<p(.*)><br\\s?/>", "<p$1>")
+				.replaceAll("</p><br\\s?/>", "</p>")
+				.replaceAll("&nbsp;</p>", "</p>")
+				.replaceAll("<br\\s?/>\\s*<br\\s?/>", "<br />");
 	}
 
 	public static boolean isOnlyWhitespaces(String str) {

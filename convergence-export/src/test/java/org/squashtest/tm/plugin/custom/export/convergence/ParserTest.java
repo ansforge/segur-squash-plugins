@@ -37,7 +37,7 @@ public class ParserTest {
 	@Test
 	public void testSanitizeWhiteSpaces() {
 		String html = "<span style=\"font-size:11.0pt\"/><p class=\"mb-1\">&nbsp;<BR/><BR/><BR/></p><p class=\"mb-1\">&nbsp;espace&nbsp;insécable&nbsp;avant&nbsp;le&nbsp;texte&nbsp;</p><ul><li>item</li></ul><BR/>";
-		String expected = "<p class=\"mb-1\">&nbsp;espace&nbsp;ins&eacute;cable&nbsp;avant&nbsp;le&nbsp;texte&nbsp;</p>\n"
+		String expected = "<p class=\"mb-1\">&nbsp;espace&nbsp;ins&eacute;cable&nbsp;avant&nbsp;le&nbsp;texte</p>\n"
 				+ "<ul class=\" mb-1\">\n"
 				+ " <li>item</li>\n"
 				+ "</ul>\n"
@@ -103,5 +103,39 @@ public class ParserTest {
 				+ " <li>de signes diacritiques</li> \n"
 				+ "</ul>";
 		assertEquals(expected,Parser.sanitize(source));
+	}
+	
+	@Test
+	public void testSanitizeSuppressBREndOfParagraph() {
+		String html = "<p>Le syst&egrave;me DOIT impl&eacute;menter le &quot;Volet de Transmission d&rsquo;un document CDA-R2 en HL7v2&quot; [CISIS3] permettant de cr&eacute;er et transmettre l&#39;archive IHE_XDM sur la base d&#39;un message HL7 V2 ORU/MDM provenant des syst&egrave;mes cr&eacute;ateurs de documents (DPI/RIS/SGL&hellip;).<br/></p>\r\n";
+		String expected = "<p class=\" mb-1\">Le syst&egrave;me DOIT impl&eacute;menter le &quot;Volet de Transmission d’un document CDA-R2 en HL7v2&quot; [CISIS3] permettant de cr&eacute;er et transmettre l'archive IHE_XDM sur la base d'un message HL7 V2 ORU/MDM provenant des syst&egrave;mes cr&eacute;ateurs de documents (DPI/RIS/SGL…).</p>";
+		assertEquals(expected,Parser.sanitize(html));
+	}
+	
+	@Test
+	public void testSanitizeSuppressEmptyParagraph() {
+		String html = "<p class=\" mb-1\"></p>";
+		String expected = "";
+		assertEquals(expected,Parser.sanitize(html));
+	}
+	
+	@Test
+	public void testSanitizeSuppressParagraphWithNbsp() {
+		String html = "<p class=\" mb-1\">&nbsp;</p>";
+		String expected = "";
+		assertEquals(expected,Parser.sanitize(html));
+	}
+	
+	@Test
+	public void testSanitizeNbspBeforeEndOfParagraph() {
+		String html = "<p class=\" mb-1\">A conserver&nbsp;</p>";
+		String expected = "<p class=\" mb-1\">A conserver</p>";
+		assertEquals(expected,Parser.sanitize(html));
+	}
+	@Test
+	public void testSanitizeSuppressBRAtStartOfParagraph() {
+		String html = "<p class=\" mb-1\"><br/>A conserver</p>";
+		String expected = "<p class=\" mb-1\">A conserver</p>";
+		assertEquals(expected,Parser.sanitize(html));
 	}
 }
