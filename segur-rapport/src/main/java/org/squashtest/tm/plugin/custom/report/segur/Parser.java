@@ -7,7 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 
 /**
@@ -68,7 +68,7 @@ public class Parser {
 		doc.select("ol").after("\\n\\n");
 		doc.select("ul").after("\\n\\n");
 		String str = doc.html().replaceAll("\\\\n", "\n");
-		return Jsoup.clean(str, "", Whitelist.none(), outputSettings)
+		return Jsoup.clean(str, "", Safelist.none(), outputSettings)
 				.replaceAll("&apos;", "'")
 				.replaceAll("&quot;", "\"")
 				.replaceAll("&gt;", ">")

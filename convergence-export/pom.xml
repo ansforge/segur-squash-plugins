@@ -4,16 +4,16 @@
 
   <groupId>org.squashtest.tm.plugin</groupId>
   <artifactId>segur-convergence-export</artifactId>
-  <version>1.0.0-RC12</version>
+  <version>2.0.1</version>
   <packaging>jar</packaging>
   <name>segur-convergence-export</name>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version>
     <!-- ecraser la version junit embarquée dans squash -->
     <junit-jupiter.version>5.7.1</junit-jupiter.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <squash.core.version>3.0.5.RELEASE</squash.core.version>
+    <squash.core.version>7.1.0.RELEASE</squash.core.version>
   </properties>
 
   <dependencyManagement>
@@ -33,6 +33,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.15.1</version>
+      <!-- Replace with the latest version -->
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -41,13 +47,13 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>3.14</version>
+      <version>5.2.3</version>
       <!--$NO-MVN-MAN-VER$-->
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>3.14</version>
+      <version>5.2.3</version>
       <!--$NO-MVN-MAN-VER$-->
       <exclusions>
         <exclusion>

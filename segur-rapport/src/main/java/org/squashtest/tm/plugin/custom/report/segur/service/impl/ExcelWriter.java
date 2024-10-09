@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -218,7 +221,7 @@ public class ExcelWriter {
 		linkFont.setFontHeight(height);
 		linkFont.setFontName("ARIAL");
 		linkFont.setUnderline(XSSFFont.U_SINGLE);
-		linkFont.setColor(HSSFColor.BLUE.index);
+		linkFont.setColor(HSSFColorPredefined.BLUE.getIndex());
 		// boucle sur les exigences
 		for (ExcelRow req : data.getRequirements()) {
 
@@ -324,7 +327,7 @@ public class ExcelWriter {
 					c33Style.setFont(linkFont);
 					c33.setCellStyle(c33Style);
 					c33.setCellValue(req.getReference());
-					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+					XSSFHyperlink c33link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 					c33link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getReqId()));
 					c33.setHyperlink(c33link);
 
@@ -335,7 +338,7 @@ public class ExcelWriter {
 					c34.setCellStyle(c34Style);
 					if (testCase.getTcln_id() > 0) {
 						c34.setCellValue(testCase.getReference());
-						XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+						XSSFHyperlink c34link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 						c34link.setAddress(String.format(TESTCASE_CONTEXT_PATH, squashBaseUrl, testCase.getTcln_id()));
 						c34.setHyperlink(c34link);
 					}
@@ -347,7 +350,7 @@ public class ExcelWriter {
 					c35.setCellStyle(c35Style);
 					if (req.getSocleReqId() > 0) {
 						c35.setCellValue(req.getReferenceSocle());
-						XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(Hyperlink.LINK_URL);
+						XSSFHyperlink c35link = (XSSFHyperlink) helper.createHyperlink(HyperlinkType.URL);
 						c35link.setAddress(String.format(REQ_CONTEXT_PATH, squashBaseUrl, req.getSocleReqId()));
 						c35.setHyperlink(c35link);
 					}
@@ -381,13 +384,13 @@ public class ExcelWriter {
 		for (Row row : sheet) {
 			for (Cell cell : row) {
 				CellStyle style = cell.getCellStyle();
-				style.setBorderBottom(CellStyle.BORDER_THIN);
+				style.setBorderBottom(BorderStyle.THIN);
 				style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderLeft(CellStyle.BORDER_THIN);
+				style.setBorderLeft(BorderStyle.THIN);
 				style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderRight(CellStyle.BORDER_THIN);
+				style.setBorderRight(BorderStyle.THIN);
 				style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderTop(CellStyle.BORDER_THIN);
+				style.setBorderTop(BorderStyle.THIN);
 				style.setTopBorderColor(IndexedColors.BLACK.getIndex());
 				cell.setCellStyle(style);
 			}

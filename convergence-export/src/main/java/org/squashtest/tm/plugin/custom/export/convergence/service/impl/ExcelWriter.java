@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -170,7 +171,7 @@ public class ExcelWriter {
 		linkFont.setFontHeight(height);
 		linkFont.setFontName("ARIAL");
 		linkFont.setUnderline(XSSFFont.U_SINGLE);
-		linkFont.setColor(HSSFColor.BLUE.index);
+		linkFont.setColor(HSSFColorPredefined.BLUE.getIndex());
 		
 		//map avec les steps de tous les Cts
 		Map<Long, Step> steps= data.getSteps();
@@ -262,13 +263,14 @@ public class ExcelWriter {
 		for (Row row : sheet) {
 			for (Cell cell : row) {
 				CellStyle style = cell.getCellStyle();
-				style.setBorderBottom(CellStyle.BORDER_THIN);
+			
+				style.setBorderBottom(BorderStyle.THIN);
 				style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderLeft(CellStyle.BORDER_THIN);
+				style.setBorderLeft(BorderStyle.THIN);
 				style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderRight(CellStyle.BORDER_THIN);
+				style.setBorderRight(BorderStyle.THIN);
 				style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-				style.setBorderTop(CellStyle.BORDER_THIN);
+				style.setBorderTop(BorderStyle.THIN);
 				style.setTopBorderColor(IndexedColors.BLACK.getIndex());
 				cell.setCellStyle(style);
 			}

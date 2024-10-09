@@ -10,8 +10,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +76,7 @@ public class Parser {
 		doc.select("ol").after("\\n\\n");
 		doc.select("ul").after("\\n\\n");
 		String str = doc.html().replaceAll("\\\\n", "\n");
-		return Jsoup.clean(str, "", Whitelist.none(), outputSettings).replaceAll("&apos;", "'")
+		return Jsoup.clean(str, "", Safelist.none(), outputSettings).replaceAll("&apos;", "'")
 				.replaceAll("&quot;", "\"").replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&amp;", "&");
 	}
 
@@ -86,7 +87,11 @@ public class Parser {
 		}
 		Document.OutputSettings outputSettings = new Document.OutputSettings();
 		outputSettings.prettyPrint(true);
+		outputSettings.syntax(Document.OutputSettings.Syntax.xml); 
+		//outputSettings.escapeMode(Entities.EscapeMode.xhtml);
+		outputSettings.charset("UTF-8"); 
 		Document document = Jsoup.parseBodyFragment(html);
+		System.out.println(document.body().html());
 		document.outputSettings(outputSettings);
 		List<Element> elementsToremove = new ArrayList<>();
 		Elements elements = document.body().getAllElements();
@@ -126,18 +131,34 @@ public class Parser {
 				log.info(element.tagName() + " déjà supprimé");
 			}
 		}
+		System.out.println(document.body().html());
 		return document.body().html()
 				//On supprime les balises span sans toucher au texte
 				.replaceAll("<span[^>]*>", "")
 				.replaceAll("</span>", "")
 				.replaceAll("&NewLine;", "")
 				.replaceAll("&Tab;", "")
+				.replaceAll("<br\\s?/>\\s*</p>", "</p>")
+				.replaceAll("<br\\s?/>\\s*<br\\s?/>", "<br/>")
 				.replaceAll("<br\\s?/>\\s*<p(.*)>", "<p$1>")
 				.replaceAll("<br\\s?/>\\s*</p>", "</p>")
 				.replaceAll("<p(.*)>\\s*<br\\s?/>", "<p$1>")
 				.replaceAll("</p>\\s*<br\\s?/>", "</p>")
 				.replaceAll("&nbsp;</p>", "</p>")
-				.replaceAll("<br\\s?/>\\s*<br\\s?/>", "<br />");
+				.replaceAll("<p class=\"mb-1\"></p>", "")
+				.replaceAll("é", "&eacute;")
+				.replaceAll("è", "&egrave;")
+				.replaceAll("à", "&agrave;")
+				.replaceAll("ù", "&ugrave;")
+				.replaceAll("ô", "&ocirc;")
+				.replaceAll("ê", "&ecirc;")
+				.replaceAll("â", "&acirc;")
+				.replaceAll("î", "&icirc;")
+				.replaceAll("ç", "&ccedil;")
+				.replaceAll("°", "&deg;");
+
+				//.replaceAll("<br\\s?/>\\s*<br\\s?/>", ;"<br/>");
+				
 	}
 
 	public static boolean isOnlyWhitespaces(String str) {
