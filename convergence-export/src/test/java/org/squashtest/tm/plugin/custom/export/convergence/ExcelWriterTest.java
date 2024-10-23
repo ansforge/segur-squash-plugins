@@ -263,7 +263,7 @@ public class ExcelWriterTest {
 		System.out.println(workbook.getSheet("Exigences").getRow(3).getCell(10).getStringCellValue());
 		System.out.println("xxxxxxxxxxxxx");
 		System.out.println(workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
-		assertEquals(409,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
+		assertEquals(377,workbook.getSheet("Exigences").getRow(3).getCell(8).getStringCellValue().length());
 
 		workbook.close();
 		out.close();	

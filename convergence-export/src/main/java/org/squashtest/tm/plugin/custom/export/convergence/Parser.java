@@ -6,11 +6,9 @@ package org.squashtest.tm.plugin.custom.export.convergence;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
@@ -91,7 +89,6 @@ public class Parser {
 		//outputSettings.escapeMode(Entities.EscapeMode.xhtml);
 		outputSettings.charset("UTF-8"); 
 		Document document = Jsoup.parseBodyFragment(html);
-		System.out.println(document.body().html());
 		document.outputSettings(outputSettings);
 		List<Element> elementsToremove = new ArrayList<>();
 		Elements elements = document.body().getAllElements();
@@ -131,7 +128,6 @@ public class Parser {
 				log.info(element.tagName() + " déjà supprimé");
 			}
 		}
-		System.out.println(document.body().html());
 		return document.body().html()
 				//On supprime les balises span sans toucher au texte
 				.replaceAll("<span[^>]*>", "")
@@ -139,7 +135,7 @@ public class Parser {
 				.replaceAll("&NewLine;", "")
 				.replaceAll("&Tab;", "")
 				.replaceAll("<br\\s?/>\\s*</p>", "</p>")
-				.replaceAll("<br\\s?/>\\s*<br\\s?/>", "<br/>")
+				.replaceAll("(<br\\s*/>[\\s\\r\\n]*){2,}", "<br/>")
 				.replaceAll("<br\\s?/>\\s*<p(.*)>", "<p$1>")
 				.replaceAll("<br\\s?/>\\s*</p>", "</p>")
 				.replaceAll("<p(.*)>\\s*<br\\s?/>", "<p$1>")
